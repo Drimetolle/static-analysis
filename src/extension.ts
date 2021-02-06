@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
+import a from "./Analyzer";
 
 export function activate(context: vscode.ExtensionContext): void {
   const disposable = vscode.commands.registerCommand(
     "extension.helloWorld",
     () => {
-      vscode.window.showInformationMessage("Hello World!");
+      vscode.window.showInformationMessage(a);
     }
   );
 
