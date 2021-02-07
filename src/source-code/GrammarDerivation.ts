@@ -1,4 +1,4 @@
-export default class ASTNode {
+export default class GrammarDerivation {
   start: number;
   stop: number;
   line: number;
