@@ -1,6 +1,7 @@
 import { singleton } from "tsyringe";
 import VariableDeclaration from "./VariableDeclaration";
 import GrammarDerivation from "./GrammarDerivation";
+import PositionInFile from "./PositionInFile";
 
 @singleton()
 export default class DeclaredVariables {
@@ -11,16 +12,32 @@ export default class DeclaredVariables {
   }
 
   declare(
-    variable: GrammarDerivation,
+    declaration: Array<string> | string,
     expression: GrammarDerivation,
     id: number
   ): void {
-    const { line, text } = expression;
-    const declaration = new VariableDeclaration(line, text, id);
-
-    if (this.variables.has(variable.text)) {
-      this.variables.delete(variable.text);
+    if (typeof declaration == "string") {
+      this.setVariable(declaration, expression, id);
+    } else {
+      declaration.forEach((d) => this.setVariable(d, expression, id));
     }
-    this.variables.set(variable.text, declaration);
+  }
+
+  private setVariable(
+    variable: string,
+    expression: GrammarDerivation,
+    id: number
+  ) {
+    const { line, text, start } = expression;
+    const declaration = new VariableDeclaration(
+      new PositionInFile(line, start),
+      text,
+      id
+    );
+
+    if (this.variables.has(variable)) {
+      this.variables.delete(variable);
+    }
+    this.variables.set(variable, declaration);
   }
 }

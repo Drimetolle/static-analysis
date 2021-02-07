@@ -1,12 +1,13 @@
 import { KeyWords } from "./KeyWords";
+import PositionInFile from "./PositionInFile";
 
 export default class VariableDeclaration {
-  line: number;
+  position: PositionInFile;
   expression: string;
   blockId: number;
 
-  constructor(line: number, expression: string, blockId: number) {
-    this.line = line;
+  constructor(position: PositionInFile, expression: string, blockId: number) {
+    this.position = position;
     this.expression = expression;
     this.blockId = blockId;
   }

@@ -10,7 +10,8 @@ import { CGrammarListener } from "./grammar/CGrammarListener";
 
 const inputStream = new ANTLRInputStream(`
 int main (void) {
-    int z, x = 10 + 13;
+    int z, x, y = 10 + 13;
+    z = 5;
 }
 `);
 
@@ -25,3 +26,6 @@ ParseTreeWalker.DEFAULT.walk(listener, tree);
 const vars = container.resolve(DeclaredVariables);
 
 console.log(vars);
+
+// const a = tree.toStringTree(parser.ruleNames);
+// console.log(a);

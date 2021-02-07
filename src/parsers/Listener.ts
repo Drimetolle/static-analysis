@@ -1,5 +1,5 @@
 import { CGrammarListener } from "../grammar/CGrammarListener";
-import { InitDeclaratorContext } from "../grammar/CGrammarParser";
+import { DeclarationContext } from "../grammar/CGrammarParser";
 import { KeyWords } from "../source-code/KeyWords";
 import DeclaredVariables from "../source-code/DeclaredVariables";
 import { autoInjectable } from "tsyringe";
@@ -9,14 +9,29 @@ import GrammarDerivation from "../source-code/GrammarDerivation";
 export default class Listener implements CGrammarListener {
   constructor(private declaredVariables?: DeclaredVariables) {}
 
-  exitInitDeclarator(ctx: InitDeclaratorContext): void {
-    //TODO int z, x = 10 + 13; (not working)
-    const declare = ctx.declarator().text;
-    const init = ctx.initializer()?.text ?? KeyWords.Null;
+  exitDeclaration(ctx: DeclarationContext): void {
+    const listOfVariables =
+      ctx.initDeclaratorList()?.initDeclaratorList()?.text.split(",") ?? [];
+    const lastDeclarationVariable = ctx
+      .initDeclaratorList()
+      ?.initDeclarator()
+      ?.declarator()?.text;
+    const init =
+      ctx.initDeclaratorList()?.initDeclarator().initializer()?.text ??
+      KeyWords.Null;
+
+    if (lastDeclarationVariable) {
+      listOfVariables.push(lastDeclarationVariable);
+    }
 
     this.declaredVariables?.declare(
-      new GrammarDerivation(1, 1, 1, declare),
-      new GrammarDerivation(1, 1, 1, init),
+      listOfVariables,
+      new GrammarDerivation(
+        ctx.start.startIndex,
+        ctx.start.stopIndex,
+        ctx.start.line,
+        init
+      ),
       1
     );
   }
