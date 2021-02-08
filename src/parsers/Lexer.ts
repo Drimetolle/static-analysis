@@ -1,3 +1,3 @@
-import { CGrammarLexer } from "../grammar/CGrammarLexer";
+import { CPP14Lexer } from "../grammar/CPP14Lexer";
 
-export default class Lexer extends CGrammarLexer {}
+export default class Lexer extends CPP14Lexer {}

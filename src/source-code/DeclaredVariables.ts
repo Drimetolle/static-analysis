@@ -23,6 +23,12 @@ export default class DeclaredVariables {
     }
   }
 
+  assign(declaration: string, expression: GrammarDerivation, id: number): void {
+    if (this.variables.has(declaration)) {
+      this.setVariable(declaration, expression, id);
+    }
+  }
+
   private setVariable(
     variable: string,
     expression: GrammarDerivation,

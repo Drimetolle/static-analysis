@@ -1,3 +1,3 @@
-import { CGrammarParser } from "../grammar/CGrammarParser";
+import { CPP14Parser } from "../grammar/CPP14Parser";
 
-export default class Parser extends CGrammarParser {}
+export default class Parser extends CPP14Parser {}

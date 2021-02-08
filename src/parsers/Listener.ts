@@ -1,50 +1,36 @@
-import { CGrammarListener } from "../grammar/CGrammarListener";
-import {
-  AssignmentExpressionContext,
-  DeclarationContext,
-} from "../grammar/CGrammarParser";
 import { KeyWords } from "../source-code/KeyWords";
 import DeclaredVariables from "../source-code/DeclaredVariables";
 import { autoInjectable } from "tsyringe";
 import GrammarDerivation from "../source-code/GrammarDerivation";
+import { CPP14ParserListener } from "../grammar/CPP14ParserListener";
+import {
+  ExpressionContext,
+  SimpleDeclarationContext,
+} from "../grammar/CPP14Parser";
 
 @autoInjectable()
-export default class Listener implements CGrammarListener {
+export default class Listener implements CPP14ParserListener {
   constructor(private declaredVariables?: DeclaredVariables) {}
 
-  exitAssignmentExpression(ctx: AssignmentExpressionContext): void {
-    const variable = ctx.unaryExpression()?.text;
-    if (variable) {
-      this.declaredVariables?.declare(
-        variable,
-        new GrammarDerivation(
-          ctx.start.startIndex,
-          ctx.start.stopIndex,
-          ctx.start.line,
-          Listener.parseInitStatement(ctx.assignmentExpression()?.text)
-        ),
-        1
-      );
-    }
-  }
-
-  exitDeclaration(ctx: DeclarationContext): void {
-    const listOfVariables =
-      ctx.initDeclaratorList()?.initDeclaratorList()?.text.split(",") ?? [];
-    const lastDeclarationVariable = ctx
-      .initDeclaratorList()
-      ?.initDeclarator()
-      ?.declarator()?.text;
+  exitSimpleDeclaration(ctx: SimpleDeclarationContext): void {
+    const type = ctx.declSpecifierSeq()?.text;
+    const nodeVars =
+      ctx
+        .initDeclaratorList()
+        ?.initDeclarator()
+        .map((v) => v) ?? [];
+    const vars = nodeVars.slice(0, nodeVars.length - 1).map((n) => n.text);
+    const lastDeclaredVar = nodeVars[nodeVars.length - 1];
+    vars.push(lastDeclaredVar.declarator().text);
     const init = Listener.parseInitStatement(
-      ctx.initDeclaratorList()?.initDeclarator().initializer()?.text
+      lastDeclaredVar
+        .initializer()
+        ?.braceOrEqualInitializer()
+        ?.initializerClause()?.text
     );
 
-    if (lastDeclarationVariable) {
-      listOfVariables.push(lastDeclarationVariable);
-    }
-
     this.declaredVariables?.declare(
-      listOfVariables,
+      vars,
       new GrammarDerivation(
         ctx.start.startIndex,
         ctx.start.stopIndex,
@@ -53,6 +39,29 @@ export default class Listener implements CGrammarListener {
       ),
       1
     );
+  }
+
+  exitExpression(ctx: ExpressionContext): void {
+    const assignNode = ctx.assignmentExpression(
+      ctx.assignmentExpression().length - 1
+    );
+    const variable = assignNode.logicalOrExpression()?.text;
+    const init = Listener.parseInitStatement(
+      assignNode.initializerClause()?.text
+    );
+
+    if (variable) {
+      this.declaredVariables?.assign(
+        variable,
+        new GrammarDerivation(
+          ctx.start.startIndex,
+          ctx.start.stopIndex,
+          ctx.start.line,
+          init
+        ),
+        1
+      );
+    }
   }
 
   private static parseInitStatement(text: string | undefined): string {

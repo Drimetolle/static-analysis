@@ -27,7 +27,7 @@
 		"compile": "tsc -p ./",
 		"lint": "eslint . --ext .ts,.tsx",
 		"watch": "tsc -watch -p ./",
-		"antlr4ts": "cd src/grammar && antlr4ts -visitor lib/CGrammar.g4",
+		"antlr4ts": "cd src/grammar && antlr4ts lib/CPP14Lexer.g4 lib/CPP14Parser.g4",
 		"cli-mode": "tsnd --respawn src/CLI.ts"
 	},
 	"devDependencies": {
