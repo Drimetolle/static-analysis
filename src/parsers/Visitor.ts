@@ -33,8 +33,18 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     this.variableDeclaratorVisitor = variableDeclaratorVisitor!;
   }
 
-  visitSimpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar {
-    return this.variableDeclaratorVisitor?.simpleDeclaration(ctx);
+  visitSimpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar | null {
+    if (
+      !ctx
+        .declSpecifierSeq()
+        ?.declSpecifier(0)
+        .typeSpecifier()
+        ?.classSpecifier()
+    ) {
+      return this.variableDeclaratorVisitor?.simpleDeclaration(ctx);
+    } else {
+      return null;
+    }
   }
 
   private setScope(
@@ -42,12 +52,15 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     ctx: SimpleDeclarationContext
   ) {
     const result = this.visitSimpleDeclaration(ctx);
-    root.data.declare(
-      result.variable,
-      result.grammar,
-      new PositionInFile(result.line, result.start),
-      result.type
-    );
+
+    if (result) {
+      root.data.declare(
+        result.variable,
+        result.grammar,
+        new PositionInFile(result.line, result.start),
+        result.type
+      );
+    }
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
@@ -69,12 +82,14 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
-      this.scopeTree?.getRoot.data.declare(
-        tmp.variable,
-        tmp.grammar,
-        new PositionInFile(tmp.line, tmp.start),
-        tmp.type
-      );
+      if (tmp) {
+        this.scopeTree?.getRoot.data.declare(
+          tmp.variable,
+          tmp.grammar,
+          new PositionInFile(tmp.line, tmp.start),
+          tmp.type
+        );
+      }
     }
   }
 

@@ -9,27 +9,22 @@ import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
 import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
 import { Tree } from "./utils/ScopeTree";
 import Visitor from "./parsers/Visitor";
+import FileManager from "./file-system/FileManager";
 
-const inputStream = new ANTLRInputStream(`
-#include <stdio.h>
+let inputStream!: ANTLRInputStream;
 
-float c = 1;
-
-int func(int a) {
-  return a;
+for (const content of new FileManager().read()) {
+  inputStream = new ANTLRInputStream(content);
 }
-
-int main (void) {
-  int z, x, y = 10 + 13;
-  x,z = 5;
-}
-`);
 
 const lexer = new Lexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new Parser(tokenStream);
 
 const tree = parser.translationUnit();
+
+const a = tree.toStringTree(parser.ruleNames);
+// console.log(a);
 
 const listener: CPP14ParserListener = new Listener();
 ParseTreeWalker.DEFAULT.walk(listener, tree);
@@ -38,6 +33,3 @@ const visitor = new Visitor();
 const test = visitor.visit(tree);
 // console.log(test?.getRoot.children[0]);
 // console.log(vars);
-
-const a = tree.toStringTree(parser.ruleNames);
-// console.log(a);
