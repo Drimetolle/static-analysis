@@ -18,7 +18,7 @@ export default class VariableDeclaratorVisitor {
     const vars = nodeVars.slice(0, nodeVars.length - 1).map((n) => n.text);
     const lastDeclaredVar = nodeVars[nodeVars.length - 1];
     vars.push(lastDeclaredVar.declarator().text);
-    const init = this.parseInitStatement(
+    const init = VariableDeclaratorVisitor.parseInitStatement(
       lastDeclaredVar
         .initializer()
         ?.braceOrEqualInitializer()
@@ -33,12 +33,13 @@ export default class VariableDeclaratorVisitor {
         ctx.start.line,
         init
       ),
-      id: ctx.start.line.toString(),
+      line: ctx.start.line,
+      start: ctx.start.startIndex,
       type: type,
     } as DeclarationVar;
   }
 
-  private parseInitStatement(text: string | undefined): string {
+  private static parseInitStatement(text: string | undefined): string {
     return text ?? KeyWords.Null;
   }
 }

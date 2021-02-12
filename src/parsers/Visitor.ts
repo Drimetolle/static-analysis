@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorNode } from "antlr4ts/tree/ErrorNode";
 import { RuleNode } from "antlr4ts/tree/RuleNode";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
@@ -14,15 +15,25 @@ import { autoInjectable } from "tsyringe";
 import ScopeTree, { Node } from "../utils/ScopeTree";
 import DeclaredVariables from "../source-code/DeclaredVariables";
 import VariableDeclaratorVisitor from "../source-code/VariableDeclaratorVisitor";
+import { DeclarationVar } from "../source-code/DTOs";
+import PositionInFile from "../source-code/PositionInFile";
 
 @autoInjectable()
 export default class Visitor implements CPP14ParserVisitor<any> {
-  constructor(
-    private scopeTree?: ScopeTree,
-    private variableDeclaratorVisitor?: VariableDeclaratorVisitor
-  ) {}
+  private readonly scopeTree: ScopeTree;
+  private readonly variableDeclaratorVisitor: VariableDeclaratorVisitor;
 
-  visitSimpleDeclaration(ctx: SimpleDeclarationContext): any {
+  constructor(
+    scopeTree?: ScopeTree,
+    variableDeclaratorVisitor?: VariableDeclaratorVisitor
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.scopeTree = scopeTree!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.variableDeclaratorVisitor = variableDeclaratorVisitor!;
+  }
+
+  visitSimpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar {
     return this.variableDeclaratorVisitor?.simpleDeclaration(ctx);
   }
 
@@ -31,7 +42,12 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     ctx: SimpleDeclarationContext
   ) {
     const result = this.visitSimpleDeclaration(ctx);
-    root.data.declare(result.variable, result.grammar, result.id, result.type);
+    root.data.declare(
+      result.variable,
+      result.grammar,
+      new PositionInFile(result.line, result.start),
+      result.type
+    );
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
@@ -56,7 +72,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
       this.scopeTree?.getRoot.data.declare(
         tmp.variable,
         tmp.grammar,
-        tmp.id,
+        new PositionInFile(tmp.line, tmp.start),
         tmp.type
       );
     }
@@ -93,18 +109,18 @@ export default class Visitor implements CPP14ParserVisitor<any> {
       this.visitDeclarationseq(sequence);
     }
 
-    return this.scopeTree!;
+    return this.scopeTree;
   }
 
-  visitChildren(node: RuleNode) {
+  visitChildren(node: RuleNode): never {
     throw new Error("Method not implemented.");
   }
 
-  visitTerminal(node: TerminalNode) {
+  visitTerminal(node: TerminalNode): never {
     throw new Error("Method not implemented.");
   }
 
-  visitErrorNode(node: ErrorNode) {
+  visitErrorNode(node: ErrorNode): never {
     throw new Error("Method not implemented.");
   }
 }
