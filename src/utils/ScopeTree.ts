@@ -1,4 +1,4 @@
-import DeclaredVariables from "../source-code/DeclaredVariables";
+import DeclaredVariablesInScope from "../source-code/DeclaredVariablesInScope";
 import { singleton } from "tsyringe";
 
 export class Node<T> {
@@ -69,16 +69,16 @@ export class Tree<T> {
   }
 }
 
-export type ScopeNode = Node<DeclaredVariables>;
+export type ScopeNode = Node<DeclaredVariablesInScope>;
 
 @singleton()
-export default class ScopeTree extends Tree<DeclaredVariables> {
+export default class ScopeTree extends Tree<DeclaredVariablesInScope> {
   get getRoot(): ScopeNode {
     return this.root;
   }
 
   constructor() {
-    super(new DeclaredVariables());
+    super(new DeclaredVariablesInScope());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

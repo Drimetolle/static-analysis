@@ -1,12 +1,10 @@
-import { singleton } from "tsyringe";
-import VariableDeclaration from "./VariableDeclaration";
-import GrammarDerivation from "./GrammarDerivation";
-import PositionInFile from "./PositionInFile";
-import { CppTypes } from "./CppTypes";
+import VariableDeclaration from "./data-objects/VariableDeclaration";
+import GrammarDerivation from "./data-objects/GrammarDerivation";
+import PositionInFile from "./data-objects/PositionInFile";
+import { CppTypes } from "./data-objects/CppTypes";
 
-@singleton()
-export default class DeclaredVariables {
-  private variables: Map<string, VariableDeclaration>;
+export default class DeclaredVariablesInScope {
+  private readonly variables: Map<string, VariableDeclaration>;
 
   constructor() {
     this.variables = new Map<string, VariableDeclaration>();
@@ -51,7 +49,7 @@ export default class DeclaredVariables {
     const declaration = new VariableDeclaration(
       new PositionInFile(line, start),
       text,
-      id.line,
+      id.start,
       type
     );
 

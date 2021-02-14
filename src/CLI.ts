@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import DeclaredVariables from "./source-code/DeclaredVariables";
+import DeclaredVariablesInScope from "./source-code/DeclaredVariablesInScope";
 import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
@@ -8,7 +8,7 @@ import Listener from "./parsers/Listener";
 import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
 import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
 import { Tree } from "./utils/ScopeTree";
-import Visitor from "./parsers/Visitor";
+import Visitor from "./visitors/Visitor";
 import FileManager from "./file-system/FileManager";
 
 let inputStream!: ANTLRInputStream;
@@ -28,8 +28,8 @@ const a = tree.toStringTree(parser.ruleNames);
 
 const listener: CPP14ParserListener = new Listener();
 ParseTreeWalker.DEFAULT.walk(listener, tree);
-const vars = container.resolve(DeclaredVariables);
+const vars = container.resolve(DeclaredVariablesInScope);
 const visitor = new Visitor();
 const test = visitor.visit(tree);
-console.log(test.toString());
+// console.log(test.toString());
 // console.log(vars);

@@ -17,11 +17,11 @@ import {
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
 import ScopeTree, { ScopeNode } from "../utils/ScopeTree";
-import DeclaredVariables from "../source-code/DeclaredVariables";
-import VariableDeclaratorVisitor from "../visitors/VariableDeclaratorVisitor";
-import { DeclarationVar } from "../source-code/DTOs";
-import PositionInFile from "../source-code/PositionInFile";
-import IfElseStatementVisitor from "../visitors/IfElseStatementVisitor";
+import DeclaredVariablesInScope from "../source-code/DeclaredVariablesInScope";
+import VariableDeclaratorVisitor from "./VariableDeclaratorVisitor";
+import { DeclarationVar } from "../source-code/data-objects/DTOs";
+import PositionInFile from "../source-code/data-objects/PositionInFile";
+import IfElseStatementVisitor from "./IfElseStatementVisitor";
 
 @autoInjectable()
 export default class Visitor implements CPP14ParserVisitor<any> {
@@ -186,7 +186,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
   }
 
   private createNode(toNode: ScopeNode) {
-    const declare = new DeclaredVariables();
+    const declare = new DeclaredVariablesInScope();
     this.scopeTree?.add(declare, toNode);
     return this.scopeTree?.find(declare);
   }
