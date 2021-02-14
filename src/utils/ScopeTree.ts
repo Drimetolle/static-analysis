@@ -54,6 +54,7 @@ export class Tree<T> {
     return data1 === data2;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private traverseDF(callback: (...args: Array<any>) => void) {
     (function recurse(currentNode: Node<T>) {
       for (let i = 0, length = currentNode.children.length; i < length; i++) {
@@ -63,6 +64,8 @@ export class Tree<T> {
     })(this.root);
   }
 }
+
+export type ScopeNode = Node<DeclaredVariables>;
 
 @singleton()
 export default class ScopeTree extends Tree<DeclaredVariables> {

@@ -16,7 +16,7 @@ import {
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
-import ScopeTree, { Node } from "../utils/ScopeTree";
+import ScopeTree, { ScopeNode } from "../utils/ScopeTree";
 import DeclaredVariables from "../source-code/DeclaredVariables";
 import VariableDeclaratorVisitor from "../visitors/VariableDeclaratorVisitor";
 import { DeclarationVar } from "../source-code/DTOs";
@@ -89,10 +89,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     console.log(ctx.text);
   }
 
-  private setScope(
-    root: Node<DeclaredVariables>,
-    ctx: SimpleDeclarationContext
-  ) {
+  private setScope(root: ScopeNode, ctx: SimpleDeclarationContext) {
     const result = this.visitSimpleDeclaration(ctx);
 
     if (result) {
@@ -107,7 +104,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
 
   private declarationStatement(
     ctx: DeclarationStatementContext,
-    toNode: Node<DeclaredVariables>
+    toNode: ScopeNode
   ): void {
     const simpleDeclaration = ctx?.blockDeclaration()?.simpleDeclaration();
 
@@ -138,7 +135,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         .compoundStatement()
         ?.statementSeq()
         ?.statement() ?? [];
-    let scopeNode: Node<DeclaredVariables> | null = null;
+    let scopeNode: ScopeNode | null = null;
 
     if (functionBody.length > 0) {
       scopeNode = this.createNode(this.scopeTree?.getRoot);
@@ -162,10 +159,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     }
   }
 
-  private StatementSequence(
-    ctx: StatementSeqContext,
-    node: Node<DeclaredVariables>
-  ): void {
+  private StatementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
     const childNode = this.createNode(node);
 
     if (childNode) {
@@ -191,7 +185,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     throw new Error("Method not implemented." + node.text);
   }
 
-  private createNode(toNode: Node<DeclaredVariables>) {
+  private createNode(toNode: ScopeNode) {
     const declare = new DeclaredVariables();
     this.scopeTree?.add(declare, toNode);
     return this.scopeTree?.find(declare);
