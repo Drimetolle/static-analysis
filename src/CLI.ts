@@ -31,5 +31,5 @@ ParseTreeWalker.DEFAULT.walk(listener, tree);
 const vars = container.resolve(DeclaredVariables);
 const visitor = new Visitor();
 const test = visitor.visit(tree);
-// console.log(test?.getRoot.children[0]);
+console.log(test.toString());
 // console.log(vars);

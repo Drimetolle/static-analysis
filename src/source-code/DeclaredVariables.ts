@@ -60,4 +60,18 @@ export default class DeclaredVariables {
     }
     this.variables.set(variable, declaration);
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toObject(): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function mapToObj(map: Map<any, unknown>) {
+      const obj = {};
+      for (const [k, v] of map) {
+        Object.assign(obj, { [k]: v });
+      }
+      return obj;
+    }
+
+    return mapToObj(this.variables);
+  }
 }

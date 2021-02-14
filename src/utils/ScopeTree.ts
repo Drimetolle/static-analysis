@@ -11,6 +11,10 @@ export class Node<T> {
     this.parent = null;
     this.children = [];
   }
+
+  toString(): string {
+    return `${this.data}`;
+  }
 }
 
 export class Tree<T> {
@@ -69,11 +73,23 @@ export type ScopeNode = Node<DeclaredVariables>;
 
 @singleton()
 export default class ScopeTree extends Tree<DeclaredVariables> {
-  get getRoot(): Node<DeclaredVariables> {
+  get getRoot(): ScopeNode {
     return this.root;
   }
 
   constructor() {
     super(new DeclaredVariables());
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private convertNodeToString(node: ScopeNode): any {
+    return {
+      data: node.data.toObject(),
+      children: node.children.map((i) => this.convertNodeToString(i)),
+    };
+  }
+
+  toString(): string {
+    return JSON.stringify(this.convertNodeToString(this.root));
   }
 }
