@@ -1,9 +1,9 @@
 import { singleton } from "tsyringe";
 import { SimpleDeclarationContext } from "../grammar/CPP14Parser";
-import GrammarDerivation from "./GrammarDerivation";
-import { CppTypes } from "./CppTypes";
-import { DeclarationVar } from "./DTOs";
-import { KeyWords } from "./KeyWords";
+import GrammarDerivation from "../source-code/GrammarDerivation";
+import { CppTypes } from "../source-code/CppTypes";
+import { DeclarationVar } from "../source-code/DTOs";
+import { KeyWords } from "../source-code/KeyWords";
 
 @singleton()
 export default class VariableDeclaratorVisitor {

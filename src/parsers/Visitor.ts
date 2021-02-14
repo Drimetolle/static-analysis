@@ -6,31 +6,64 @@ import {
   BlockDeclarationContext,
   DeclarationContext,
   DeclarationseqContext,
+  DeclarationStatementContext,
   FunctionDefinitionContext,
+  SelectionStatementContext,
   SimpleDeclarationContext,
+  StatementContext,
+  StatementSeqContext,
   TranslationUnitContext,
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
 import ScopeTree, { Node } from "../utils/ScopeTree";
 import DeclaredVariables from "../source-code/DeclaredVariables";
-import VariableDeclaratorVisitor from "../source-code/VariableDeclaratorVisitor";
+import VariableDeclaratorVisitor from "../visitors/VariableDeclaratorVisitor";
 import { DeclarationVar } from "../source-code/DTOs";
 import PositionInFile from "../source-code/PositionInFile";
+import IfElseStatementVisitor from "../visitors/IfElseStatementVisitor";
 
 @autoInjectable()
 export default class Visitor implements CPP14ParserVisitor<any> {
   private readonly scopeTree: ScopeTree;
   private readonly variableDeclaratorVisitor: VariableDeclaratorVisitor;
+  private readonly ifElseStatementVisitor: IfElseStatementVisitor;
 
   constructor(
     scopeTree?: ScopeTree,
-    variableDeclaratorVisitor?: VariableDeclaratorVisitor
+    variableDeclaratorVisitor?: VariableDeclaratorVisitor,
+    ifElseStatementVisitor?: IfElseStatementVisitor
   ) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.scopeTree = scopeTree!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.variableDeclaratorVisitor = variableDeclaratorVisitor!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.ifElseStatementVisitor = ifElseStatementVisitor!;
+  }
+
+  visit(tree: TranslationUnitContext): ScopeTree {
+    const sequence = tree.declarationseq();
+    if (sequence) {
+      this.visitDeclarationseq(sequence);
+    }
+
+    return this.scopeTree;
+  }
+
+  visitDeclarationseq(ctx: DeclarationseqContext): any {
+    if (ctx.children) {
+      for (const i of ctx.children) {
+        const block = (i as DeclarationContext).blockDeclaration();
+        const functionDef = (i as DeclarationContext).functionDefinition();
+
+        if (block) {
+          this.blockStatement(block);
+        } else if (functionDef) {
+          this.functionStatement(functionDef);
+        }
+      }
+    }
   }
 
   visitSimpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar | null {
@@ -45,6 +78,15 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     } else {
       return null;
     }
+  }
+
+  visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
+    //TODO нужно сделать еще и присваивание
+    return ctx.statement().filter((s) => s.declarationStatement() != null);
+  }
+
+  visitSelectionStatement(ctx: SelectionStatementContext): void {
+    console.log(ctx.text);
   }
 
   private setScope(
@@ -63,18 +105,14 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     }
   }
 
-  visitDeclarationseq(ctx: DeclarationseqContext): any {
-    if (ctx.children) {
-      for (const i of ctx.children) {
-        const block = (i as DeclarationContext).blockDeclaration();
-        const functionDef = (i as DeclarationContext).functionDefinition();
+  private declarationStatement(
+    ctx: DeclarationStatementContext,
+    toNode: Node<DeclaredVariables>
+  ): void {
+    const simpleDeclaration = ctx?.blockDeclaration()?.simpleDeclaration();
 
-        if (block) {
-          this.blockStatement(block);
-        } else if (functionDef) {
-          this.functionStatement(functionDef);
-        }
-      }
+    if (simpleDeclaration) {
+      this.setScope(toNode, simpleDeclaration);
     }
   }
 
@@ -100,42 +138,62 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         .compoundStatement()
         ?.statementSeq()
         ?.statement() ?? [];
-    for (const d of functionBody) {
-      const declaration = d.declarationStatement();
+    let scopeNode: Node<DeclaredVariables> | null = null;
 
-      if (declaration) {
-        const declare = new DeclaredVariables();
-        this.scopeTree?.add(declare, this.scopeTree?.getRoot);
-        const scopeNode = this.scopeTree?.find(declare);
-        const simpleDeclaration = declaration
-          ?.blockDeclaration()
-          ?.simpleDeclaration();
+    if (functionBody.length > 0) {
+      scopeNode = this.createNode(this.scopeTree?.getRoot);
+    }
 
-        if (scopeNode && simpleDeclaration) {
-          this.setScope(scopeNode, simpleDeclaration);
+    if (scopeNode) {
+      for (const d of functionBody) {
+        const declaration = d.declarationStatement();
+        const ifElse = d.selectionStatement();
+
+        if (declaration) {
+          this.declarationStatement(declaration, scopeNode);
+        } else if (ifElse) {
+          for (const s of this.ifElseStatementVisitor.ifElseStatement(ifElse)) {
+            this.StatementSequence(s, scopeNode);
+          }
+        }
+      }
+    } else {
+      throw new Error("Scope not created");
+    }
+  }
+
+  private StatementSequence(
+    ctx: StatementSeqContext,
+    node: Node<DeclaredVariables>
+  ): void {
+    const childNode = this.createNode(node);
+
+    if (childNode) {
+      for (const s of this.visitStatementSeq(ctx)) {
+        const declaration = s.declarationStatement();
+
+        if (declaration) {
+          this.declarationStatement(declaration, childNode);
         }
       }
     }
   }
 
-  visit(tree: TranslationUnitContext): ScopeTree {
-    const sequence = tree.declarationseq();
-    if (sequence) {
-      this.visitDeclarationseq(sequence);
-    }
-
-    return this.scopeTree;
-  }
-
   visitChildren(node: RuleNode): never {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented." + node.text);
   }
 
   visitTerminal(node: TerminalNode): never {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented." + node.text);
   }
 
   visitErrorNode(node: ErrorNode): never {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented." + node.text);
+  }
+
+  private createNode(toNode: Node<DeclaredVariables>) {
+    const declare = new DeclaredVariables();
+    this.scopeTree?.add(declare, toNode);
+    return this.scopeTree?.find(declare);
   }
 }
