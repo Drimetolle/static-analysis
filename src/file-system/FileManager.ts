@@ -4,15 +4,16 @@ import { singleton } from "tsyringe";
 
 @singleton()
 export default class FileManager {
-  private readonly devHomeDirectory: string;
   private readonly homeDirectory: string;
   private readonly files: Array<string>;
 
-  constructor() {
-    this.devHomeDirectory = join(__dirname, "../../test-case-files");
-    this.homeDirectory = this.devHomeDirectory;
-    this.files = readdirSync(this.devHomeDirectory).map(
-      (f) => `${this.devHomeDirectory}\\${f}`
+  constructor();
+  constructor(homeDirectory: string);
+  constructor(homeDirectory?: string) {
+    this.homeDirectory =
+      homeDirectory ?? join(__dirname, "../../test-case-files");
+    this.files = readdirSync(this.homeDirectory).map(
+      (f) => `${this.homeDirectory}\\${f}`
     );
   }
 

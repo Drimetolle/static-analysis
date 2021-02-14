@@ -13,7 +13,13 @@ import FileManager from "./file-system/FileManager";
 
 let inputStream!: ANTLRInputStream;
 
-for (const content of new FileManager().read()) {
+container.register<FileManager>(FileManager, {
+  useValue: new FileManager(),
+});
+
+const fileManager = container.resolve(FileManager);
+
+for (const content of fileManager.read()) {
   inputStream = new ANTLRInputStream(content);
 }
 

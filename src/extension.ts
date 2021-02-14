@@ -1,14 +1,11 @@
 import "reflect-metadata";
-import * as vscode from "vscode";
+import { window, commands, ExtensionContext } from "vscode";
 import a from "./Analyzer";
 
-export function activate(context: vscode.ExtensionContext): void {
-  const disposable = vscode.commands.registerCommand(
-    "extension.helloWorld",
-    () => {
-      vscode.window.showInformationMessage(a);
-    }
-  );
+export function activate(context: ExtensionContext): void {
+  const disposable = commands.registerCommand("extension.helloWorld", () => {
+    window.showInformationMessage(a);
+  });
 
   context.subscriptions.push(disposable);
 }
