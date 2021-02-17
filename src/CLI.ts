@@ -8,7 +8,7 @@ import Listener from "./parsers/Listener";
 import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
 import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
 import { Tree } from "./utils/ScopeTree";
-import Visitor from "./visitors/Visitor";
+import DataFlowVisitor from "./visitors/DataFlowVisitor";
 import FileManager from "./file-system/FileManager";
 
 let inputStream!: ANTLRInputStream;
@@ -35,7 +35,7 @@ const a = tree.toStringTree(parser.ruleNames);
 const listener: CPP14ParserListener = new Listener();
 ParseTreeWalker.DEFAULT.walk(listener, tree);
 const vars = container.resolve(DeclaredVariablesInScope);
-const visitor = new Visitor();
+const visitor = new DataFlowVisitor();
 const test = visitor.visit(tree);
 // console.log(test.toString());
 // console.log(vars);

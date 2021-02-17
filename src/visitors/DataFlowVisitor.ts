@@ -20,29 +20,19 @@ import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
 import ScopeTree, { ScopeNode } from "../utils/ScopeTree";
 import DeclaredVariablesInScope from "../source-code/DeclaredVariablesInScope";
-import VariableDeclaratorVisitor from "./VariableDeclaratorVisitor";
 import { DeclarationVar } from "../source-code/data-objects/DTOs";
 import PositionInFile from "../source-code/data-objects/PositionInFile";
-import IfElseStatementVisitor from "./IfElseStatementVisitor";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
+import { CppTypes } from "../source-code/data-objects/CppTypes";
+import { KeyWords } from "../source-code/data-objects/KeyWords";
 
 @autoInjectable()
-export default class Visitor implements CPP14ParserVisitor<any> {
+export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   private readonly scopeTree: ScopeTree;
-  private readonly variableDeclaratorVisitor: VariableDeclaratorVisitor;
-  private readonly ifElseStatementVisitor: IfElseStatementVisitor;
 
-  constructor(
-    scopeTree?: ScopeTree,
-    variableDeclaratorVisitor?: VariableDeclaratorVisitor,
-    ifElseStatementVisitor?: IfElseStatementVisitor
-  ) {
+  constructor(scopeTree?: ScopeTree) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.scopeTree = scopeTree!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.variableDeclaratorVisitor = variableDeclaratorVisitor!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.ifElseStatementVisitor = ifElseStatementVisitor!;
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -77,14 +67,44 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         .typeSpecifier()
         ?.classSpecifier()
     ) {
-      return this.variableDeclaratorVisitor?.simpleDeclaration(ctx);
+      return this.simpleDeclaration(ctx);
     } else {
       return null;
     }
   }
 
+  simpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar {
+    const rawType = ctx.declSpecifierSeq()?.text.toUpperCase() ?? CppTypes.VOID;
+    const type = CppTypes[rawType as keyof typeof CppTypes];
+    const nodeVars =
+      ctx
+        .initDeclaratorList()
+        ?.initDeclarator()
+        .map((v) => v) ?? [];
+
+    const lastDeclaredVar = nodeVars[nodeVars.length - 1];
+    const init = DataFlowVisitor.parseInitStatement(
+      lastDeclaredVar
+        .initializer()
+        ?.braceOrEqualInitializer()
+        ?.initializerClause()?.text
+    );
+
+    return {
+      variable: lastDeclaredVar.declarator().text,
+      grammar: new GrammarDerivation(
+        ctx.start.startIndex,
+        ctx.start.stopIndex,
+        ctx.start.line,
+        init
+      ),
+      line: ctx.start.line,
+      start: ctx.start.startIndex,
+      type: type,
+    } as DeclarationVar;
+  }
+
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
-    //TODO нужно сделать еще и присваивание
     return ctx
       .statement()
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
@@ -147,7 +167,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     const assign = ctx.expression()?.assignmentExpression(lastChildIndex);
 
     if (assign) {
-      Visitor.setAssignScope(toNode, assign);
+      DataFlowVisitor.setAssignScope(toNode, assign);
     }
   }
 
@@ -187,16 +207,36 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         if (declaration) {
           this.declarationStatement(declaration, scopeNode);
         } else if (ifElse) {
-          for (const s of this.ifElseStatementVisitor.ifElseStatement(ifElse)) {
+          for (const s of this.ifElseStatement(ifElse)) {
             this.statementSequence(s, scopeNode);
           }
         } else if (assign) {
-          Visitor.assignStatement(assign, scopeNode);
+          DataFlowVisitor.assignStatement(assign, scopeNode);
         }
       }
     } else {
       throw new Error("Scope not created");
     }
+  }
+
+  private ifElseStatement(
+    ctx: SelectionStatementContext
+  ): Array<StatementSeqContext> {
+    const result = new Array<StatementSeqContext>();
+    const statements = ctx.statement() ?? [];
+    for (const s of statements) {
+      const seq = s.compoundStatement()?.statementSeq();
+      const elseStatement = s.selectionStatement();
+
+      if (seq) {
+        result.push(seq);
+      } else if (elseStatement) {
+        const tmp = this.ifElseStatement(elseStatement);
+        result.push(...tmp);
+      }
+    }
+
+    return result;
   }
 
   private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
@@ -210,7 +250,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         if (declaration) {
           this.declarationStatement(declaration, childNode);
         } else if (assign) {
-          Visitor.assignStatement(assign, childNode);
+          DataFlowVisitor.assignStatement(assign, childNode);
         }
       }
     }
@@ -232,5 +272,9 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     const declare = new DeclaredVariablesInScope();
     this.scopeTree?.add(declare, toNode);
     return this.scopeTree?.find(declare);
+  }
+
+  private static parseInitStatement(text: string | undefined): string {
+    return text ?? KeyWords.Null;
   }
 }
