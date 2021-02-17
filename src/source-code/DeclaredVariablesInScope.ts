@@ -1,7 +1,6 @@
 import VariableDeclaration from "./data-objects/VariableDeclaration";
 import GrammarDerivation from "./data-objects/GrammarDerivation";
 import PositionInFile from "./data-objects/PositionInFile";
-import { CppTypes } from "./data-objects/CppTypes";
 
 export default class DeclaredVariablesInScope {
   private readonly variables: Map<string, VariableDeclaration>;
@@ -13,13 +12,12 @@ export default class DeclaredVariablesInScope {
   declare(
     declaration: Array<string> | string,
     expression: GrammarDerivation,
-    id: PositionInFile,
-    type: CppTypes
+    id: PositionInFile
   ): void {
     if (typeof declaration == "string") {
-      this.setVariable(declaration, expression, id, type);
+      this.setVariable(declaration, expression, id);
     } else {
-      declaration.forEach((d) => this.setVariable(d, expression, id, type));
+      declaration.forEach((d) => this.setVariable(d, expression, id));
     }
   }
 
@@ -29,28 +27,20 @@ export default class DeclaredVariablesInScope {
     id: PositionInFile
   ): void {
     if (this.variables.has(declaration)) {
-      this.setVariable(
-        declaration,
-        expression,
-        id,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.variables.get(declaration)!.type
-      );
+      this.setVariable(declaration, expression, id);
     }
   }
 
   private setVariable(
     variable: string,
     expression: GrammarDerivation,
-    id: PositionInFile,
-    type: CppTypes
+    id: PositionInFile
   ) {
     const { line, text, start } = expression;
     const declaration = new VariableDeclaration(
       new PositionInFile(line, start),
       text,
-      id.start,
-      type
+      id.start
     );
 
     if (this.variables.has(variable)) {

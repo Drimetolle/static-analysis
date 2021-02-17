@@ -17,16 +17,17 @@ int func(int a) {
 
 int main() {
     int z, x, y = 10 + 13;
-    x, z = 5;
+    float d = 1.5;
+    xA, zA = 5;
 
     if (z < 0) {
         char q = 'q';
-        z = 1;
+        zA = 1;
     } else if (z > 0) {
-        z = 2;
+        zA = 2;
     } else if (z == 1) {
-        z = 4;
+        zA = 4;
     } else {
-        z = 3;
+        zA = 3;
     }
 }

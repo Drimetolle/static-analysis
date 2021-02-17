@@ -3,10 +3,12 @@ import { ErrorNode } from "antlr4ts/tree/ErrorNode";
 import { RuleNode } from "antlr4ts/tree/RuleNode";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import {
+  AssignmentExpressionContext,
   BlockDeclarationContext,
   DeclarationContext,
   DeclarationseqContext,
   DeclarationStatementContext,
+  ExpressionStatementContext,
   FunctionDefinitionContext,
   SelectionStatementContext,
   SimpleDeclarationContext,
@@ -22,6 +24,7 @@ import VariableDeclaratorVisitor from "./VariableDeclaratorVisitor";
 import { DeclarationVar } from "../source-code/data-objects/DTOs";
 import PositionInFile from "../source-code/data-objects/PositionInFile";
 import IfElseStatementVisitor from "./IfElseStatementVisitor";
+import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
 
 @autoInjectable()
 export default class Visitor implements CPP14ParserVisitor<any> {
@@ -82,7 +85,9 @@ export default class Visitor implements CPP14ParserVisitor<any> {
 
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
     //TODO нужно сделать еще и присваивание
-    return ctx.statement().filter((s) => s.declarationStatement() != null);
+    return ctx
+      .statement()
+      .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
   visitSelectionStatement(ctx: SelectionStatementContext): void {
@@ -96,8 +101,28 @@ export default class Visitor implements CPP14ParserVisitor<any> {
       root.data.declare(
         result.variable,
         result.grammar,
-        new PositionInFile(result.line, result.start),
-        result.type
+        new PositionInFile(result.line, result.start)
+      );
+    }
+  }
+
+  private static setAssignScope(
+    root: ScopeNode,
+    ctx: AssignmentExpressionContext
+  ) {
+    const variable = ctx.logicalOrExpression();
+    const init = ctx.initializerClause();
+
+    if (variable && init) {
+      root.data.assign(
+        variable.text,
+        new GrammarDerivation(
+          ctx.start.startIndex,
+          ctx.start.stopIndex,
+          ctx.start.line,
+          init.text
+        ),
+        new PositionInFile(ctx.start.line, ctx.start.startIndex)
       );
     }
   }
@@ -113,6 +138,19 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     }
   }
 
+  private static assignStatement(
+    ctx: ExpressionStatementContext,
+    toNode: ScopeNode
+  ): void {
+    const childCount = ctx.expression()?.assignmentExpression().length;
+    const lastChildIndex = childCount ? childCount - 1 : 0;
+    const assign = ctx.expression()?.assignmentExpression(lastChildIndex);
+
+    if (assign) {
+      Visitor.setAssignScope(toNode, assign);
+    }
+  }
+
   private blockStatement(block: BlockDeclarationContext) {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
@@ -121,8 +159,7 @@ export default class Visitor implements CPP14ParserVisitor<any> {
         this.scopeTree?.getRoot.data.declare(
           tmp.variable,
           tmp.grammar,
-          new PositionInFile(tmp.line, tmp.start),
-          tmp.type
+          new PositionInFile(tmp.line, tmp.start)
         );
       }
     }
@@ -145,13 +182,16 @@ export default class Visitor implements CPP14ParserVisitor<any> {
       for (const d of functionBody) {
         const declaration = d.declarationStatement();
         const ifElse = d.selectionStatement();
+        const assign = d.expressionStatement();
 
         if (declaration) {
           this.declarationStatement(declaration, scopeNode);
         } else if (ifElse) {
           for (const s of this.ifElseStatementVisitor.ifElseStatement(ifElse)) {
-            this.StatementSequence(s, scopeNode);
+            this.statementSequence(s, scopeNode);
           }
+        } else if (assign) {
+          Visitor.assignStatement(assign, scopeNode);
         }
       }
     } else {
@@ -159,15 +199,18 @@ export default class Visitor implements CPP14ParserVisitor<any> {
     }
   }
 
-  private StatementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
+  private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
     const childNode = this.createNode(node);
 
     if (childNode) {
       for (const s of this.visitStatementSeq(ctx)) {
         const declaration = s.declarationStatement();
+        const assign = s.expressionStatement();
 
         if (declaration) {
           this.declarationStatement(declaration, childNode);
+        } else if (assign) {
+          Visitor.assignStatement(assign, childNode);
         }
       }
     }

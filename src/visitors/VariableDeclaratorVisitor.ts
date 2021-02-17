@@ -15,9 +15,8 @@ export default class VariableDeclaratorVisitor {
         .initDeclaratorList()
         ?.initDeclarator()
         .map((v) => v) ?? [];
-    const vars = nodeVars.slice(0, nodeVars.length - 1).map((n) => n.text);
+
     const lastDeclaredVar = nodeVars[nodeVars.length - 1];
-    vars.push(lastDeclaredVar.declarator().text);
     const init = VariableDeclaratorVisitor.parseInitStatement(
       lastDeclaredVar
         .initializer()
@@ -26,7 +25,7 @@ export default class VariableDeclaratorVisitor {
     );
 
     return {
-      variable: vars,
+      variable: lastDeclaredVar.declarator().text,
       grammar: new GrammarDerivation(
         ctx.start.startIndex,
         ctx.start.stopIndex,
