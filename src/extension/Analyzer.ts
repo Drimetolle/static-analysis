@@ -1,8 +1,8 @@
 import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
-import Lexer from "./parsers/Lexer";
-import Parser from "./parsers/Parser";
+import Lexer from "../parsers/Lexer";
+import Parser from "../parsers/Parser";
 import { container } from "tsyringe";
-import FileManager from "./file-system/FileManager";
+import FileManager from "../file-system/FileManager";
 import { workspace } from "vscode";
 
 container.register<FileManager>(FileManager, {
