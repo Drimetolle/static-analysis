@@ -19,7 +19,9 @@ import {
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
-import ScopeTree, { ScopeNode } from "../utils/ScopeTree";
+import ScopeTree, {
+  ScopeNode,
+} from "../source-code/data-flow-analisis/ScopeTree";
 import DeclaredVariablesInScope from "../source-code/DeclaredVariablesInScope";
 import { DeclarationVar } from "../source-code/data-objects/DTOs";
 import PositionInFile from "../source-code/data-objects/PositionInFile";

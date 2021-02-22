@@ -7,11 +7,11 @@ import Parser from "./parsers/Parser";
 import Listener from "./parsers/Listener";
 import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
 import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
-import { Tree } from "./utils/ScopeTree";
 import DataFlowVisitor from "./visitors/DataFlowVisitor";
 import FileManager from "./file-system/FileManager";
 import { writeFileSync } from "fs";
 import { join } from "path";
+import { Tree } from "./utils/Tree";
 
 let inputStream!: ANTLRInputStream;
 
