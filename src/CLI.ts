@@ -10,6 +10,8 @@ import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
 import { Tree } from "./utils/ScopeTree";
 import DataFlowVisitor from "./visitors/DataFlowVisitor";
 import FileManager from "./file-system/FileManager";
+import { writeFileSync } from "fs";
+import { join } from "path";
 
 let inputStream!: ANTLRInputStream;
 
@@ -37,5 +39,6 @@ ParseTreeWalker.DEFAULT.walk(listener, tree);
 const vars = container.resolve(DeclaredVariablesInScope);
 const visitor = new DataFlowVisitor();
 const test = visitor.visit(tree);
-// console.log(test.toString());
+console.log(join(__dirname, "../../test-case-files"));
+writeFileSync(join(__dirname, "../test-case-files/tree.json"), test.toString());
 // console.log(vars);

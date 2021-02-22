@@ -1,4 +1,6 @@
-import VariableDeclaration from "./data-objects/VariableDeclaration";
+import VariableDeclaration, {
+  VariableType,
+} from "./data-objects/VariableDeclaration";
 import GrammarDerivation from "./data-objects/GrammarDerivation";
 import PositionInFile from "./data-objects/PositionInFile";
 
@@ -28,7 +30,29 @@ export default class DeclaredVariablesInScope {
   ): void {
     if (this.variables.has(declaration)) {
       this.setVariable(declaration, expression, id);
+    } else {
+      this.setUndefinedVariable(declaration, expression, id);
     }
+  }
+
+  private setUndefinedVariable(
+    variable: string,
+    expression: GrammarDerivation,
+    id: PositionInFile
+  ) {
+    const { line, text, start } = expression;
+    const declaration = new VariableDeclaration(
+      new PositionInFile(line, start),
+      text,
+      id.start,
+      variable,
+      VariableType.undefined
+    );
+
+    if (this.variables.has(variable)) {
+      this.variables.delete(variable);
+    }
+    this.variables.set(variable, declaration);
   }
 
   private setVariable(
@@ -40,7 +64,8 @@ export default class DeclaredVariablesInScope {
     const declaration = new VariableDeclaration(
       new PositionInFile(line, start),
       text,
-      id.start
+      id.start,
+      variable
     );
 
     if (this.variables.has(variable)) {

@@ -1,17 +1,8 @@
 #include <stdio.h>
 
-class A {
-public:
-    int innerA;
-
-    int print() const {
-        return innerA;
-    }
-};
-
 float c = 1;
 
-int func(int a) {
+int func(int aF, char hF) {
     return a;
 }
 

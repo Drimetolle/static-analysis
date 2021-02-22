@@ -16,10 +16,8 @@ function createDiagnostic(
   lineOfText: vscode.TextLine,
   lineIndex: number
 ): vscode.Diagnostic {
-  // find where in the line of thet the 'emoji' is mentioned
   const index = 0;
 
-  // create range that represents, where in the document the word is
   const range = new vscode.Range(lineIndex, index, lineIndex, index);
 
   const diagnostic = new vscode.Diagnostic(

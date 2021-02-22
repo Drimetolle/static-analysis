@@ -76,9 +76,17 @@ export default class ScopeTree extends Tree<DeclaredVariablesInScope> {
   get getRoot(): ScopeNode {
     return this.root;
   }
+  private i = 0;
 
   constructor() {
     super(new DeclaredVariablesInScope());
+  }
+
+  add(
+    data: DeclaredVariablesInScope,
+    toData: Node<DeclaredVariablesInScope>
+  ): void {
+    super.add(data, toData);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

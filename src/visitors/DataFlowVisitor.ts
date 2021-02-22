@@ -186,6 +186,16 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   }
 
   private functionStatement(functionDef: FunctionDefinitionContext) {
+    const functionArgs =
+      functionDef
+        .declarator()
+        .pointerDeclarator()
+        ?.noPointerDeclarator()
+        .parametersAndQualifiers()
+        ?.parameterDeclarationClause()
+        ?.parameterDeclarationList()
+        ?.parameterDeclaration() ?? [];
+
     const functionBody =
       functionDef
         .functionBody()
@@ -194,7 +204,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
         ?.statement() ?? [];
     let scopeNode: ScopeNode | null = null;
 
-    if (functionBody.length > 0) {
+    if (functionBody.length > 0 || functionArgs.length > 0) {
       scopeNode = this.createNode(this.scopeTree?.getRoot);
     }
 
