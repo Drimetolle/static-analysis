@@ -1,6 +1,6 @@
 export class Node<T> {
   data: T;
-  parent: T | null;
+  parent: Node<T> | null;
   children: Array<Node<T>>;
 
   constructor(data: T) {
