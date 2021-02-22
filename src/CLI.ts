@@ -39,6 +39,5 @@ ParseTreeWalker.DEFAULT.walk(listener, tree);
 const vars = container.resolve(DeclaredVariablesInScope);
 const visitor = new DataFlowVisitor();
 const test = visitor.visit(tree);
-console.log(join(__dirname, "../../test-case-files"));
 writeFileSync(join(__dirname, "../test-case-files/tree.json"), test.toString());
 // console.log(vars);

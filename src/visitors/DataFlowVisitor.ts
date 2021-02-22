@@ -10,6 +10,7 @@ import {
   DeclarationStatementContext,
   ExpressionStatementContext,
   FunctionDefinitionContext,
+  ParameterDeclarationContext,
   SelectionStatementContext,
   SimpleDeclarationContext,
   StatementContext,
@@ -73,6 +74,27 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     }
   }
 
+  visitParameterDeclaration(
+    ctx: ParameterDeclarationContext
+  ): DeclarationVar | null {
+    const rawType = ctx.declSpecifierSeq().declSpecifier(0).text.toUpperCase();
+    const type = CppTypes[rawType as keyof typeof CppTypes];
+    const name = ctx.declSpecifierSeq().declSpecifier(1).text;
+
+    return {
+      variable: name,
+      grammar: new GrammarDerivation(
+        ctx.start.startIndex,
+        ctx.start.stopIndex,
+        ctx.start.line,
+        KeyWords.Null
+      ),
+      line: ctx.start.line,
+      start: ctx.start.startIndex,
+      type: type,
+    } as DeclarationVar;
+  }
+
   simpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar {
     const rawType = ctx.declSpecifierSeq()?.text.toUpperCase() ?? CppTypes.VOID;
     const type = CppTypes[rawType as keyof typeof CppTypes];
@@ -114,16 +136,12 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     console.log(ctx.text);
   }
 
-  private setScope(root: ScopeNode, ctx: SimpleDeclarationContext) {
-    const result = this.visitSimpleDeclaration(ctx);
-
-    if (result) {
-      root.data.declare(
-        result.variable,
-        result.grammar,
-        new PositionInFile(result.line, result.start)
-      );
-    }
+  private static setScope(root: ScopeNode, ctx: DeclarationVar): void {
+    root.data.declare(
+      ctx.variable,
+      ctx.grammar,
+      new PositionInFile(ctx.line, ctx.start)
+    );
   }
 
   private static setAssignScope(
@@ -152,9 +170,21 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     toNode: ScopeNode
   ): void {
     const simpleDeclaration = ctx?.blockDeclaration()?.simpleDeclaration();
-
     if (simpleDeclaration) {
-      this.setScope(toNode, simpleDeclaration);
+      const result = this.visitSimpleDeclaration(simpleDeclaration);
+      if (result) {
+        DataFlowVisitor.setScope(toNode, result);
+      }
+    }
+  }
+
+  private parameterDeclarationStatement(
+    ctx: ParameterDeclarationContext,
+    toNode: ScopeNode
+  ): void {
+    const result = this.visitParameterDeclaration(ctx);
+    if (result) {
+      DataFlowVisitor.setScope(toNode, result);
     }
   }
 
@@ -223,6 +253,10 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
         } else if (assign) {
           DataFlowVisitor.assignStatement(assign, scopeNode);
         }
+      }
+
+      for (const d of functionArgs) {
+        this.parameterDeclarationStatement(d, scopeNode);
       }
     } else {
       throw new Error("Scope not created");
