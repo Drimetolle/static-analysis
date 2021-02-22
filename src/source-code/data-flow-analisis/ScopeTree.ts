@@ -1,24 +1,20 @@
-import DeclaredVariablesInScope from "../DeclaredVariablesInScope";
 import { singleton } from "tsyringe";
 import { Node, Tree } from "../../utils/Tree";
+import CodeBlock from "../CodeBlock";
 
-export type ScopeNode = Node<DeclaredVariablesInScope>;
+export type ScopeNode = Node<CodeBlock>;
 
 @singleton()
-export default class ScopeTree extends Tree<DeclaredVariablesInScope> {
+export default class ScopeTree extends Tree<CodeBlock> {
   get getRoot(): ScopeNode {
     return this.root;
   }
-  private i = 0;
 
   constructor() {
-    super(new DeclaredVariablesInScope());
+    super(new CodeBlock(0));
   }
 
-  add(
-    data: DeclaredVariablesInScope,
-    toData: Node<DeclaredVariablesInScope>
-  ): void {
+  add(data: CodeBlock, toData: ScopeNode): void {
     super.add(data, toData);
   }
 

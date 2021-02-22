@@ -5,10 +5,14 @@ import GrammarDerivation from "./data-objects/GrammarDerivation";
 import PositionInFile from "./data-objects/PositionInFile";
 
 export default class DeclaredVariablesInScope {
-  private readonly variables: Map<string, VariableDeclaration>;
+  private readonly _variables: Map<string, VariableDeclaration>;
+
+  get variables(): Map<string, VariableDeclaration> {
+    return this._variables;
+  }
 
   constructor() {
-    this.variables = new Map<string, VariableDeclaration>();
+    this._variables = new Map<string, VariableDeclaration>();
   }
 
   declare(
@@ -28,7 +32,7 @@ export default class DeclaredVariablesInScope {
     expression: GrammarDerivation,
     id: PositionInFile
   ): void {
-    if (this.variables.has(declaration)) {
+    if (this._variables.has(declaration)) {
       this.setVariable(declaration, expression, id);
     } else {
       this.setUndefinedVariable(declaration, expression, id);
@@ -49,10 +53,10 @@ export default class DeclaredVariablesInScope {
       VariableType.undefined
     );
 
-    if (this.variables.has(variable)) {
-      this.variables.delete(variable);
+    if (this._variables.has(variable)) {
+      this._variables.delete(variable);
     }
-    this.variables.set(variable, declaration);
+    this._variables.set(variable, declaration);
   }
 
   private setVariable(
@@ -68,23 +72,9 @@ export default class DeclaredVariablesInScope {
       variable
     );
 
-    if (this.variables.has(variable)) {
-      this.variables.delete(variable);
+    if (this._variables.has(variable)) {
+      this._variables.delete(variable);
     }
-    this.variables.set(variable, declaration);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toObject(): any {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function mapToObj(map: Map<any, unknown>) {
-      const obj = {};
-      for (const [k, v] of map) {
-        Object.assign(obj, { [k]: v });
-      }
-      return obj;
-    }
-
-    return mapToObj(this.variables);
+    this._variables.set(variable, declaration);
   }
 }

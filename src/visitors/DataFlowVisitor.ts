@@ -22,12 +22,12 @@ import { autoInjectable } from "tsyringe";
 import ScopeTree, {
   ScopeNode,
 } from "../source-code/data-flow-analisis/ScopeTree";
-import DeclaredVariablesInScope from "../source-code/DeclaredVariablesInScope";
 import { DeclarationVar } from "../source-code/data-objects/DTOs";
 import PositionInFile from "../source-code/data-objects/PositionInFile";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
 import { CppTypes } from "../source-code/data-objects/CppTypes";
 import { KeyWords } from "../source-code/data-objects/KeyWords";
+import CodeBlock from "../source-code/CodeBlock";
 
 @autoInjectable()
 export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
@@ -139,7 +139,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   }
 
   private static setScope(root: ScopeNode, ctx: DeclarationVar): void {
-    root.data.declare(
+    root.data.declaredVariables.declare(
       ctx.variable,
       ctx.grammar,
       new PositionInFile(ctx.line, ctx.start)
@@ -154,7 +154,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     const init = ctx.initializerClause();
 
     if (variable && init) {
-      root.data.assign(
+      root.data.declaredVariables.assign(
         variable.text,
         new GrammarDerivation(
           ctx.start.startIndex,
@@ -208,7 +208,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     if (simpleDeclaration) {
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
       if (tmp) {
-        this.scopeTree?.getRoot.data.declare(
+        this.scopeTree?.getRoot.data.declaredVariables.declare(
           tmp.variable,
           tmp.grammar,
           new PositionInFile(tmp.line, tmp.start)
@@ -315,7 +315,18 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   }
 
   private createNode(toNode: ScopeNode) {
-    const declare = new DeclaredVariablesInScope();
+    let post = 0;
+    const tmp = toNode.parent?.data.post;
+
+    if (tmp == 0) {
+      post = tmp + 1;
+    } else if (tmp) {
+      post = tmp + 1;
+    }
+    console.log(post);
+
+    const declare = new CodeBlock(post);
+
     this.scopeTree?.add(declare, toNode);
     return this.scopeTree?.find(declare);
   }
