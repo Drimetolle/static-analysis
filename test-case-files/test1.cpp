@@ -14,6 +14,9 @@ int main() {
     if (z < 0) {
         char q = 'q';
         zA = 1;
+        if (z < 0) {
+            a = a;
+        }
     } else if (z > 0) {
         zA = 2;
     } else if (z == 1) {
@@ -25,5 +28,11 @@ int main() {
     for (int i = 0; i < n; ++i) {
         aFor1 += 1;
         aFor2 += 1;
+        for (int i = 0; i < n; ++i) {
+            aFor3 += 1;
+            if (z < 0) {
+                a3 = a;
+            }
+        }
     }
 }

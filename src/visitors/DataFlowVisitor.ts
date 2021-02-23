@@ -242,32 +242,11 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     }
 
     if (scopeNode) {
-      for (const d of functionBody) {
-        const declaration = d.declarationStatement();
-        const ifElse = d.selectionStatement();
-        const assign = d.expressionStatement();
-        const forLoop = d.iterationStatement();
-
-        if (declaration) {
-          this.declarationStatement(declaration, scopeNode);
-        } else if (ifElse) {
-          for (const s of this.ifElseStatement(ifElse)) {
-            this.statementSequence(s, scopeNode);
-          }
-        } else if (assign) {
-          DataFlowVisitor.assignStatement(assign, scopeNode);
-        } else if (forLoop) {
-          const statement = DataFlowVisitor.forLoopStatement(forLoop);
-
-          if (statement) {
-            this.statementSequence(statement, scopeNode);
-          }
-        }
-      }
-
       for (const d of functionArgs) {
         this.parameterDeclarationStatement(d, scopeNode);
       }
+
+      this.statementSequence(functionBody, scopeNode);
     } else {
       throw new Error("Scope not created");
     }
@@ -301,18 +280,43 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     return statementSeq ?? null;
   }
 
-  private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
+  private statementSequence(
+    ctx: Array<StatementContext>,
+    node: ScopeNode
+  ): void;
+  private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void;
+  private statementSequence(ctx: any, node: ScopeNode): void {
     const childNode = this.createNode(node);
 
     if (childNode) {
-      for (const s of this.visitStatementSeq(ctx)) {
+      const a = new Array<StatementContext>();
+
+      if (ctx instanceof StatementSeqContext) {
+        a.push(...this.visitStatementSeq(ctx));
+      } else if (ctx instanceof Array) {
+        a.push(...ctx);
+      }
+
+      for (const s of a) {
         const declaration = s.declarationStatement();
         const assign = s.expressionStatement();
+        const ifElse = s.selectionStatement();
+        const forLoop = s.iterationStatement();
 
         if (declaration) {
           this.declarationStatement(declaration, childNode);
         } else if (assign) {
           DataFlowVisitor.assignStatement(assign, childNode);
+        } else if (ifElse) {
+          for (const s of this.ifElseStatement(ifElse)) {
+            this.statementSequence(s, childNode);
+          }
+        } else if (forLoop) {
+          const statement = DataFlowVisitor.forLoopStatement(forLoop);
+
+          if (statement) {
+            this.statementSequence(statement, childNode);
+          }
         }
       }
     }
