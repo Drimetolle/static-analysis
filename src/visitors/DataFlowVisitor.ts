@@ -10,6 +10,7 @@ import {
   DeclarationStatementContext,
   ExpressionStatementContext,
   FunctionDefinitionContext,
+  IterationStatementContext,
   ParameterDeclarationContext,
   SelectionStatementContext,
   SimpleDeclarationContext,
@@ -245,6 +246,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
         const declaration = d.declarationStatement();
         const ifElse = d.selectionStatement();
         const assign = d.expressionStatement();
+        const forLoop = d.iterationStatement();
 
         if (declaration) {
           this.declarationStatement(declaration, scopeNode);
@@ -254,6 +256,12 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
           }
         } else if (assign) {
           DataFlowVisitor.assignStatement(assign, scopeNode);
+        } else if (forLoop) {
+          const statement = DataFlowVisitor.forLoopStatement(forLoop);
+
+          if (statement) {
+            this.statementSequence(statement, scopeNode);
+          }
         }
       }
 
@@ -283,6 +291,14 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     }
 
     return result;
+  }
+
+  private static forLoopStatement(
+    ctx: IterationStatementContext
+  ): StatementSeqContext | null {
+    const statementSeq = ctx.statement().compoundStatement()?.statementSeq();
+
+    return statementSeq ?? null;
   }
 
   private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void {
@@ -323,7 +339,6 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     } else if (tmp) {
       post = tmp + 1;
     }
-    console.log(post);
 
     const declare = new CodeBlock(post);
 

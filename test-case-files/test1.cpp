@@ -21,4 +21,9 @@ int main() {
     } else {
         zA = 3;
     }
+
+    for (int i = 0; i < n; ++i) {
+        aFor1 += 1;
+        aFor2 += 1;
+    }
 }
