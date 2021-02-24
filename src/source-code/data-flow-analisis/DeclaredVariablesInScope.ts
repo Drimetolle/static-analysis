@@ -1,8 +1,8 @@
 import VariableDeclaration, {
   VariableType,
-} from "./data-objects/VariableDeclaration";
-import GrammarDerivation from "./data-objects/GrammarDerivation";
-import PositionInFile from "./data-objects/PositionInFile";
+} from "../data-objects/VariableDeclaration";
+import GrammarDerivation from "../data-objects/GrammarDerivation";
+import PositionInFile from "../data-objects/PositionInFile";
 
 export default class DeclaredVariablesInScope {
   private readonly _variables: Map<string, VariableDeclaration>;

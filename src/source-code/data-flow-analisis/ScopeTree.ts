@@ -1,6 +1,6 @@
 import { singleton } from "tsyringe";
 import { Node, Tree } from "../../utils/Tree";
-import CodeBlock from "../CodeBlock";
+import CodeBlock from "../data-objects/CodeBlock";
 
 export type ScopeNode = Node<CodeBlock>;
 

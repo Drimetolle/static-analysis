@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import DeclaredVariablesInScope from "./source-code/DeclaredVariablesInScope";
+import DeclaredVariablesInScope from "./source-code/data-flow-analisis/DeclaredVariablesInScope";
 import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
