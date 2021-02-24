@@ -11,11 +11,11 @@ int main() {
     float d = 1.5;
     xA, zA = 5;
 
-    if (z < 0) {
+    if (int iInitIf = 0) {
         char q = 'q';
         zA = 1;
         if (z < 0) {
-            a = a;
+            aInnerIf = a;
         }
     } else if (z > 0) {
         zA = 2;
