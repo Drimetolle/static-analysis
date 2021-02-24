@@ -169,10 +169,22 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   }
 
   private declarationStatement(
+    ctx: SimpleDeclarationContext,
+    toNode: ScopeNode
+  ): void;
+  private declarationStatement(
     ctx: DeclarationStatementContext,
     toNode: ScopeNode
-  ): void {
-    const simpleDeclaration = ctx?.blockDeclaration()?.simpleDeclaration();
+  ): void;
+  private declarationStatement(ctx: any, toNode: ScopeNode): void {
+    let simpleDeclaration;
+
+    if (ctx instanceof SimpleDeclarationContext) {
+      simpleDeclaration = ctx;
+    } else if (ctx instanceof DeclarationStatementContext) {
+      simpleDeclaration = ctx?.blockDeclaration()?.simpleDeclaration();
+    }
+
     if (simpleDeclaration) {
       const result = this.visitSimpleDeclaration(simpleDeclaration);
       if (result) {
@@ -272,7 +284,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     return result;
   }
 
-  private static forLoopStatement(
+  private static loopStatement(
     ctx: IterationStatementContext
   ): StatementSeqContext | null {
     const statementSeq = ctx.statement().compoundStatement()?.statementSeq();
@@ -312,7 +324,12 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
             this.statementSequence(s, childNode);
           }
         } else if (forLoop) {
-          const statement = DataFlowVisitor.forLoopStatement(forLoop);
+          const statement = DataFlowVisitor.loopStatement(forLoop);
+          const declaration = forLoop.forInitStatement()?.simpleDeclaration();
+
+          if (declaration) {
+            this.declarationStatement(declaration, childNode);
+          }
 
           if (statement) {
             this.statementSequence(statement, childNode);

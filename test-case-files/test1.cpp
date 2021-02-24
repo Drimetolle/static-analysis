@@ -25,7 +25,7 @@ int main() {
         zA = 3;
     }
 
-    for (int i = 0; i < n; ++i) {
+    for (int iInitFor = 0; i < n; ++i) {
         aFor1 += 1;
         aFor2 += 1;
         for (int i = 0; i < n; ++i) {
@@ -35,4 +35,14 @@ int main() {
             }
         }
     }
+
+    while (true) {
+        aWhile = 1;
+        int bWhile = 'c';
+    }
+
+    do {
+        aDoWhile = 1;
+        int bDoWhile = 'c';
+    } while (true);
 }
