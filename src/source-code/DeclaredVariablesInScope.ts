@@ -16,15 +16,11 @@ export default class DeclaredVariablesInScope {
   }
 
   declare(
-    declaration: Array<string> | string,
+    declaration: string,
     expression: GrammarDerivation,
     id: PositionInFile
   ): void {
-    if (typeof declaration == "string") {
-      this.setVariable(declaration, expression, id);
-    } else {
-      declaration.forEach((d) => this.setVariable(d, expression, id));
-    }
+    this.setVariable(declaration, expression, id);
   }
 
   assign(

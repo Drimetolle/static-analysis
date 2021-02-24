@@ -13,3 +13,7 @@ export enum CppTypes {
   DOUBLE = "double",
   VOID = "void",
 }
+
+export enum KeyWords {
+  Null = "null",
+}

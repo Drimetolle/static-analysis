@@ -27,12 +27,14 @@ import { autoInjectable } from "tsyringe";
 import ScopeTree, {
   ScopeNode,
 } from "../source-code/data-flow-analisis/ScopeTree";
-import { DeclarationVar } from "../source-code/data-objects/DTOs";
 import PositionInFile from "../source-code/data-objects/PositionInFile";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
-import { CppTypes } from "../source-code/data-objects/CppTypes";
-import { KeyWords } from "../source-code/data-objects/KeyWords";
 import CodeBlock from "../source-code/CodeBlock";
+import DeclarationVar from "../source-code/data-objects/DeclarationVar";
+import {
+  CppTypes,
+  KeyWords,
+} from "../source-code/data-objects/LanguageKeyWords";
 
 interface ConditionAndStatementContext {
   statement: StatementSeqContext;
@@ -93,18 +95,16 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     const type = CppTypes[rawType as keyof typeof CppTypes];
     const name = ctx.declSpecifierSeq().declSpecifier(1).text;
 
-    return {
-      variable: name,
-      grammar: new GrammarDerivation(
+    return new DeclarationVar(
+      name,
+      new GrammarDerivation(
         ctx.start.startIndex,
         ctx.start.stopIndex,
         ctx.start.line,
         KeyWords.Null
       ),
-      line: ctx.start.line,
-      start: ctx.start.startIndex,
-      type: type,
-    } as DeclarationVar;
+      type
+    );
   }
 
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
@@ -148,25 +148,23 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
 
     const initInner = DataFlowVisitor.parseInitStatement(init?.text);
 
-    return {
-      variable: dec.text,
-      grammar: new GrammarDerivation(
+    return new DeclarationVar(
+      dec.text,
+      new GrammarDerivation(
         dec.start.startIndex,
         dec.start.stopIndex,
         dec.start.line,
         initInner
       ),
-      line: dec.start.line,
-      start: dec.start.startIndex,
-      type: type,
-    } as DeclarationVar;
+      type
+    );
   }
 
   private static setScope(root: ScopeNode, ctx: DeclarationVar): void {
     root.data.declaredVariables.declare(
       ctx.variable,
       ctx.grammar,
-      new PositionInFile(ctx.line, ctx.start)
+      new PositionInFile(ctx.grammar.line, ctx.grammar.start)
     );
   }
 
@@ -262,7 +260,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
         this.scopeTree?.getRoot.data.declaredVariables.declare(
           tmp.variable,
           tmp.grammar,
-          new PositionInFile(tmp.line, tmp.start)
+          new PositionInFile(tmp.grammar.line, tmp.grammar.start)
         );
       }
     }

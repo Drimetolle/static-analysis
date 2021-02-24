@@ -1,6 +1,6 @@
-import { KeyWords } from "./KeyWords";
 import PositionInFile from "./PositionInFile";
 import { IHavePosition } from "./DiagnosticsInterfaceses";
+import { KeyWords } from "./LanguageKeyWords";
 
 export enum VariableType {
   defined = "defined",
