@@ -14,10 +14,6 @@ export default class ScopeTree extends Tree<CodeBlock> {
     super(new CodeBlock(0));
   }
 
-  add(data: CodeBlock, toData: ScopeNode): void {
-    super.add(data, toData);
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private convertNodeToString(node: ScopeNode): any {
     return {

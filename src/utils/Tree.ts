@@ -21,7 +21,7 @@ export class Tree<T> {
     this.root = new Node(data);
   }
 
-  add(data: T, toData: Node<T>): void {
+  add(data: T, toData: Node<T>): Node<T> | null {
     let parent = null;
     const callback = (node: Node<T>) => {
       if (this.defaultComparator(node.data, toData.data)) {
@@ -35,6 +35,9 @@ export class Tree<T> {
       const child = new Node(data);
       (parent as Node<T>).children.push(child);
       child.parent = parent;
+      return child;
+    } else {
+      return null;
     }
   }
 

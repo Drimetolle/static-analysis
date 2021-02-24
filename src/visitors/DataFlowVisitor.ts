@@ -401,8 +401,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
 
     const declare = new CodeBlock(post);
 
-    this.scopeTree?.add(declare, toNode);
-    return this.scopeTree?.find(declare);
+    return this.scopeTree?.add(declare, toNode);
   }
 
   private static parseInitStatement(text: string | undefined): string {
