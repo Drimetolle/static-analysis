@@ -1,5 +1,5 @@
 import VariableDeclaration, {
-  VariableType,
+  VariableState,
 } from "../data-objects/VariableDeclaration";
 import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
@@ -46,7 +46,7 @@ export default class DeclaredVariablesInScope {
       text,
       id.start,
       variable,
-      VariableType.undefined
+      VariableState.undefined
     );
 
     if (this._variables.has(variable)) {
