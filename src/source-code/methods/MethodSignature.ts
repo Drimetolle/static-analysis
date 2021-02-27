@@ -1,11 +1,15 @@
-import { CppTypes } from "../data-objects/LanguageKeyWords";
+import { TypeSpecifier } from "../data-objects/LanguageKeyWords";
 
 export default class MethodSignature {
   readonly name: string;
-  readonly args?: Array<CppTypes>;
-  readonly returnValue: CppTypes;
+  readonly args?: Array<TypeSpecifier>;
+  readonly returnValue: TypeSpecifier;
 
-  constructor(name: string, args: Array<CppTypes>, returnValue: CppTypes) {
+  constructor(
+    name: string,
+    args: Array<TypeSpecifier>,
+    returnValue: TypeSpecifier
+  ) {
     this.name = name;
     this.args = args;
     this.returnValue = returnValue;
@@ -13,16 +17,16 @@ export default class MethodSignature {
 }
 
 export class MethodArgument {
-  readonly type: CppTypes;
+  readonly type: TypeSpecifier;
   private readonly ref: boolean;
 
   get isRef(): boolean {
     return this.ref;
   }
 
-  constructor(type: CppTypes);
-  constructor(type: CppTypes, ref: boolean);
-  constructor(type: CppTypes, ref?: boolean) {
+  constructor(type: TypeSpecifier);
+  constructor(type: TypeSpecifier, ref: boolean);
+  constructor(type: TypeSpecifier, ref?: boolean) {
     this.type = type;
     this.ref = ref ?? false;
   }

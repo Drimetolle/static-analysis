@@ -88,7 +88,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
   ): DeclarationVar | null {
-    const type = parseSingleType(ctx.declSpecifierSeq().declSpecifier(0));
+    const type = parseSingleType(ctx.declSpecifierSeq());
     const name = ctx.declSpecifierSeq().declSpecifier(1).text;
 
     return new DeclarationVar(

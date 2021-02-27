@@ -69,7 +69,7 @@ export default class DeclaredVariablesInScope {
     );
 
     if (this._variables.has(variable)) {
-      this._variables.delete(variable);
+      throw new Error("Variable already declared.");
     }
     this._variables.set(variable, declaration);
   }

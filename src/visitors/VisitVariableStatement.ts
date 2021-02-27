@@ -7,14 +7,14 @@ import {
 import DeclarationVar from "../source-code/data-objects/DeclarationVar";
 import { KeyWords } from "../source-code/data-objects/LanguageKeyWords";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
-import { parseSingleType } from "../utils/TypeInference";
+import { parseTypeFunction } from "../utils/TypeInference";
 
 export function createDeclaration(
   dec: DeclaratorContext,
   init?: InitializerClauseContext,
   decSeq?: DeclSpecifierSeqContext
 ): DeclarationVar {
-  const type = parseSingleType(decSeq?.declSpecifier(0));
+  const type = parseTypeFunction(decSeq);
   const initInner = parseInitStatement(init?.text);
 
   return new DeclarationVar(
