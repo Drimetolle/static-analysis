@@ -7,6 +7,8 @@ int func(int aF, char hF) {
 }
 
 int main() {
+    auto autoV = 1;
+    long long longModifier = 0;
     int z, x, y = 10 + 13;
     float d = 1.5;
     xA, zA = 5;
