@@ -2,7 +2,7 @@
 
 float c = 1;
 
-int func(int aF, char hF) {
+long long func(int aF, char hF) {
     return a;
 }
 

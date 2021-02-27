@@ -26,20 +26,25 @@ import PositionInFile from "../source-code/data-objects/PositionInFile";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
 import CodeBlock from "../source-code/data-objects/CodeBlock";
 import DeclarationVar from "../source-code/data-objects/DeclarationVar";
-import {
-  CppTypes,
-  KeyWords,
-} from "../source-code/data-objects/LanguageKeyWords";
+import { KeyWords } from "../source-code/data-objects/LanguageKeyWords";
 import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
+import { declareMethod } from "./VisitFunctionStatment";
+import { parseSingleType } from "../utils/TypeInference";
+import DeclaredMethods from "../source-code/methods/DeclaredMethods";
+import HeaderScope from "../source-code/methods/HeaderScope";
 
 @autoInjectable()
 export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   private readonly scopeTree: ScopeTree;
+  private readonly methods: DeclaredMethods;
+  private readonly name: string;
 
   constructor(scopeTree?: ScopeTree) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.scopeTree = scopeTree!;
+    this.name = "test1";
+    this.methods = new DeclaredMethods([new HeaderScope(this.name)]);
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -83,8 +88,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
   ): DeclarationVar | null {
-    const rawType = ctx.declSpecifierSeq().declSpecifier(0).text.toUpperCase();
-    const type = CppTypes[rawType as keyof typeof CppTypes];
+    const type = parseSingleType(ctx.declSpecifierSeq().declSpecifier(0));
     const name = ctx.declSpecifierSeq().declSpecifier(1).text;
 
     return new DeclarationVar(
@@ -208,15 +212,28 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
   }
 
   private functionStatement(functionDef: FunctionDefinitionContext) {
+    const alias = functionDef
+      .declarator()
+      .pointerDeclarator()
+      ?.noPointerDeclarator();
+    const functionName = alias?.noPointerDeclarator();
+    const functionType = functionDef.declSpecifierSeq();
     const functionArgs =
-      functionDef
-        .declarator()
-        .pointerDeclarator()
-        ?.noPointerDeclarator()
-        .parametersAndQualifiers()
+      alias
+        ?.parametersAndQualifiers()
         ?.parameterDeclarationClause()
         ?.parameterDeclarationList()
         ?.parameterDeclaration() ?? [];
+
+    if (functionName && functionType) {
+      const signature = declareMethod(
+        functionName.text,
+        functionArgs,
+        functionType
+      );
+
+      this.methods.addMethodInScope(this.name, signature);
+    }
 
     const functionBody =
       functionDef

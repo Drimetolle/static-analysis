@@ -5,13 +5,10 @@ export default class MethodSignature {
   readonly args?: Array<CppTypes>;
   readonly returnValue: CppTypes;
 
-  constructor(name: string);
-  constructor(name: string, args: Array<CppTypes>);
-  constructor(name: string, args: Array<CppTypes>, returnValue: CppTypes);
-  constructor(name: string, args?: Array<CppTypes>, returnValue?: CppTypes) {
+  constructor(name: string, args: Array<CppTypes>, returnValue: CppTypes) {
     this.name = name;
     this.args = args;
-    this.returnValue = returnValue ?? CppTypes.VOID;
+    this.returnValue = returnValue;
   }
 }
 

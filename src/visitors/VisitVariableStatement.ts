@@ -5,20 +5,16 @@ import {
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
 import DeclarationVar from "../source-code/data-objects/DeclarationVar";
-import {
-  CppTypes,
-  KeyWords,
-} from "../source-code/data-objects/LanguageKeyWords";
+import { KeyWords } from "../source-code/data-objects/LanguageKeyWords";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
+import { parseSingleType } from "../utils/TypeInference";
 
 export function createDeclaration(
   dec: DeclaratorContext,
   init?: InitializerClauseContext,
   decSeq?: DeclSpecifierSeqContext
 ): DeclarationVar {
-  const rawType = decSeq?.text.toUpperCase() ?? CppTypes.VOID;
-  const type = CppTypes[rawType as keyof typeof CppTypes];
-
+  const type = parseSingleType(decSeq?.declSpecifier(0));
   const initInner = parseInitStatement(init?.text);
 
   return new DeclarationVar(

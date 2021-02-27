@@ -9,13 +9,12 @@ import MethodSignature from "./MethodSignature";
 export default class DeclaredMethods {
   private readonly methods: Array<MethodsScope>;
 
-  constructor() {
-    this.methods = new Array<MethodsScope>();
+  constructor(scopes: Array<MethodsScope>) {
+    this.methods = scopes;
   }
 
   addMethodInScope(id: string, signature: MethodSignature): void {
     const scope = this.findById(id);
-
     if (!scope) {
       throw new Error("Scope not find");
     }
