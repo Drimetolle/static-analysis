@@ -1,6 +1,5 @@
 import PositionInFile from "./PositionInFile";
 import { IHavePosition } from "./DiagnosticsInterfaceses";
-import { KeyWords } from "./LanguageKeyWords";
 
 export enum VariableState {
   defined = "defined",
@@ -9,7 +8,7 @@ export enum VariableState {
 
 export default class VariableDeclaration implements IHavePosition {
   position: PositionInFile;
-  expression: string;
+  expression?: string;
   blockId: number;
   name: string;
   state: VariableState;
@@ -39,9 +38,5 @@ export default class VariableDeclaration implements IHavePosition {
     this.blockId = blockId;
     this.name = name;
     this.state = type ?? VariableState.defined;
-  }
-
-  get isNull(): boolean {
-    return this.expression == KeyWords.Null || this.expression == "";
   }
 }

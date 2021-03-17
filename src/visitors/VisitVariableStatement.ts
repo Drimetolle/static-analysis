@@ -5,9 +5,10 @@ import {
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
 import DeclarationVar from "../source-code/data-objects/DeclarationVar";
-import { KeyWords } from "../source-code/data-objects/LanguageKeyWords";
+import { TypeSpecifier } from "../source-code/data-objects/LanguageKeyWords";
 import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
 import { parseTypeFunction } from "../utils/TypeInference";
+import defaultValueByType from "../utils/DefaultValues";
 
 export function createDeclaration(
   dec: DeclaratorContext,
@@ -15,7 +16,7 @@ export function createDeclaration(
   decSeq?: DeclSpecifierSeqContext
 ): DeclarationVar {
   const type = parseTypeFunction(decSeq);
-  const initInner = parseInitStatement(init?.text);
+  const initInner = parseInitStatement(init?.text, type);
 
   return new DeclarationVar(
     dec.text,
@@ -47,6 +48,9 @@ export function simpleDeclaration(
   );
 }
 
-export function parseInitStatement(text: string | undefined): string {
-  return text ?? KeyWords.Null;
+export function parseInitStatement(
+  text: string | undefined,
+  type: TypeSpecifier
+): string {
+  return text ?? defaultValueByType(type);
 }
