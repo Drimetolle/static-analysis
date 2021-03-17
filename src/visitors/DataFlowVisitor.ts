@@ -71,7 +71,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     }
   }
 
-  visitSimpleDeclaration(ctx: SimpleDeclarationContext): DeclarationVar | null {
+  visitSimpleDeclaration(ctx: SimpleDeclarationContext): Array<DeclarationVar> {
     if (
       !ctx
         .declSpecifierSeq()
@@ -81,7 +81,7 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     ) {
       return simpleDeclaration(ctx);
     } else {
-      return null;
+      return [];
     }
   }
 
@@ -157,8 +157,9 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
 
     if (simpleDeclaration) {
       const result = this.visitSimpleDeclaration(simpleDeclaration);
-      if (result) {
-        DataFlowVisitor.setScope(toNode, result);
+
+      for (const d of result) {
+        DataFlowVisitor.setScope(toNode, d);
       }
     }
   }
@@ -201,12 +202,9 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
-      if (tmp) {
-        this.scopeTree?.getRoot.data.declaredVariables.declare(
-          tmp.variable,
-          tmp.grammar,
-          new PositionInFile(tmp.grammar.line, tmp.grammar.start)
-        );
+
+      for (const d of tmp) {
+        DataFlowVisitor.setScope(this.scopeTree?.getRoot, d);
       }
     }
   }

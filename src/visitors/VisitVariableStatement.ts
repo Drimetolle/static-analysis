@@ -31,22 +31,19 @@ export function createDeclaration(
 
 export function simpleDeclaration(
   ctx: SimpleDeclarationContext
-): DeclarationVar {
+): Array<DeclarationVar> {
   const nodeVars =
     ctx
       .initDeclaratorList()
       ?.initDeclarator()
       .map((v) => v) ?? [];
 
-  const lastDeclaredVar = nodeVars[nodeVars.length - 1];
-
-  return createDeclaration(
-    lastDeclaredVar.declarator(),
-    lastDeclaredVar
-      .initializer()
-      ?.braceOrEqualInitializer()
-      ?.initializerClause(),
-    ctx.declSpecifierSeq()
+  return nodeVars.map((node) =>
+    createDeclaration(
+      node.declarator(),
+      node.initializer()?.braceOrEqualInitializer()?.initializerClause(),
+      ctx.declSpecifierSeq()
+    )
   );
 }
 
