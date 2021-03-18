@@ -4,9 +4,9 @@ import {
   InitializerClauseContext,
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
-import DeclarationVar from "../source-code/data-objects/DeclarationVar";
-import { TypeSpecifier } from "../source-code/data-objects/LanguageKeyWords";
-import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
+import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
+import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
+import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
 import { parseTypeFunction } from "../utils/TypeInference";
 import defaultValueByType from "../utils/DefaultValues";
 

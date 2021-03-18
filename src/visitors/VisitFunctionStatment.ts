@@ -2,7 +2,7 @@ import {
   DeclSpecifierSeqContext,
   ParameterDeclarationContext,
 } from "../grammar/CPP14Parser";
-import MethodSignature from "../source-code/methods/MethodSignature";
+import MethodSignature from "../source-analysis/methods/MethodSignature";
 import { parseSingleType, parseTypeFunction } from "../utils/TypeInference";
 
 export function declareMethod(

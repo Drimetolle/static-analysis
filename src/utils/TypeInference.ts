@@ -2,7 +2,7 @@ import {
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
 } from "../grammar/CPP14Parser";
-import { TypeSpecifier } from "../source-code/data-objects/LanguageKeyWords";
+import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 
 export function parseSingleType(
   declaration?: DeclSpecifierSeqContext

@@ -19,20 +19,18 @@ import {
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { autoInjectable } from "tsyringe";
-import ScopeTree, {
-  ScopeNode,
-} from "../source-code/data-flow-analisis/ScopeTree";
-import PositionInFile from "../source-code/data-objects/PositionInFile";
-import GrammarDerivation from "../source-code/data-objects/GrammarDerivation";
-import CodeBlock from "../source-code/data-objects/CodeBlock";
-import DeclarationVar from "../source-code/data-objects/DeclarationVar";
-import { KeyWords } from "../source-code/data-objects/LanguageKeyWords";
+import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
+import PositionInFile from "../source-analysis/data-objects/PositionInFile";
+import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
+import CodeBlock from "../source-analysis/data-objects/CodeBlock";
+import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
+import { KeyWords } from "../source-analysis/data-objects/LanguageKeyWords";
 import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
 import { declareMethod } from "./VisitFunctionStatment";
 import { parseSingleType } from "../utils/TypeInference";
-import DeclaredMethods from "../source-code/methods/DeclaredMethods";
-import HeaderScope from "../source-code/methods/HeaderScope";
+import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
+import HeaderScope from "../source-analysis/methods/HeaderScope";
 
 @autoInjectable()
 export default class DataFlowVisitor implements CPP14ParserVisitor<any> {

@@ -1,25 +1,27 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import DeclaredVariablesInScope from "./source-code/data-flow-analisis/DeclaredVariablesInScope";
 import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
-import Listener from "./parsers/Listener";
-import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
-import { CPP14ParserListener } from "./grammar/CPP14ParserListener";
 import DataFlowVisitor from "./visitors/DataFlowVisitor";
 import FileManager from "./file-system/FileManager";
 import { writeFileSync } from "fs";
 import { join } from "path";
-import { Tree } from "./utils/Tree";
+import Linter from "./linter/Linter";
+import ProjectContext from "./linter/ProjectContext";
 
 let inputStream!: ANTLRInputStream;
 
+// container registration
+container.register<Linter>(Linter, {
+  useValue: new Linter([]),
+});
 container.register<FileManager>(FileManager, {
   useValue: new FileManager(),
 });
 
 const fileManager = container.resolve(FileManager);
+new ProjectContext();
 
 for (const content of fileManager.read()) {
   inputStream = new ANTLRInputStream(content);
@@ -31,12 +33,6 @@ const parser = new Parser(tokenStream);
 
 const tree = parser.translationUnit();
 
-const a = tree.toStringTree(parser.ruleNames);
-// console.log(a);
-
-const listener: CPP14ParserListener = new Listener();
-ParseTreeWalker.DEFAULT.walk(listener, tree);
-const vars = container.resolve(DeclaredVariablesInScope);
 const visitor = new DataFlowVisitor();
 const test = visitor.visit(tree);
 writeFileSync(join(__dirname, "../test-case-files/tree.json"), test.toString());
