@@ -1,19 +1,22 @@
 import LinterContext from "./LinterContext";
-import { container } from "tsyringe";
+import { singleton, autoInjectable } from "tsyringe";
 import Linter from "./Linter";
 
+@singleton()
+@autoInjectable()
 export default class ProjectContext {
   private readonly contexts: Array<LinterContext>;
   private readonly linter: Linter;
 
   constructor();
-  constructor(contexts: Array<LinterContext>);
-  constructor(contexts?: Array<LinterContext>) {
-    this.linter = container.resolve(Linter);
-    this.contexts = contexts ?? [];
+  constructor(linter: Linter);
+  constructor(linter?: Linter) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.linter = linter!;
+    this.contexts = [];
   }
 
-  create(context: LinterContext) {
+  create(context: LinterContext): void {
     this.contexts.push(context);
   }
 }

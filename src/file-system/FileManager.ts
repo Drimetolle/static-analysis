@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import { singleton } from "tsyringe";
+import SourceFile from "../utils/SourceFile";
 
 @singleton()
 export default class FileManager {
@@ -20,6 +21,6 @@ export default class FileManager {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   *read() {
     const fileContent = readFileSync(this.files[0], "utf8");
-    yield fileContent;
+    yield new SourceFile(this.files[0], fileContent);
   }
 }

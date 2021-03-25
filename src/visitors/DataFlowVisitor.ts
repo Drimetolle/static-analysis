@@ -31,9 +31,11 @@ import { declareMethod } from "./VisitFunctionStatment";
 import { parseSingleType } from "../utils/TypeInference";
 import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 import HeaderScope from "../source-analysis/methods/HeaderScope";
+import { Information, Walker } from "../linter/walkers/Walker";
 
 @autoInjectable()
-export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
+export default class DataFlowVisitor
+  implements CPP14ParserVisitor<any>, Walker {
   private readonly scopeTree: ScopeTree;
   private readonly methods: DeclaredMethods;
   private readonly name: string;
@@ -327,5 +329,9 @@ export default class DataFlowVisitor implements CPP14ParserVisitor<any> {
     const declare = new CodeBlock(post);
 
     return this.scopeTree?.add(declare, toNode);
+  }
+
+  async start(tree: TranslationUnitContext): Promise<Information> {
+    return { scope: this.visit(tree), methods: this.methods };
   }
 }

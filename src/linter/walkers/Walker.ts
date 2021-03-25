@@ -1,4 +1,12 @@
+import { TranslationUnitContext } from "../../grammar/CPP14Parser";
+import ScopeTree from "../../source-analysis/data-flow/ScopeTree";
+import DeclaredMethods from "../../source-analysis/methods/DeclaredMethods";
+
+export type Information = {
+  scope: ScopeTree;
+  methods: DeclaredMethods;
+};
+
 export interface Walker {
-  start(): void;
-  onEnd(callback: (...args: unknown[]) => void): void;
+  start(tree: TranslationUnitContext): Promise<Information>;
 }
