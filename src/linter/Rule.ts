@@ -1,12 +1,12 @@
 import LinterContext from "./LinterContext";
-import CodeIssue from "./issue/CodeIssue";
+import Report from "./issue/Report";
 
 export default abstract class Rule {
-  readonly id: string;
+  readonly id: number;
 
-  protected constructor() {
-    this.id = "id";
+  protected constructor(id: number) {
+    this.id = id;
   }
 
-  abstract run(context: LinterContext): CodeIssue | null;
+  abstract run(context: LinterContext): Report | null;
 }

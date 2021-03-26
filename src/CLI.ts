@@ -9,7 +9,7 @@ import IssuesQueue from "./linter/issue/IssuesQueue";
 
 // container registration
 container.register<Linter>(Linter, {
-  useValue: new Linter([UndeclaredVariable]),
+  useValue: new Linter([UndeclaredVariable], { rules: { 1: 2 } }),
 });
 container.register<FileManager>(FileManager, {
   useValue: new FileManager(),

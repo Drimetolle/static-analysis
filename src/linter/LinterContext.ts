@@ -4,9 +4,9 @@ import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 
 export default class LinterContext {
   fileName: string;
-  private readonly ast: ParserRuleContext;
-  private readonly scope: ScopeTree;
-  private readonly methods: DeclaredMethods;
+  readonly ast: ParserRuleContext;
+  readonly scope: ScopeTree;
+  readonly methods: DeclaredMethods;
 
   constructor(
     fileName: string,
