@@ -1,8 +1,8 @@
 import { Information, Walker } from "./Walker";
-import { TranslationUnitContext } from "../../grammar/CPP14Parser";
 import { autoInjectable } from "tsyringe";
 import ProjectContext from "../ProjectContext";
 import Controller from "../../Controller";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 @autoInjectable()
 export default class WalkersHelper {
@@ -17,10 +17,7 @@ export default class WalkersHelper {
     this.controller = controller!;
   }
 
-  async analyze(
-    walker: Walker,
-    ast: TranslationUnitContext
-  ): Promise<Information> {
+  async analyze(walker: Walker, ast: ParserRuleContext): Promise<Information> {
     return await walker.start(ast);
   }
 }

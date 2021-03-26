@@ -1,4 +1,4 @@
-import { TranslationUnitContext } from "../../grammar/CPP14Parser";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ScopeTree from "../../source-analysis/data-flow/ScopeTree";
 import DeclaredMethods from "../../source-analysis/methods/DeclaredMethods";
 
@@ -8,5 +8,5 @@ export type Information = {
 };
 
 export interface Walker {
-  start(tree: TranslationUnitContext): Promise<Information>;
+  start(tree: ParserRuleContext): Promise<Information>;
 }

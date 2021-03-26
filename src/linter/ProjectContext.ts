@@ -18,5 +18,6 @@ export default class ProjectContext {
 
   create(context: LinterContext): void {
     this.contexts.push(context);
+    this.linter.start(context);
   }
 }
