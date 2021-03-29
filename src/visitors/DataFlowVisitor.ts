@@ -262,33 +262,35 @@ export default class DataFlowVisitor
   ): void;
   private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void;
   private statementSequence(ctx: any, node: ScopeNode): void {
-    const childNode = this.createNode(node);
+    const a = new Array<StatementContext>();
 
-    if (childNode) {
-      const a = new Array<StatementContext>();
+    if (ctx instanceof StatementSeqContext) {
+      a.push(...this.visitStatementSeq(ctx));
+    } else if (ctx instanceof Array) {
+      a.push(...ctx);
+    }
 
-      if (ctx instanceof StatementSeqContext) {
-        a.push(...this.visitStatementSeq(ctx));
-      } else if (ctx instanceof Array) {
-        a.push(...ctx);
-      }
+    for (const s of a) {
+      const declaration = s.declarationStatement();
+      const assign = s.expressionStatement();
+      const ifElse = s.selectionStatement();
+      const forLoop = s.iterationStatement();
 
-      for (const s of a) {
-        const declaration = s.declarationStatement();
-        const assign = s.expressionStatement();
-        const ifElse = s.selectionStatement();
-        const forLoop = s.iterationStatement();
-
-        if (declaration) {
-          this.declarationStatement(declaration, childNode);
-        } else if (assign) {
-          DataFlowVisitor.assignStatement(assign, childNode);
-        } else if (ifElse) {
-          for (const s of ifElseStatement(ifElse)) {
+      if (declaration) {
+        this.declarationStatement(declaration, node);
+      } else if (assign) {
+        DataFlowVisitor.assignStatement(assign, node);
+      } else if (ifElse) {
+        for (const s of ifElseStatement(ifElse)) {
+          const childNode = this.createNode(node);
+          if (childNode) {
             DataFlowVisitor.conditionStatement(s.condition, childNode);
             this.statementSequence(s.statement, childNode);
           }
-        } else if (forLoop) {
+        }
+      } else if (forLoop) {
+        const childNode = this.createNode(node);
+        if (childNode) {
           const statement = loopStatement(forLoop);
           const declaration = forLoop.forInitStatement()?.simpleDeclaration();
 
