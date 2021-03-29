@@ -28,31 +28,7 @@ export default class DeclaredVariablesInScope {
     expression: GrammarDerivation,
     id: PositionInFile
   ): void {
-    if (this._variables.has(declaration)) {
-      this.setVariable(declaration, expression, id);
-    } else {
-      this.setUndefinedVariable(declaration, expression, id);
-    }
-  }
-
-  private setUndefinedVariable(
-    variable: string,
-    expression: GrammarDerivation,
-    id: PositionInFile
-  ) {
-    const { line, text, start } = expression;
-    const declaration = new VariableDeclaration(
-      new PositionInFile(line, start),
-      text,
-      id.start,
-      variable,
-      VariableState.undefined
-    );
-
-    if (this._variables.has(variable)) {
-      this._variables.delete(variable);
-    }
-    this._variables.set(variable, declaration);
+    this.assignVariable(declaration, expression, id);
   }
 
   private setVariable(
@@ -60,17 +36,57 @@ export default class DeclaredVariablesInScope {
     expression: GrammarDerivation,
     id: PositionInFile
   ) {
-    const { line, text, start } = expression;
-    const declaration = new VariableDeclaration(
-      new PositionInFile(line, start),
-      text,
-      id.start,
-      variable
+    const declaration = DeclaredVariablesInScope.createDeclaration(
+      variable,
+      expression,
+      id,
+      VariableState.defined
     );
 
     if (this._variables.has(variable)) {
+      // TODO
       throw new Error("Variable already declared.");
     }
     this._variables.set(variable, declaration);
+  }
+
+  private assignVariable(
+    variable: string,
+    expression: GrammarDerivation,
+    id: PositionInFile
+  ) {
+    if (this._variables.has(variable)) {
+      const declaration = DeclaredVariablesInScope.createDeclaration(
+        variable,
+        expression,
+        id,
+        VariableState.defined
+      );
+      this._variables.set(variable, declaration);
+    } else {
+      const declaration = DeclaredVariablesInScope.createDeclaration(
+        variable,
+        expression,
+        id,
+        VariableState.undefined
+      );
+      this._variables.set(variable, declaration);
+    }
+  }
+
+  private static createDeclaration(
+    variable: string,
+    expression: GrammarDerivation,
+    id: PositionInFile,
+    type: VariableState
+  ): VariableDeclaration {
+    const { line, text, start } = expression;
+    return new VariableDeclaration(
+      new PositionInFile(line, start),
+      text,
+      id.start,
+      variable,
+      type
+    );
   }
 }

@@ -13,6 +13,8 @@ int main() {
     float d = 1.5;
     xA, zA = 5;
 
+    z = 1;
+
     if (int iInitIf = 0) {
         char q = 'q';
         zA = 1;
