@@ -3,6 +3,7 @@ import VariableDeclaration, {
 } from "../data-objects/VariableDeclaration";
 import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
+import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 
 export default class DeclaredVariablesInScope {
   private readonly _variables: Map<string, VariableDeclaration>;
@@ -44,8 +45,10 @@ export default class DeclaredVariablesInScope {
     );
 
     if (this._variables.has(variable)) {
-      // TODO
-      throw new Error("Variable already declared.");
+      const position = this._variables.get(variable)?.position.toString();
+      throw new VariableAlreadyDefinedException(
+        `Variable: ${variable} already declared in position: ${position}.`
+      );
     }
     this._variables.set(variable, declaration);
   }
