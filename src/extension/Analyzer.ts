@@ -13,7 +13,7 @@ let inputStream!: ANTLRInputStream;
 const fileManager = container.resolve(FileManager);
 
 for (const content of fileManager.read()) {
-  inputStream = new ANTLRInputStream(content);
+  inputStream = new ANTLRInputStream(content.text);
 }
 
 const lexer = new Lexer(inputStream);

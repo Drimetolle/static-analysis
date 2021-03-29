@@ -25,4 +25,12 @@ export default class ScopeTree extends Tree<CodeBlock> {
   toString(): string {
     return JSON.stringify(this.convertNodeToString(this.root));
   }
+
+  toArray(): Array<ScopeNode> {
+    const result = new Array<ScopeNode>();
+
+    this.traverseDF((node: ScopeNode) => result.push(node));
+
+    return result;
+  }
 }

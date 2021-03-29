@@ -54,12 +54,12 @@ export class Tree<T> {
     return parent;
   }
 
-  private defaultComparator(data1: T, data2: T): boolean {
+  protected defaultComparator(data1: T, data2: T): boolean {
     return data1 === data2;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private traverseDF(callback: (...args: Array<any>) => void) {
+  protected traverseDF(callback: (...args: Array<any>) => void): void {
     (function recurse(currentNode: Node<T>) {
       for (let i = 0, length = currentNode.children.length; i < length; i++) {
         recurse(currentNode.children[i]);

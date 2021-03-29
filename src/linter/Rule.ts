@@ -8,5 +8,5 @@ export default abstract class Rule {
     this.id = id;
   }
 
-  abstract run(context: LinterContext): Report | null;
+  abstract run(context: LinterContext): Array<Report>;
 }

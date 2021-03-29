@@ -5,6 +5,7 @@ import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 export default class LinterContext {
   fileName: string;
   readonly ast: ParserRuleContext;
+  //TODO заменить на readonly тип DeclaredVariablesInScope (сделать интерфейс или зарефакторить)
   readonly scope: ScopeTree;
   readonly methods: DeclaredMethods;
 

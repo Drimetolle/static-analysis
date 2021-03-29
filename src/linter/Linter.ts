@@ -27,21 +27,23 @@ export default class Linter {
 
   start(context: LinterContext): void {
     this.rules.forEach((r) => {
-      const issue = r.run(context);
+      const issues = r.run(context);
 
-      if (issue) {
-        this.issueService.add(
-          new CodeIssue(
-            r.id,
-            issue.description,
-            new PositionInFile(
-              issue.node.start.startIndex,
-              issue.node.start.stopIndex
-            ),
-            context.fileName,
-            this.ruleResolver.getRuleSeverity(r.id)
-          )
-        );
+      if (issues.length > 0) {
+        for (const issue of issues) {
+          this.issueService.add(
+            new CodeIssue(
+              r.id,
+              issue.description,
+              new PositionInFile(
+                issue.node.start.startIndex,
+                issue.node.start.stopIndex
+              ),
+              context.fileName,
+              this.ruleResolver.getRuleSeverity(r.id)
+            )
+          );
+        }
       }
     });
   }
