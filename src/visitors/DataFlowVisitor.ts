@@ -65,7 +65,7 @@ export default class DataFlowVisitor
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          this.functionStatement(functionDef);
+          this.topLevelFunctionStatement(functionDef);
         }
       }
     }
@@ -209,7 +209,7 @@ export default class DataFlowVisitor
     }
   }
 
-  private functionStatement(functionDef: FunctionDefinitionContext) {
+  private topLevelFunctionStatement(functionDef: FunctionDefinitionContext) {
     const alias = functionDef
       .declarator()
       .pointerDeclarator()
