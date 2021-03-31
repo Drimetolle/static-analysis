@@ -1,5 +1,6 @@
 import { singleton } from "tsyringe";
 import CodeIssue from "./CodeIssue";
+import { clone } from "ramda";
 
 export type IssueDelegate = <T extends CodeIssue>(issue: T) => void;
 
@@ -9,8 +10,7 @@ export default class IssuesQueue {
   private readonly subscribers: Array<IssueDelegate>;
 
   get issues(): Array<CodeIssue> {
-    //TODO
-    return JSON.parse(JSON.stringify(this._issues));
+    return clone(this._issues);
   }
 
   constructor() {
