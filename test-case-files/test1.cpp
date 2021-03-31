@@ -11,7 +11,7 @@ int main() {
     long long longModifier = 0;
     int z, x = 10, y = 10 + 13;
     float d = 1.5;
-    xA, zA = 5;
+    xA, yA = 1, zA = 5;
 
     z = 1;
 

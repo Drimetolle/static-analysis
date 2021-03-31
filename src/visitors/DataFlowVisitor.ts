@@ -121,17 +121,17 @@ export default class DataFlowVisitor
     root: ScopeNode,
     ctx: AssignmentExpressionContext
   ) {
-    const variable = ctx.logicalOrExpression();
+    const variable = ctx.logicalOrExpression() ?? ctx.conditionalExpression();
     const init = ctx.initializerClause();
 
-    if (variable && init) {
+    if (variable) {
       root.data.declaredVariables.assign(
         variable.text,
         new GrammarDerivation(
           ctx.start.startIndex,
           ctx.start.stopIndex,
           ctx.start.line,
-          init.text
+          init?.text ?? ""
         ),
         new PositionInFile(ctx.start.line, ctx.start.startIndex)
       );
@@ -189,12 +189,11 @@ export default class DataFlowVisitor
     ctx: ExpressionStatementContext,
     toNode: ScopeNode
   ): void {
-    const childCount = ctx.expression()?.assignmentExpression().length;
-    const lastChildIndex = childCount ? childCount - 1 : 0;
-    const assign = ctx.expression()?.assignmentExpression(lastChildIndex);
-
-    if (assign) {
-      DataFlowVisitor.setAssignScope(toNode, assign);
+    const expressions = ctx.expression()?.assignmentExpression() ?? [];
+    for (const assign of expressions) {
+      if (assign) {
+        DataFlowVisitor.setAssignScope(toNode, assign);
+      }
     }
   }
 
