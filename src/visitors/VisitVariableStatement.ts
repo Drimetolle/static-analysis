@@ -9,6 +9,7 @@ import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords"
 import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
 import { parseTypeFunction } from "../utils/TypeInference";
 import defaultValueByType from "../utils/DefaultValues";
+import { DeclarationVarAndNode } from "./DataFlowVisitor";
 
 export function createDeclaration(
   dec: DeclaratorContext,
@@ -32,20 +33,23 @@ export function createDeclaration(
 
 export function simpleDeclaration(
   ctx: SimpleDeclarationContext
-): Array<DeclarationVar> {
+): Array<DeclarationVarAndNode> {
   const nodeVars =
     ctx
       .initDeclaratorList()
       ?.initDeclarator()
       .map((v) => v) ?? [];
 
-  return nodeVars.map((node) =>
-    createDeclaration(
-      node.declarator(),
-      node.initializer()?.braceOrEqualInitializer()?.initializerClause(),
-      ctx.declSpecifierSeq()
-    )
-  );
+  return nodeVars.map((node, i) => {
+    return {
+      declaration: createDeclaration(
+        node.declarator(),
+        node.initializer()?.braceOrEqualInitializer()?.initializerClause(),
+        ctx.declSpecifierSeq()
+      ),
+      node: nodeVars[i],
+    };
+  });
 }
 
 export function parseInitStatement(

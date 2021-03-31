@@ -32,6 +32,12 @@ import { parseSingleType } from "../utils/TypeInference";
 import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 import HeaderScope from "../source-analysis/methods/HeaderScope";
 import { Information, Walker } from "../linter/walkers/Walker";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+
+export interface DeclarationVarAndNode {
+  declaration: DeclarationVar;
+  node: ParserRuleContext;
+}
 
 @autoInjectable()
 export default class DataFlowVisitor
@@ -71,7 +77,9 @@ export default class DataFlowVisitor
     }
   }
 
-  visitSimpleDeclaration(ctx: SimpleDeclarationContext): Array<DeclarationVar> {
+  visitSimpleDeclaration(
+    ctx: SimpleDeclarationContext
+  ): Array<DeclarationVarAndNode> {
     if (
       !ctx
         .declSpecifierSeq()
@@ -109,17 +117,23 @@ export default class DataFlowVisitor
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
-  private static setScope(root: ScopeNode, ctx: DeclarationVar): void {
+  private static setScope(
+    root: ScopeNode,
+    ctx: DeclarationVar,
+    node: ParserRuleContext
+  ): void {
     root.data.declaredVariables.declare(
       ctx.variable,
       ctx.grammar,
-      new PositionInFile(ctx.grammar.line, ctx.grammar.start)
+      new PositionInFile(ctx.grammar.line, ctx.grammar.start),
+      node
     );
   }
 
   private static setAssignScope(
     root: ScopeNode,
-    ctx: AssignmentExpressionContext
+    ctx: AssignmentExpressionContext,
+    node: ParserRuleContext
   ) {
     const variable = ctx.logicalOrExpression() ?? ctx.conditionalExpression();
     const init = ctx.initializerClause();
@@ -133,7 +147,8 @@ export default class DataFlowVisitor
           ctx.start.line,
           init?.text ?? ""
         ),
-        new PositionInFile(ctx.start.line, ctx.start.startIndex)
+        new PositionInFile(ctx.start.line, ctx.start.startIndex),
+        node
       );
     }
   }
@@ -158,8 +173,8 @@ export default class DataFlowVisitor
     if (simpleDeclaration) {
       const result = this.visitSimpleDeclaration(simpleDeclaration);
 
-      for (const d of result) {
-        DataFlowVisitor.setScope(toNode, d);
+      for (const { declaration, node } of result) {
+        DataFlowVisitor.setScope(toNode, declaration, node);
       }
     }
   }
@@ -171,7 +186,7 @@ export default class DataFlowVisitor
 
     if (decSeq && dec && init) {
       const varDeclaration = createDeclaration(dec, init, decSeq);
-      DataFlowVisitor.setScope(toNode, varDeclaration);
+      DataFlowVisitor.setScope(toNode, varDeclaration, dec);
     }
   }
 
@@ -181,7 +196,7 @@ export default class DataFlowVisitor
   ): void {
     const result = this.visitParameterDeclaration(ctx);
     if (result) {
-      DataFlowVisitor.setScope(toNode, result);
+      DataFlowVisitor.setScope(toNode, result, ctx);
     }
   }
 
@@ -192,7 +207,7 @@ export default class DataFlowVisitor
     const expressions = ctx.expression()?.assignmentExpression() ?? [];
     for (const assign of expressions) {
       if (assign) {
-        DataFlowVisitor.setAssignScope(toNode, assign);
+        DataFlowVisitor.setAssignScope(toNode, assign, assign);
       }
     }
   }
@@ -202,8 +217,8 @@ export default class DataFlowVisitor
     if (simpleDeclaration) {
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
 
-      for (const d of tmp) {
-        DataFlowVisitor.setScope(this.scopeTree?.getRoot, d);
+      for (const { declaration, node } of tmp) {
+        DataFlowVisitor.setScope(this.scopeTree?.getRoot, declaration, node);
       }
     }
   }

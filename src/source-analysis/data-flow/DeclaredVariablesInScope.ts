@@ -4,6 +4,7 @@ import VariableDeclaration, {
 import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export default class DeclaredVariablesInScope {
   private readonly _variables: Map<string, VariableDeclaration>;
@@ -19,29 +20,33 @@ export default class DeclaredVariablesInScope {
   declare(
     declaration: string,
     expression: GrammarDerivation,
-    id: PositionInFile
+    id: PositionInFile,
+    node: ParserRuleContext
   ): void {
-    this.setVariable(declaration, expression, id);
+    this.setVariable(declaration, expression, id, node);
   }
 
   assign(
     declaration: string,
     expression: GrammarDerivation,
-    id: PositionInFile
+    id: PositionInFile,
+    node: ParserRuleContext
   ): void {
-    this.assignVariable(declaration, expression, id);
+    this.assignVariable(declaration, expression, id, node);
   }
 
   private setVariable(
     variable: string,
     expression: GrammarDerivation,
-    id: PositionInFile
+    id: PositionInFile,
+    node: ParserRuleContext
   ) {
     const declaration = DeclaredVariablesInScope.createDeclaration(
       variable,
       expression,
       id,
-      VariableState.defined
+      VariableState.defined,
+      node
     );
 
     if (this._variables.has(variable)) {
@@ -56,14 +61,16 @@ export default class DeclaredVariablesInScope {
   private assignVariable(
     variable: string,
     expression: GrammarDerivation,
-    id: PositionInFile
+    id: PositionInFile,
+    node: ParserRuleContext
   ) {
     if (this._variables.has(variable)) {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
         expression,
         id,
-        VariableState.defined
+        VariableState.defined,
+        node
       );
       this._variables.set(variable, declaration);
     } else {
@@ -71,7 +78,8 @@ export default class DeclaredVariablesInScope {
         variable,
         expression,
         id,
-        VariableState.undefined
+        VariableState.undefined,
+        node
       );
       this._variables.set(variable, declaration);
     }
@@ -81,7 +89,8 @@ export default class DeclaredVariablesInScope {
     variable: string,
     expression: GrammarDerivation,
     id: PositionInFile,
-    type: VariableState
+    type: VariableState,
+    node: ParserRuleContext
   ): VariableDeclaration {
     const { line, text, start } = expression;
     return new VariableDeclaration(
@@ -89,6 +98,7 @@ export default class DeclaredVariablesInScope {
       text,
       id.start,
       variable,
+      node,
       type
     );
   }

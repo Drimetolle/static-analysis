@@ -14,18 +14,6 @@ export default class ScopeTree extends Tree<CodeBlock> {
     super(new CodeBlock(0));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private convertNodeToString(node: ScopeNode): any {
-    return {
-      data: node.data.toObject(),
-      children: node.children.map((i) => this.convertNodeToString(i)),
-    };
-  }
-
-  toString(): string {
-    return JSON.stringify(this.convertNodeToString(this.root));
-  }
-
   toArray(): Array<ScopeNode> {
     const result = new Array<ScopeNode>();
 

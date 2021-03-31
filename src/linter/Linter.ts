@@ -36,8 +36,8 @@ export default class Linter {
               r.id,
               issue.description,
               new PositionInFile(
-                issue.node.start.startIndex,
-                issue.node.start.stopIndex
+                issue.node.start.line,
+                issue.node.start.charPositionInLine + 1
               ),
               context.fileName,
               this.ruleResolver.getRuleSeverity(r.id)

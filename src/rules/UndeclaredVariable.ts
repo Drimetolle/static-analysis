@@ -7,7 +7,7 @@ export default class UndeclaredVariable extends Rule {
   constructor() {
     super(1);
   }
-  // TODO AST необходимо добавить в VariableDeclaration
+
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
     context.scope
@@ -15,7 +15,7 @@ export default class UndeclaredVariable extends Rule {
       .flatMap((_) => Array.from(_.data.declaredVariables.variables.values()))
       .filter((_) => _.state != VariableState.defined)
       .forEach((r) =>
-        reports.push(new Report(`Variable ${r.name} is undefined`, context.ast))
+        reports.push(new Report(`Variable ${r.name} is undefined`, r.node))
       );
 
     return reports;

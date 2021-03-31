@@ -7,8 +7,6 @@ import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
-import { writeFileSync } from "fs";
-import { join } from "path";
 
 @singleton()
 export default class Controller {
@@ -38,11 +36,6 @@ export default class Controller {
 
     context.create(
       new LinterContext(contentL?.path ?? "", tree, data.scope, data.methods)
-    );
-
-    writeFileSync(
-      join(__dirname, "../test-case-files/tree.json"),
-      data.scope.toString()
     );
   }
 }
