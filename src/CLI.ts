@@ -6,6 +6,7 @@ import WalkersHelper from "./linter/walkers/WalkersHelper";
 import Controller from "./Controller";
 import UndeclaredVariable from "./rules/UndeclaredVariable";
 import IssuesQueue from "./linter/issue/IssuesQueue";
+import Formatter from "./cli-engine/Formatter";
 
 // container registration
 container.register<Linter>(Linter, {
@@ -18,7 +19,9 @@ container.register<WalkersHelper>(WalkersHelper, {
   useValue: new WalkersHelper(),
 });
 
-// container.resolve(IssuesQueue).subscribe((i) => console.log(i.toString()));
+container
+  .resolve(IssuesQueue)
+  .subscribe((i) => console.log(Formatter.formatMessage(i)));
 
 const controller = container.resolve(Controller);
 controller.run();

@@ -4,7 +4,9 @@ export enum Severity {
   Error,
 }
 
-export function mapSeverity(s: Severity): string {
+export type messageLevel = "error" | "warning" | "";
+
+export function mapSeverity(s: Severity): messageLevel {
   switch (s) {
     case Severity.Warning:
       return "warning";
