@@ -12,7 +12,7 @@ export default class UndeclaredVariable extends Rule {
     const reports = new Array<Report>();
     context.scope
       .toArray()
-      .flatMap((_) => Array.from(_.data.declaredVariables.variables.values()))
+      .flatMap((_) => _.data.declaredVariables.variables)
       .filter((_) => _.state != VariableState.defined)
       .forEach((r) =>
         reports.push(new Report(`Variable ${r.name} is undefined`, r.node))

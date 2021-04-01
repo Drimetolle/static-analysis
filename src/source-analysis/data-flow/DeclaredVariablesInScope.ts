@@ -6,11 +6,15 @@ import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
-export default class DeclaredVariablesInScope {
+export interface DeclaredVariables {
+  variables: Array<VariableDeclaration>;
+}
+
+export default class DeclaredVariablesInScope implements DeclaredVariables {
   private readonly _variables: Map<string, VariableDeclaration>;
 
-  get variables(): Map<string, VariableDeclaration> {
-    return this._variables;
+  get variables(): Array<VariableDeclaration> {
+    return Array.from(this._variables.values());
   }
 
   constructor() {

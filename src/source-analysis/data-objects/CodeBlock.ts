@@ -1,5 +1,7 @@
 import { FlowGraphNumeration } from "./DiagnosticsInterfaceses";
-import DeclaredVariablesInScope from "../data-flow/DeclaredVariablesInScope";
+import DeclaredVariablesInScope, {
+  DeclaredVariables,
+} from "../data-flow/DeclaredVariablesInScope";
 
 export default class CodeBlock implements FlowGraphNumeration {
   post: number;
@@ -23,21 +25,10 @@ export default class CodeBlock implements FlowGraphNumeration {
     this.declaredVariables =
       declaredVariables ?? new DeclaredVariablesInScope();
   }
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toObject(): any {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function mapToObj(map: Map<any, unknown>) {
-      const obj = {};
-      for (const [k, v] of map) {
-        Object.assign(obj, { [k]: v });
-      }
-      return obj;
-    }
-
-    return {
-      ...mapToObj(this.declaredVariables.variables),
-      ...{ pre: this.pre, post: this.post },
-    };
-  }
+export class Block implements FlowGraphNumeration {
+  post!: number;
+  pre!: number;
+  declaredVariables!: DeclaredVariables;
 }

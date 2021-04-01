@@ -1,18 +1,17 @@
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import ScopeTree from "../source-analysis/data-flow/ScopeTree";
+import { Scope } from "../source-analysis/data-flow/ScopeTree";
 import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 
 export default class LinterContext {
   fileName: string;
   readonly ast: ParserRuleContext;
-  //TODO заменить на readonly тип DeclaredVariablesInScope (сделать интерфейс или зарефакторить)
-  readonly scope: ScopeTree;
+  readonly scope: Scope;
   readonly methods: DeclaredMethods;
 
   constructor(
     fileName: string,
     ast: ParserRuleContext,
-    scope: ScopeTree,
+    scope: Scope,
     methods: DeclaredMethods
   ) {
     this.fileName = fileName;
