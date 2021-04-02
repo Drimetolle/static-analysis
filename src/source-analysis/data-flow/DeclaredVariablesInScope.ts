@@ -5,9 +5,11 @@ import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import VariableNotDefinedException from "../../exceptions/VariableNotDefinedException";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
+  getVariable(id: string): VariableDeclaration | null;
 }
 
 export default class DeclaredVariablesInScope implements DeclaredVariables {
@@ -19,6 +21,10 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   constructor() {
     this._variables = new Map<string, VariableDeclaration>();
+  }
+
+  getVariable(id: string): VariableDeclaration | null {
+    return this._variables.get(id) ?? null;
   }
 
   declare(
@@ -78,14 +84,9 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       );
       this._variables.set(variable, declaration);
     } else {
-      const declaration = DeclaredVariablesInScope.createDeclaration(
-        variable,
-        expression,
-        id,
-        VariableState.undefined,
-        node
+      throw new VariableNotDefinedException(
+        `Variable: ${variable} not declared. Position: ${id.line}:${id.start}.`
       );
-      this._variables.set(variable, declaration);
     }
   }
 
