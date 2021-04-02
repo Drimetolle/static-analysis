@@ -18,7 +18,6 @@ import {
   TranslationUnitContext,
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
-import { autoInjectable } from "tsyringe";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
@@ -39,17 +38,15 @@ export interface DeclarationVarAndNode {
   node: ParserRuleContext;
 }
 
-@autoInjectable()
 export default class DataFlowVisitor
   implements CPP14ParserVisitor<any>, Walker {
   private readonly scopeTree: ScopeTree;
   private readonly methods: DeclaredMethods;
   private readonly name: string;
 
-  constructor(scopeTree?: ScopeTree) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.scopeTree = scopeTree!;
-    this.name = "test1";
+  constructor(fileName: string, scopeTree: ScopeTree) {
+    this.scopeTree = scopeTree;
+    this.name = fileName;
     this.methods = new DeclaredMethods([new HeaderScope(this.name)]);
   }
 

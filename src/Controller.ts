@@ -7,7 +7,7 @@ import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
-import { Scope } from "./source-analysis/data-flow/ScopeTree";
+import ScopeTree, { Scope } from "./source-analysis/data-flow/ScopeTree";
 
 @singleton()
 export default class Controller {
@@ -30,7 +30,7 @@ export default class Controller {
 
     const tree = parser.translationUnit();
 
-    const visitor = new DataFlowVisitor();
+    const visitor = new DataFlowVisitor(contentL?.path ?? "", new ScopeTree());
 
     const walkers = container.resolve(WalkersHelper);
     const data = await walkers.analyze(visitor, tree);
