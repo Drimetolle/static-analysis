@@ -4,7 +4,6 @@ import PositionInFile from "../src/source-analysis/data-objects/PositionInFile";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../src/source-analysis/data-objects/VariableDeclaration";
 import VariableAlreadyDefinedException from "../src/exceptions/VariableAlreadyDefinedException";
-import VariableNotDefinedException from "../src/exceptions/VariableNotDefinedException";
 
 describe("checking the context was work correctly", () => {
   let variables: DeclaredVariablesInScope;
@@ -58,15 +57,18 @@ describe("checking the context was work correctly", () => {
 
   test("checking assign method if variables are empty", () => {
     const name = "a";
+    variables.assign(
+      name,
+      new GrammarDerivation(1, 1, 1, "10"),
+      position,
+      {} as ParserRuleContext
+    );
 
-    expect(() => {
-      variables.assign(
-        name,
-        grammarDerivation,
-        position,
-        {} as ParserRuleContext
-      );
-    }).toThrow(VariableNotDefinedException);
+    const declaration = variables.variables[0];
+    expect(declaration).not.toBeNull();
+    expect(variables.variables.length).toBe(1);
+    expect(declaration.state).toBe(VariableState.undefined);
+    expect(declaration.name).toBe(name);
   });
 
   test("checking assign method if variables already declared", () => {

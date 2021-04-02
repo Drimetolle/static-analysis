@@ -5,7 +5,6 @@ import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import VariableNotDefinedException from "../../exceptions/VariableNotDefinedException";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
@@ -84,9 +83,14 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       );
       this._variables.set(variable, declaration);
     } else {
-      throw new VariableNotDefinedException(
-        `Variable: ${variable} not declared. Position: ${id.line}:${id.start}.`
+      const declaration = DeclaredVariablesInScope.createDeclaration(
+        variable,
+        expression,
+        id,
+        VariableState.undefined,
+        node
       );
+      this._variables.set(variable, declaration);
     }
   }
 
