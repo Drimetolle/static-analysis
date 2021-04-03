@@ -1,4 +1,4 @@
-import { Information, Walker } from "./Walker";
+import { Walker } from "./Walker";
 import { autoInjectable } from "tsyringe";
 import ProjectContext from "../ProjectContext";
 import Controller from "../../Controller";
@@ -17,7 +17,7 @@ export default class WalkersHelper {
     this.controller = controller!;
   }
 
-  async analyze(walker: Walker, ast: ParserRuleContext): Promise<Information> {
+  async analyze<T>(walker: Walker<T>, ast: ParserRuleContext): Promise<T> {
     return await walker.start(ast);
   }
 }

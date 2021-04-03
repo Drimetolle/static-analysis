@@ -7,6 +7,6 @@ export type Information = {
   methods: DeclaredMethods;
 };
 
-export interface Walker {
-  start(tree: ParserRuleContext): Promise<Information>;
+export interface Walker<T> {
+  start(tree: ParserRuleContext): Promise<T>;
 }

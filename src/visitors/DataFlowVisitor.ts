@@ -39,7 +39,7 @@ export interface DeclarationVarAndNode {
 }
 
 export default class DataFlowVisitor
-  implements CPP14ParserVisitor<any>, Walker {
+  implements CPP14ParserVisitor<any>, Walker<Information> {
   private readonly scopeTree: ScopeTree;
   private readonly methods: DeclaredMethods;
   private readonly name: string;
