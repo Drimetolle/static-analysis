@@ -5,7 +5,6 @@ import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import { Walker } from "../linter/walkers/Walker";
 import {
-  DeclarationContext,
   DeclarationseqContext,
   DeclSpecifierSeqContext,
   FunctionDefinitionContext,
@@ -36,10 +35,14 @@ export default class MethodsVisitor
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      for (const i of ctx.children) {
-        const functionDef = (i as DeclarationContext).functionDefinition();
+      for (const i of ctx.declaration()) {
+        const functionDef = i.functionDefinition();
+        const functionDefInHeader = i.blockDeclaration()?.simpleDeclaration();
+
         if (functionDef) {
           this.parseFunctionSignature(functionDef);
+        } else if (functionDefInHeader) {
+          //TODO
         }
       }
     }

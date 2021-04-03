@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include "as/stdio.h"
 
-float c = 1;
+using namespace std;
+
+float c = "1";
 
 long long func(int aF, char hF) {
     return a;

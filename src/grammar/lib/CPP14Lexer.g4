@@ -27,10 +27,8 @@ UserDefinedLiteral:
 	| UserDefinedStringLiteral
 	| UserDefinedCharacterLiteral;
 
-MultiLineMacro:
-	'#' (~[\n]*? '\\' '\r'? '\n')+ ~ [\n]+ -> channel (HIDDEN);
+Include: '#include';
 
-Directive: '#' ~ [\n]* -> channel (HIDDEN);
 /*Keywords*/
 
 Alignas: 'alignas';
@@ -279,6 +277,12 @@ Dot: '.';
 DotStar: '.*';
 
 Ellipsis: '...';
+
+Quote: '"';
+
+IncludeQuote: Include Whitespace* Quote;
+
+HFormat: 'h';
 
 fragment Hexquad:
 	HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT;

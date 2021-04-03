@@ -300,7 +300,14 @@ declaration:
 	| linkageSpecification
 	| namespaceDefinition
 	| emptyDeclaration
-	| attributeDeclaration;
+	| attributeDeclaration
+	| includeDefinition;
+
+includeDefinition:
+    Include Less fileName Greater
+    | IncludeQuote fileName Quote;
+
+fileName: Identifier (Div Identifier)* (Dot HFormat)?;
 
 blockDeclaration:
 	simpleDeclaration
@@ -641,7 +648,8 @@ virtualSpecifier: Override | Final;
  */
 
 pureSpecifier:
-	Assign val = OctalLiteral {if($val.text.compareTo("0")!=0) throw new InputMismatchException(this);
+
+	Assign val = OctalLiteral {if($val.text!="0") throw new InputMismatchException(this);
 		};
 /*Derived classes*/
 

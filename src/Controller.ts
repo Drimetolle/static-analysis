@@ -9,6 +9,7 @@ import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
 import ScopeTree, { Scope } from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
+import HeadersVisitor from "./visitors/HeadersVisitor";
 
 @singleton()
 export default class Controller {
@@ -24,6 +25,7 @@ export default class Controller {
       contentL = content;
       inputStream = new ANTLRInputStream(content.text);
     }
+    console.log(contentL?.path);
 
     const lexer = new Lexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
@@ -33,10 +35,14 @@ export default class Controller {
 
     const visitor = new DataFlowVisitor(contentL?.path ?? "", new ScopeTree());
     const methodsVisitor = new MethodsVisitor(contentL?.path ?? "");
+    const headersVisitor = new HeadersVisitor();
 
     const walkers = container.resolve(WalkersHelper);
     const scope = await walkers.analyze(visitor, tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
+    headersVisitor.visit(tree);
+
+    methods.getMethodSignature(contentL?.path ?? "", "func");
 
     context.create(
       new LinterContext(contentL?.path ?? "", tree, scope as Scope, methods)
