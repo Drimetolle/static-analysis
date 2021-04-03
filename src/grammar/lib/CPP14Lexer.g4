@@ -284,6 +284,9 @@ IncludeQuote: Include Whitespace* Quote;
 
 HFormat: 'h';
 
+MultiLineMacro:
+	'#' (~[\n]*? '\\' '\r'? '\n')+ ~ [\n]+ -> channel (HIDDEN);
+
 fragment Hexquad:
 	HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT;
 

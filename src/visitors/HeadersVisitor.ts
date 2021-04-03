@@ -6,7 +6,7 @@ import { TranslationUnitContext } from "../grammar/CPP14Parser";
 
 export default class HeadersVisitor implements CPP14ParserVisitor<any> {
   visit(tree: TranslationUnitContext): void {
-    console.log(tree?.declarationseq()?.declaration(0)?.text);
+    // console.log(tree?.declarationseq()?.declaration(2)?.text);
   }
 
   visitChildren(node: RuleNode): never {

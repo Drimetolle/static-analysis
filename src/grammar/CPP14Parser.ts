@@ -163,20 +163,21 @@ export class CPP14Parser extends Parser {
 	public static readonly Quote = 131;
 	public static readonly IncludeQuote = 132;
 	public static readonly HFormat = 133;
-	public static readonly Identifier = 134;
-	public static readonly DecimalLiteral = 135;
-	public static readonly OctalLiteral = 136;
-	public static readonly HexadecimalLiteral = 137;
-	public static readonly BinaryLiteral = 138;
-	public static readonly Integersuffix = 139;
-	public static readonly UserDefinedIntegerLiteral = 140;
-	public static readonly UserDefinedFloatingLiteral = 141;
-	public static readonly UserDefinedStringLiteral = 142;
-	public static readonly UserDefinedCharacterLiteral = 143;
-	public static readonly Whitespace = 144;
-	public static readonly Newline = 145;
-	public static readonly BlockComment = 146;
-	public static readonly LineComment = 147;
+	public static readonly MultiLineMacro = 134;
+	public static readonly Identifier = 135;
+	public static readonly DecimalLiteral = 136;
+	public static readonly OctalLiteral = 137;
+	public static readonly HexadecimalLiteral = 138;
+	public static readonly BinaryLiteral = 139;
+	public static readonly Integersuffix = 140;
+	public static readonly UserDefinedIntegerLiteral = 141;
+	public static readonly UserDefinedFloatingLiteral = 142;
+	public static readonly UserDefinedStringLiteral = 143;
+	public static readonly UserDefinedCharacterLiteral = 144;
+	public static readonly Whitespace = 145;
+	public static readonly Newline = 146;
+	public static readonly BlockComment = 147;
+	public static readonly LineComment = 148;
 	public static readonly RULE_translationUnit = 0;
 	public static readonly RULE_primaryExpression = 1;
 	public static readonly RULE_idExpression = 2;
@@ -462,10 +463,11 @@ export class CPP14Parser extends Parser {
 		"RightShiftAssign", "Equal", "NotEqual", "LessEqual", "GreaterEqual", 
 		"AndAnd", "OrOr", "PlusPlus", "MinusMinus", "Comma", "ArrowStar", "Arrow", 
 		"Question", "Colon", "Doublecolon", "Semi", "Dot", "DotStar", "Ellipsis", 
-		"Quote", "IncludeQuote", "HFormat", "Identifier", "DecimalLiteral", "OctalLiteral", 
-		"HexadecimalLiteral", "BinaryLiteral", "Integersuffix", "UserDefinedIntegerLiteral", 
-		"UserDefinedFloatingLiteral", "UserDefinedStringLiteral", "UserDefinedCharacterLiteral", 
-		"Whitespace", "Newline", "BlockComment", "LineComment",
+		"Quote", "IncludeQuote", "HFormat", "MultiLineMacro", "Identifier", "DecimalLiteral", 
+		"OctalLiteral", "HexadecimalLiteral", "BinaryLiteral", "Integersuffix", 
+		"UserDefinedIntegerLiteral", "UserDefinedFloatingLiteral", "UserDefinedStringLiteral", 
+		"UserDefinedCharacterLiteral", "Whitespace", "Newline", "BlockComment", 
+		"LineComment",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CPP14Parser._LITERAL_NAMES, CPP14Parser._SYMBOLIC_NAMES, []);
 
@@ -6759,7 +6761,7 @@ export class CPP14Parser extends Parser {
 			this.state = 1350;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CPP14Parser.IntegerLiteral) | (1 << CPP14Parser.CharacterLiteral) | (1 << CPP14Parser.FloatingLiteral) | (1 << CPP14Parser.StringLiteral) | (1 << CPP14Parser.BooleanLiteral) | (1 << CPP14Parser.PointerLiteral) | (1 << CPP14Parser.UserDefinedLiteral) | (1 << CPP14Parser.Include) | (1 << CPP14Parser.Alignas) | (1 << CPP14Parser.Alignof) | (1 << CPP14Parser.Asm) | (1 << CPP14Parser.Auto) | (1 << CPP14Parser.Bool) | (1 << CPP14Parser.Break) | (1 << CPP14Parser.Case) | (1 << CPP14Parser.Catch) | (1 << CPP14Parser.Char) | (1 << CPP14Parser.Char16) | (1 << CPP14Parser.Char32) | (1 << CPP14Parser.Class) | (1 << CPP14Parser.Const) | (1 << CPP14Parser.Constexpr) | (1 << CPP14Parser.Const_cast) | (1 << CPP14Parser.Continue) | (1 << CPP14Parser.Decltype) | (1 << CPP14Parser.Default) | (1 << CPP14Parser.Delete) | (1 << CPP14Parser.Do) | (1 << CPP14Parser.Double) | (1 << CPP14Parser.Dynamic_cast) | (1 << CPP14Parser.Else))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CPP14Parser.Enum - 32)) | (1 << (CPP14Parser.Explicit - 32)) | (1 << (CPP14Parser.Export - 32)) | (1 << (CPP14Parser.Extern - 32)) | (1 << (CPP14Parser.False_ - 32)) | (1 << (CPP14Parser.Final - 32)) | (1 << (CPP14Parser.Float - 32)) | (1 << (CPP14Parser.For - 32)) | (1 << (CPP14Parser.Friend - 32)) | (1 << (CPP14Parser.Goto - 32)) | (1 << (CPP14Parser.If - 32)) | (1 << (CPP14Parser.Inline - 32)) | (1 << (CPP14Parser.Int - 32)) | (1 << (CPP14Parser.Long - 32)) | (1 << (CPP14Parser.Mutable - 32)) | (1 << (CPP14Parser.Namespace - 32)) | (1 << (CPP14Parser.New - 32)) | (1 << (CPP14Parser.Noexcept - 32)) | (1 << (CPP14Parser.Nullptr - 32)) | (1 << (CPP14Parser.Operator - 32)) | (1 << (CPP14Parser.Override - 32)) | (1 << (CPP14Parser.Private - 32)) | (1 << (CPP14Parser.Protected - 32)) | (1 << (CPP14Parser.Public - 32)) | (1 << (CPP14Parser.Register - 32)) | (1 << (CPP14Parser.Reinterpret_cast - 32)) | (1 << (CPP14Parser.Return - 32)) | (1 << (CPP14Parser.Short - 32)) | (1 << (CPP14Parser.Signed - 32)) | (1 << (CPP14Parser.Sizeof - 32)) | (1 << (CPP14Parser.Static - 32)) | (1 << (CPP14Parser.Static_assert - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CPP14Parser.Static_cast - 64)) | (1 << (CPP14Parser.Struct - 64)) | (1 << (CPP14Parser.Switch - 64)) | (1 << (CPP14Parser.Template - 64)) | (1 << (CPP14Parser.This - 64)) | (1 << (CPP14Parser.Thread_local - 64)) | (1 << (CPP14Parser.Throw - 64)) | (1 << (CPP14Parser.True_ - 64)) | (1 << (CPP14Parser.Try - 64)) | (1 << (CPP14Parser.Typedef - 64)) | (1 << (CPP14Parser.Typeid_ - 64)) | (1 << (CPP14Parser.Typename_ - 64)) | (1 << (CPP14Parser.Union - 64)) | (1 << (CPP14Parser.Unsigned - 64)) | (1 << (CPP14Parser.Using - 64)) | (1 << (CPP14Parser.Virtual - 64)) | (1 << (CPP14Parser.Void - 64)) | (1 << (CPP14Parser.Volatile - 64)) | (1 << (CPP14Parser.Wchar - 64)) | (1 << (CPP14Parser.While - 64)) | (1 << (CPP14Parser.LeftParen - 64)) | (1 << (CPP14Parser.LeftBracket - 64)) | (1 << (CPP14Parser.LeftBrace - 64)) | (1 << (CPP14Parser.Plus - 64)) | (1 << (CPP14Parser.Minus - 64)) | (1 << (CPP14Parser.Star - 64)) | (1 << (CPP14Parser.Div - 64)) | (1 << (CPP14Parser.Mod - 64)) | (1 << (CPP14Parser.Caret - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CPP14Parser.And - 96)) | (1 << (CPP14Parser.Or - 96)) | (1 << (CPP14Parser.Tilde - 96)) | (1 << (CPP14Parser.Not - 96)) | (1 << (CPP14Parser.Assign - 96)) | (1 << (CPP14Parser.Less - 96)) | (1 << (CPP14Parser.Greater - 96)) | (1 << (CPP14Parser.PlusAssign - 96)) | (1 << (CPP14Parser.MinusAssign - 96)) | (1 << (CPP14Parser.StarAssign - 96)) | (1 << (CPP14Parser.DivAssign - 96)) | (1 << (CPP14Parser.ModAssign - 96)) | (1 << (CPP14Parser.XorAssign - 96)) | (1 << (CPP14Parser.AndAssign - 96)) | (1 << (CPP14Parser.OrAssign - 96)) | (1 << (CPP14Parser.LeftShiftAssign - 96)) | (1 << (CPP14Parser.RightShiftAssign - 96)) | (1 << (CPP14Parser.Equal - 96)) | (1 << (CPP14Parser.NotEqual - 96)) | (1 << (CPP14Parser.LessEqual - 96)) | (1 << (CPP14Parser.GreaterEqual - 96)) | (1 << (CPP14Parser.AndAnd - 96)) | (1 << (CPP14Parser.OrOr - 96)) | (1 << (CPP14Parser.PlusPlus - 96)) | (1 << (CPP14Parser.MinusMinus - 96)) | (1 << (CPP14Parser.Comma - 96)) | (1 << (CPP14Parser.ArrowStar - 96)) | (1 << (CPP14Parser.Arrow - 96)) | (1 << (CPP14Parser.Question - 96)) | (1 << (CPP14Parser.Colon - 96)) | (1 << (CPP14Parser.Doublecolon - 96)) | (1 << (CPP14Parser.Semi - 96)))) !== 0) || ((((_la - 128)) & ~0x1F) === 0 && ((1 << (_la - 128)) & ((1 << (CPP14Parser.Dot - 128)) | (1 << (CPP14Parser.DotStar - 128)) | (1 << (CPP14Parser.Ellipsis - 128)) | (1 << (CPP14Parser.Quote - 128)) | (1 << (CPP14Parser.IncludeQuote - 128)) | (1 << (CPP14Parser.HFormat - 128)) | (1 << (CPP14Parser.Identifier - 128)) | (1 << (CPP14Parser.DecimalLiteral - 128)) | (1 << (CPP14Parser.OctalLiteral - 128)) | (1 << (CPP14Parser.HexadecimalLiteral - 128)) | (1 << (CPP14Parser.BinaryLiteral - 128)) | (1 << (CPP14Parser.Integersuffix - 128)) | (1 << (CPP14Parser.UserDefinedIntegerLiteral - 128)) | (1 << (CPP14Parser.UserDefinedFloatingLiteral - 128)) | (1 << (CPP14Parser.UserDefinedStringLiteral - 128)) | (1 << (CPP14Parser.UserDefinedCharacterLiteral - 128)) | (1 << (CPP14Parser.Whitespace - 128)) | (1 << (CPP14Parser.Newline - 128)) | (1 << (CPP14Parser.BlockComment - 128)) | (1 << (CPP14Parser.LineComment - 128)))) !== 0)) {
+			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CPP14Parser.IntegerLiteral) | (1 << CPP14Parser.CharacterLiteral) | (1 << CPP14Parser.FloatingLiteral) | (1 << CPP14Parser.StringLiteral) | (1 << CPP14Parser.BooleanLiteral) | (1 << CPP14Parser.PointerLiteral) | (1 << CPP14Parser.UserDefinedLiteral) | (1 << CPP14Parser.Include) | (1 << CPP14Parser.Alignas) | (1 << CPP14Parser.Alignof) | (1 << CPP14Parser.Asm) | (1 << CPP14Parser.Auto) | (1 << CPP14Parser.Bool) | (1 << CPP14Parser.Break) | (1 << CPP14Parser.Case) | (1 << CPP14Parser.Catch) | (1 << CPP14Parser.Char) | (1 << CPP14Parser.Char16) | (1 << CPP14Parser.Char32) | (1 << CPP14Parser.Class) | (1 << CPP14Parser.Const) | (1 << CPP14Parser.Constexpr) | (1 << CPP14Parser.Const_cast) | (1 << CPP14Parser.Continue) | (1 << CPP14Parser.Decltype) | (1 << CPP14Parser.Default) | (1 << CPP14Parser.Delete) | (1 << CPP14Parser.Do) | (1 << CPP14Parser.Double) | (1 << CPP14Parser.Dynamic_cast) | (1 << CPP14Parser.Else))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CPP14Parser.Enum - 32)) | (1 << (CPP14Parser.Explicit - 32)) | (1 << (CPP14Parser.Export - 32)) | (1 << (CPP14Parser.Extern - 32)) | (1 << (CPP14Parser.False_ - 32)) | (1 << (CPP14Parser.Final - 32)) | (1 << (CPP14Parser.Float - 32)) | (1 << (CPP14Parser.For - 32)) | (1 << (CPP14Parser.Friend - 32)) | (1 << (CPP14Parser.Goto - 32)) | (1 << (CPP14Parser.If - 32)) | (1 << (CPP14Parser.Inline - 32)) | (1 << (CPP14Parser.Int - 32)) | (1 << (CPP14Parser.Long - 32)) | (1 << (CPP14Parser.Mutable - 32)) | (1 << (CPP14Parser.Namespace - 32)) | (1 << (CPP14Parser.New - 32)) | (1 << (CPP14Parser.Noexcept - 32)) | (1 << (CPP14Parser.Nullptr - 32)) | (1 << (CPP14Parser.Operator - 32)) | (1 << (CPP14Parser.Override - 32)) | (1 << (CPP14Parser.Private - 32)) | (1 << (CPP14Parser.Protected - 32)) | (1 << (CPP14Parser.Public - 32)) | (1 << (CPP14Parser.Register - 32)) | (1 << (CPP14Parser.Reinterpret_cast - 32)) | (1 << (CPP14Parser.Return - 32)) | (1 << (CPP14Parser.Short - 32)) | (1 << (CPP14Parser.Signed - 32)) | (1 << (CPP14Parser.Sizeof - 32)) | (1 << (CPP14Parser.Static - 32)) | (1 << (CPP14Parser.Static_assert - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CPP14Parser.Static_cast - 64)) | (1 << (CPP14Parser.Struct - 64)) | (1 << (CPP14Parser.Switch - 64)) | (1 << (CPP14Parser.Template - 64)) | (1 << (CPP14Parser.This - 64)) | (1 << (CPP14Parser.Thread_local - 64)) | (1 << (CPP14Parser.Throw - 64)) | (1 << (CPP14Parser.True_ - 64)) | (1 << (CPP14Parser.Try - 64)) | (1 << (CPP14Parser.Typedef - 64)) | (1 << (CPP14Parser.Typeid_ - 64)) | (1 << (CPP14Parser.Typename_ - 64)) | (1 << (CPP14Parser.Union - 64)) | (1 << (CPP14Parser.Unsigned - 64)) | (1 << (CPP14Parser.Using - 64)) | (1 << (CPP14Parser.Virtual - 64)) | (1 << (CPP14Parser.Void - 64)) | (1 << (CPP14Parser.Volatile - 64)) | (1 << (CPP14Parser.Wchar - 64)) | (1 << (CPP14Parser.While - 64)) | (1 << (CPP14Parser.LeftParen - 64)) | (1 << (CPP14Parser.LeftBracket - 64)) | (1 << (CPP14Parser.LeftBrace - 64)) | (1 << (CPP14Parser.Plus - 64)) | (1 << (CPP14Parser.Minus - 64)) | (1 << (CPP14Parser.Star - 64)) | (1 << (CPP14Parser.Div - 64)) | (1 << (CPP14Parser.Mod - 64)) | (1 << (CPP14Parser.Caret - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CPP14Parser.And - 96)) | (1 << (CPP14Parser.Or - 96)) | (1 << (CPP14Parser.Tilde - 96)) | (1 << (CPP14Parser.Not - 96)) | (1 << (CPP14Parser.Assign - 96)) | (1 << (CPP14Parser.Less - 96)) | (1 << (CPP14Parser.Greater - 96)) | (1 << (CPP14Parser.PlusAssign - 96)) | (1 << (CPP14Parser.MinusAssign - 96)) | (1 << (CPP14Parser.StarAssign - 96)) | (1 << (CPP14Parser.DivAssign - 96)) | (1 << (CPP14Parser.ModAssign - 96)) | (1 << (CPP14Parser.XorAssign - 96)) | (1 << (CPP14Parser.AndAssign - 96)) | (1 << (CPP14Parser.OrAssign - 96)) | (1 << (CPP14Parser.LeftShiftAssign - 96)) | (1 << (CPP14Parser.RightShiftAssign - 96)) | (1 << (CPP14Parser.Equal - 96)) | (1 << (CPP14Parser.NotEqual - 96)) | (1 << (CPP14Parser.LessEqual - 96)) | (1 << (CPP14Parser.GreaterEqual - 96)) | (1 << (CPP14Parser.AndAnd - 96)) | (1 << (CPP14Parser.OrOr - 96)) | (1 << (CPP14Parser.PlusPlus - 96)) | (1 << (CPP14Parser.MinusMinus - 96)) | (1 << (CPP14Parser.Comma - 96)) | (1 << (CPP14Parser.ArrowStar - 96)) | (1 << (CPP14Parser.Arrow - 96)) | (1 << (CPP14Parser.Question - 96)) | (1 << (CPP14Parser.Colon - 96)) | (1 << (CPP14Parser.Doublecolon - 96)) | (1 << (CPP14Parser.Semi - 96)))) !== 0) || ((((_la - 128)) & ~0x1F) === 0 && ((1 << (_la - 128)) & ((1 << (CPP14Parser.Dot - 128)) | (1 << (CPP14Parser.DotStar - 128)) | (1 << (CPP14Parser.Ellipsis - 128)) | (1 << (CPP14Parser.Quote - 128)) | (1 << (CPP14Parser.IncludeQuote - 128)) | (1 << (CPP14Parser.HFormat - 128)) | (1 << (CPP14Parser.MultiLineMacro - 128)) | (1 << (CPP14Parser.Identifier - 128)) | (1 << (CPP14Parser.DecimalLiteral - 128)) | (1 << (CPP14Parser.OctalLiteral - 128)) | (1 << (CPP14Parser.HexadecimalLiteral - 128)) | (1 << (CPP14Parser.BinaryLiteral - 128)) | (1 << (CPP14Parser.Integersuffix - 128)) | (1 << (CPP14Parser.UserDefinedIntegerLiteral - 128)) | (1 << (CPP14Parser.UserDefinedFloatingLiteral - 128)) | (1 << (CPP14Parser.UserDefinedStringLiteral - 128)) | (1 << (CPP14Parser.UserDefinedCharacterLiteral - 128)) | (1 << (CPP14Parser.Whitespace - 128)) | (1 << (CPP14Parser.Newline - 128)) | (1 << (CPP14Parser.BlockComment - 128)) | (1 << (CPP14Parser.LineComment - 128)))) !== 0)) {
 				{
 				this.state = 1349;
 				this.balancedTokenSeq();
@@ -6805,7 +6807,7 @@ export class CPP14Parser extends Parser {
 				this.state = 1357;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CPP14Parser.IntegerLiteral) | (1 << CPP14Parser.CharacterLiteral) | (1 << CPP14Parser.FloatingLiteral) | (1 << CPP14Parser.StringLiteral) | (1 << CPP14Parser.BooleanLiteral) | (1 << CPP14Parser.PointerLiteral) | (1 << CPP14Parser.UserDefinedLiteral) | (1 << CPP14Parser.Include) | (1 << CPP14Parser.Alignas) | (1 << CPP14Parser.Alignof) | (1 << CPP14Parser.Asm) | (1 << CPP14Parser.Auto) | (1 << CPP14Parser.Bool) | (1 << CPP14Parser.Break) | (1 << CPP14Parser.Case) | (1 << CPP14Parser.Catch) | (1 << CPP14Parser.Char) | (1 << CPP14Parser.Char16) | (1 << CPP14Parser.Char32) | (1 << CPP14Parser.Class) | (1 << CPP14Parser.Const) | (1 << CPP14Parser.Constexpr) | (1 << CPP14Parser.Const_cast) | (1 << CPP14Parser.Continue) | (1 << CPP14Parser.Decltype) | (1 << CPP14Parser.Default) | (1 << CPP14Parser.Delete) | (1 << CPP14Parser.Do) | (1 << CPP14Parser.Double) | (1 << CPP14Parser.Dynamic_cast) | (1 << CPP14Parser.Else))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CPP14Parser.Enum - 32)) | (1 << (CPP14Parser.Explicit - 32)) | (1 << (CPP14Parser.Export - 32)) | (1 << (CPP14Parser.Extern - 32)) | (1 << (CPP14Parser.False_ - 32)) | (1 << (CPP14Parser.Final - 32)) | (1 << (CPP14Parser.Float - 32)) | (1 << (CPP14Parser.For - 32)) | (1 << (CPP14Parser.Friend - 32)) | (1 << (CPP14Parser.Goto - 32)) | (1 << (CPP14Parser.If - 32)) | (1 << (CPP14Parser.Inline - 32)) | (1 << (CPP14Parser.Int - 32)) | (1 << (CPP14Parser.Long - 32)) | (1 << (CPP14Parser.Mutable - 32)) | (1 << (CPP14Parser.Namespace - 32)) | (1 << (CPP14Parser.New - 32)) | (1 << (CPP14Parser.Noexcept - 32)) | (1 << (CPP14Parser.Nullptr - 32)) | (1 << (CPP14Parser.Operator - 32)) | (1 << (CPP14Parser.Override - 32)) | (1 << (CPP14Parser.Private - 32)) | (1 << (CPP14Parser.Protected - 32)) | (1 << (CPP14Parser.Public - 32)) | (1 << (CPP14Parser.Register - 32)) | (1 << (CPP14Parser.Reinterpret_cast - 32)) | (1 << (CPP14Parser.Return - 32)) | (1 << (CPP14Parser.Short - 32)) | (1 << (CPP14Parser.Signed - 32)) | (1 << (CPP14Parser.Sizeof - 32)) | (1 << (CPP14Parser.Static - 32)) | (1 << (CPP14Parser.Static_assert - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CPP14Parser.Static_cast - 64)) | (1 << (CPP14Parser.Struct - 64)) | (1 << (CPP14Parser.Switch - 64)) | (1 << (CPP14Parser.Template - 64)) | (1 << (CPP14Parser.This - 64)) | (1 << (CPP14Parser.Thread_local - 64)) | (1 << (CPP14Parser.Throw - 64)) | (1 << (CPP14Parser.True_ - 64)) | (1 << (CPP14Parser.Try - 64)) | (1 << (CPP14Parser.Typedef - 64)) | (1 << (CPP14Parser.Typeid_ - 64)) | (1 << (CPP14Parser.Typename_ - 64)) | (1 << (CPP14Parser.Union - 64)) | (1 << (CPP14Parser.Unsigned - 64)) | (1 << (CPP14Parser.Using - 64)) | (1 << (CPP14Parser.Virtual - 64)) | (1 << (CPP14Parser.Void - 64)) | (1 << (CPP14Parser.Volatile - 64)) | (1 << (CPP14Parser.Wchar - 64)) | (1 << (CPP14Parser.While - 64)) | (1 << (CPP14Parser.LeftParen - 64)) | (1 << (CPP14Parser.LeftBracket - 64)) | (1 << (CPP14Parser.LeftBrace - 64)) | (1 << (CPP14Parser.Plus - 64)) | (1 << (CPP14Parser.Minus - 64)) | (1 << (CPP14Parser.Star - 64)) | (1 << (CPP14Parser.Div - 64)) | (1 << (CPP14Parser.Mod - 64)) | (1 << (CPP14Parser.Caret - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CPP14Parser.And - 96)) | (1 << (CPP14Parser.Or - 96)) | (1 << (CPP14Parser.Tilde - 96)) | (1 << (CPP14Parser.Not - 96)) | (1 << (CPP14Parser.Assign - 96)) | (1 << (CPP14Parser.Less - 96)) | (1 << (CPP14Parser.Greater - 96)) | (1 << (CPP14Parser.PlusAssign - 96)) | (1 << (CPP14Parser.MinusAssign - 96)) | (1 << (CPP14Parser.StarAssign - 96)) | (1 << (CPP14Parser.DivAssign - 96)) | (1 << (CPP14Parser.ModAssign - 96)) | (1 << (CPP14Parser.XorAssign - 96)) | (1 << (CPP14Parser.AndAssign - 96)) | (1 << (CPP14Parser.OrAssign - 96)) | (1 << (CPP14Parser.LeftShiftAssign - 96)) | (1 << (CPP14Parser.RightShiftAssign - 96)) | (1 << (CPP14Parser.Equal - 96)) | (1 << (CPP14Parser.NotEqual - 96)) | (1 << (CPP14Parser.LessEqual - 96)) | (1 << (CPP14Parser.GreaterEqual - 96)) | (1 << (CPP14Parser.AndAnd - 96)) | (1 << (CPP14Parser.OrOr - 96)) | (1 << (CPP14Parser.PlusPlus - 96)) | (1 << (CPP14Parser.MinusMinus - 96)) | (1 << (CPP14Parser.Comma - 96)) | (1 << (CPP14Parser.ArrowStar - 96)) | (1 << (CPP14Parser.Arrow - 96)) | (1 << (CPP14Parser.Question - 96)) | (1 << (CPP14Parser.Colon - 96)) | (1 << (CPP14Parser.Doublecolon - 96)) | (1 << (CPP14Parser.Semi - 96)))) !== 0) || ((((_la - 128)) & ~0x1F) === 0 && ((1 << (_la - 128)) & ((1 << (CPP14Parser.Dot - 128)) | (1 << (CPP14Parser.DotStar - 128)) | (1 << (CPP14Parser.Ellipsis - 128)) | (1 << (CPP14Parser.Quote - 128)) | (1 << (CPP14Parser.IncludeQuote - 128)) | (1 << (CPP14Parser.HFormat - 128)) | (1 << (CPP14Parser.Identifier - 128)) | (1 << (CPP14Parser.DecimalLiteral - 128)) | (1 << (CPP14Parser.OctalLiteral - 128)) | (1 << (CPP14Parser.HexadecimalLiteral - 128)) | (1 << (CPP14Parser.BinaryLiteral - 128)) | (1 << (CPP14Parser.Integersuffix - 128)) | (1 << (CPP14Parser.UserDefinedIntegerLiteral - 128)) | (1 << (CPP14Parser.UserDefinedFloatingLiteral - 128)) | (1 << (CPP14Parser.UserDefinedStringLiteral - 128)) | (1 << (CPP14Parser.UserDefinedCharacterLiteral - 128)) | (1 << (CPP14Parser.Whitespace - 128)) | (1 << (CPP14Parser.Newline - 128)) | (1 << (CPP14Parser.BlockComment - 128)) | (1 << (CPP14Parser.LineComment - 128)))) !== 0));
+			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CPP14Parser.IntegerLiteral) | (1 << CPP14Parser.CharacterLiteral) | (1 << CPP14Parser.FloatingLiteral) | (1 << CPP14Parser.StringLiteral) | (1 << CPP14Parser.BooleanLiteral) | (1 << CPP14Parser.PointerLiteral) | (1 << CPP14Parser.UserDefinedLiteral) | (1 << CPP14Parser.Include) | (1 << CPP14Parser.Alignas) | (1 << CPP14Parser.Alignof) | (1 << CPP14Parser.Asm) | (1 << CPP14Parser.Auto) | (1 << CPP14Parser.Bool) | (1 << CPP14Parser.Break) | (1 << CPP14Parser.Case) | (1 << CPP14Parser.Catch) | (1 << CPP14Parser.Char) | (1 << CPP14Parser.Char16) | (1 << CPP14Parser.Char32) | (1 << CPP14Parser.Class) | (1 << CPP14Parser.Const) | (1 << CPP14Parser.Constexpr) | (1 << CPP14Parser.Const_cast) | (1 << CPP14Parser.Continue) | (1 << CPP14Parser.Decltype) | (1 << CPP14Parser.Default) | (1 << CPP14Parser.Delete) | (1 << CPP14Parser.Do) | (1 << CPP14Parser.Double) | (1 << CPP14Parser.Dynamic_cast) | (1 << CPP14Parser.Else))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CPP14Parser.Enum - 32)) | (1 << (CPP14Parser.Explicit - 32)) | (1 << (CPP14Parser.Export - 32)) | (1 << (CPP14Parser.Extern - 32)) | (1 << (CPP14Parser.False_ - 32)) | (1 << (CPP14Parser.Final - 32)) | (1 << (CPP14Parser.Float - 32)) | (1 << (CPP14Parser.For - 32)) | (1 << (CPP14Parser.Friend - 32)) | (1 << (CPP14Parser.Goto - 32)) | (1 << (CPP14Parser.If - 32)) | (1 << (CPP14Parser.Inline - 32)) | (1 << (CPP14Parser.Int - 32)) | (1 << (CPP14Parser.Long - 32)) | (1 << (CPP14Parser.Mutable - 32)) | (1 << (CPP14Parser.Namespace - 32)) | (1 << (CPP14Parser.New - 32)) | (1 << (CPP14Parser.Noexcept - 32)) | (1 << (CPP14Parser.Nullptr - 32)) | (1 << (CPP14Parser.Operator - 32)) | (1 << (CPP14Parser.Override - 32)) | (1 << (CPP14Parser.Private - 32)) | (1 << (CPP14Parser.Protected - 32)) | (1 << (CPP14Parser.Public - 32)) | (1 << (CPP14Parser.Register - 32)) | (1 << (CPP14Parser.Reinterpret_cast - 32)) | (1 << (CPP14Parser.Return - 32)) | (1 << (CPP14Parser.Short - 32)) | (1 << (CPP14Parser.Signed - 32)) | (1 << (CPP14Parser.Sizeof - 32)) | (1 << (CPP14Parser.Static - 32)) | (1 << (CPP14Parser.Static_assert - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CPP14Parser.Static_cast - 64)) | (1 << (CPP14Parser.Struct - 64)) | (1 << (CPP14Parser.Switch - 64)) | (1 << (CPP14Parser.Template - 64)) | (1 << (CPP14Parser.This - 64)) | (1 << (CPP14Parser.Thread_local - 64)) | (1 << (CPP14Parser.Throw - 64)) | (1 << (CPP14Parser.True_ - 64)) | (1 << (CPP14Parser.Try - 64)) | (1 << (CPP14Parser.Typedef - 64)) | (1 << (CPP14Parser.Typeid_ - 64)) | (1 << (CPP14Parser.Typename_ - 64)) | (1 << (CPP14Parser.Union - 64)) | (1 << (CPP14Parser.Unsigned - 64)) | (1 << (CPP14Parser.Using - 64)) | (1 << (CPP14Parser.Virtual - 64)) | (1 << (CPP14Parser.Void - 64)) | (1 << (CPP14Parser.Volatile - 64)) | (1 << (CPP14Parser.Wchar - 64)) | (1 << (CPP14Parser.While - 64)) | (1 << (CPP14Parser.LeftParen - 64)) | (1 << (CPP14Parser.LeftBracket - 64)) | (1 << (CPP14Parser.LeftBrace - 64)) | (1 << (CPP14Parser.Plus - 64)) | (1 << (CPP14Parser.Minus - 64)) | (1 << (CPP14Parser.Star - 64)) | (1 << (CPP14Parser.Div - 64)) | (1 << (CPP14Parser.Mod - 64)) | (1 << (CPP14Parser.Caret - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CPP14Parser.And - 96)) | (1 << (CPP14Parser.Or - 96)) | (1 << (CPP14Parser.Tilde - 96)) | (1 << (CPP14Parser.Not - 96)) | (1 << (CPP14Parser.Assign - 96)) | (1 << (CPP14Parser.Less - 96)) | (1 << (CPP14Parser.Greater - 96)) | (1 << (CPP14Parser.PlusAssign - 96)) | (1 << (CPP14Parser.MinusAssign - 96)) | (1 << (CPP14Parser.StarAssign - 96)) | (1 << (CPP14Parser.DivAssign - 96)) | (1 << (CPP14Parser.ModAssign - 96)) | (1 << (CPP14Parser.XorAssign - 96)) | (1 << (CPP14Parser.AndAssign - 96)) | (1 << (CPP14Parser.OrAssign - 96)) | (1 << (CPP14Parser.LeftShiftAssign - 96)) | (1 << (CPP14Parser.RightShiftAssign - 96)) | (1 << (CPP14Parser.Equal - 96)) | (1 << (CPP14Parser.NotEqual - 96)) | (1 << (CPP14Parser.LessEqual - 96)) | (1 << (CPP14Parser.GreaterEqual - 96)) | (1 << (CPP14Parser.AndAnd - 96)) | (1 << (CPP14Parser.OrOr - 96)) | (1 << (CPP14Parser.PlusPlus - 96)) | (1 << (CPP14Parser.MinusMinus - 96)) | (1 << (CPP14Parser.Comma - 96)) | (1 << (CPP14Parser.ArrowStar - 96)) | (1 << (CPP14Parser.Arrow - 96)) | (1 << (CPP14Parser.Question - 96)) | (1 << (CPP14Parser.Colon - 96)) | (1 << (CPP14Parser.Doublecolon - 96)) | (1 << (CPP14Parser.Semi - 96)))) !== 0) || ((((_la - 128)) & ~0x1F) === 0 && ((1 << (_la - 128)) & ((1 << (CPP14Parser.Dot - 128)) | (1 << (CPP14Parser.DotStar - 128)) | (1 << (CPP14Parser.Ellipsis - 128)) | (1 << (CPP14Parser.Quote - 128)) | (1 << (CPP14Parser.IncludeQuote - 128)) | (1 << (CPP14Parser.HFormat - 128)) | (1 << (CPP14Parser.MultiLineMacro - 128)) | (1 << (CPP14Parser.Identifier - 128)) | (1 << (CPP14Parser.DecimalLiteral - 128)) | (1 << (CPP14Parser.OctalLiteral - 128)) | (1 << (CPP14Parser.HexadecimalLiteral - 128)) | (1 << (CPP14Parser.BinaryLiteral - 128)) | (1 << (CPP14Parser.Integersuffix - 128)) | (1 << (CPP14Parser.UserDefinedIntegerLiteral - 128)) | (1 << (CPP14Parser.UserDefinedFloatingLiteral - 128)) | (1 << (CPP14Parser.UserDefinedStringLiteral - 128)) | (1 << (CPP14Parser.UserDefinedCharacterLiteral - 128)) | (1 << (CPP14Parser.Whitespace - 128)) | (1 << (CPP14Parser.Newline - 128)) | (1 << (CPP14Parser.BlockComment - 128)) | (1 << (CPP14Parser.LineComment - 128)))) !== 0));
 			}
 		}
 		catch (re) {
@@ -6992,6 +6994,7 @@ export class CPP14Parser extends Parser {
 			case CPP14Parser.Quote:
 			case CPP14Parser.IncludeQuote:
 			case CPP14Parser.HFormat:
+			case CPP14Parser.MultiLineMacro:
 			case CPP14Parser.Identifier:
 			case CPP14Parser.DecimalLiteral:
 			case CPP14Parser.OctalLiteral:
@@ -11709,7 +11712,7 @@ export class CPP14Parser extends Parser {
 
 	private static readonly _serializedATNSegments: number = 4;
 	private static readonly _serializedATNSegment0: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x95\u0839\x04" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x96\u0839\x04" +
 		"\x02\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04" +
 		"\x07\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r" +
 		"\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12" +
@@ -12027,7 +12030,7 @@ export class CPP14Parser extends Parser {
 		"\x03\x02\x02\x02\u0191\u018F\x03\x02\x02\x02\u0191\u0190\x03\x02\x02\x02" +
 		"\u0192\x05\x03\x02\x02\x02\u0193\u0196\x05\b\x05\x02\u0194\u0196\x05\n" +
 		"\x06\x02\u0195\u0193\x03\x02\x02\x02\u0195\u0194\x03\x02\x02\x02\u0196" +
-		"\x07\x03\x02\x02\x02\u0197\u01A2\x07\x88\x02\x02\u0198\u01A2\x05\u014C" +
+		"\x07\x03\x02\x02\x02\u0197\u01A2\x07\x89\x02\x02\u0198\u01A2\x05\u014C" +
 		"\xA7\x02\u0199\u01A2\x05\u013E\xA0\x02\u019A\u01A2\x05\u014E\xA8\x02\u019B" +
 		"\u019E\x07d\x02\x02\u019C\u019F\x05\u0118\x8D\x02\u019D\u019F\x05\xA4" +
 		"S\x02\u019E\u019C\x03\x02\x02\x02\u019E\u019D\x03\x02\x02\x02\u019F\u01A2" +
@@ -12041,7 +12044,7 @@ export class CPP14Parser extends Parser {
 		"\u01AC\u01AE\x05\xA4S\x02\u01AD\u01AA\x03\x02\x02\x02\u01AD\u01AB\x03" +
 		"\x02\x02\x02\u01AD\u01AC\x03\x02\x02\x02\u01AD\u01AE\x03\x02\x02\x02\u01AE" +
 		"\u01AF\x03\x02\x02\x02\u01AF\u01B0\x07\x80\x02\x02\u01B0\u01BC\x03\x02" +
-		"\x02\x02\u01B1\u01B7\f\x03\x02\x02\u01B2\u01B8\x07\x88\x02\x02\u01B3\u01B5" +
+		"\x02\x02\u01B1\u01B7\f\x03\x02\x02\u01B2\u01B8\x07\x89\x02\x02\u01B3\u01B5" +
 		"\x07E\x02\x02\u01B4\u01B3\x03\x02\x02\x02\u01B4\u01B5\x03\x02\x02\x02" +
 		"\u01B5\u01B6\x03\x02\x02\x02\u01B6\u01B8\x05\u0158\xAD\x02\u01B7\u01B2" +
 		"\x03\x02\x02\x02\u01B7\u01B4\x03\x02\x02\x02\u01B8\u01B9\x03\x02\x02\x02" +
@@ -12066,10 +12069,10 @@ export class CPP14Parser extends Parser {
 		"\x02\u01E2\u01E0\x03\x02\x02\x02\u01E2\u01E1\x03\x02\x02\x02\u01E3\x19" +
 		"\x03\x02\x02\x02\u01E4\u01E6\x07b\x02\x02\u01E5\u01E4\x03\x02\x02\x02" +
 		"\u01E5\u01E6\x03\x02\x02\x02\u01E6\u01E7\x03\x02\x02\x02\u01E7\u01EA\x07" +
-		"\x88\x02\x02\u01E8\u01EA\x07F\x02\x02\u01E9\u01E5\x03\x02\x02\x02\u01E9" +
+		"\x89\x02\x02\u01E8\u01EA\x07F\x02\x02\u01E9\u01E5\x03\x02\x02\x02\u01E9" +
 		"\u01E8\x03\x02\x02\x02\u01EA\x1B\x03\x02\x02\x02\u01EB\u01ED\x07b\x02" +
 		"\x02\u01EC\u01EB\x03\x02\x02\x02\u01EC\u01ED\x03\x02\x02\x02\u01ED\u01EE" +
-		"\x03\x02\x02\x02\u01EE\u01EF\x07\x88\x02\x02\u01EF\u01F0\x05\u010E\x88" +
+		"\x03\x02\x02\x02\u01EE\u01EF\x07\x89\x02\x02\u01EF\u01F0\x05\u010E\x88" +
 		"\x02\u01F0\x1D\x03\x02\x02\x02\u01F1\u01F3\x07V\x02\x02\u01F2\u01F4\x05" +
 		"\u0104\x83\x02\u01F3\u01F2\x03\x02\x02\x02\u01F3\u01F4\x03\x02\x02\x02" +
 		"\u01F4\u01F5\x03\x02\x02\x02\u01F5\u01F7\x07W\x02\x02\u01F6\u01F8\x07" +
@@ -12125,7 +12128,7 @@ export class CPP14Parser extends Parser {
 		"\x02\x02\u025F\u0260\x03\x02\x02\x02\u0260\u0275\x05(\x15\x02\u0261\u026A" +
 		"\x07?\x02\x02\u0262\u0263\x07V\x02\x02\u0263\u0264\x05\xF8}\x02\u0264" +
 		"\u0265\x07W\x02\x02\u0265\u026B\x03\x02\x02\x02\u0266\u0267\x07\x84\x02" +
-		"\x02\u0267\u0268\x07V\x02\x02\u0268\u0269\x07\x88\x02\x02\u0269\u026B" +
+		"\x02\u0267\u0268\x07V\x02\x02\u0268\u0269\x07\x89\x02\x02\u0269\u026B" +
 		"\x07W\x02\x02\u026A\u0262\x03\x02\x02\x02\u026A\u0266\x03\x02\x02\x02" +
 		"\u026B\u0275\x03\x02\x02\x02\u026C\u026D\x07\f\x02\x02\u026D\u026E\x07" +
 		"V\x02\x02\u026E\u026F\x05\xF8}\x02\u026F\u0270\x07W\x02\x02\u0270\u0275" +
@@ -12230,7 +12233,7 @@ export class CPP14Parser extends Parser {
 		"\u0353\x03\x02\x02\x02\u0351\u0353\x05x=\x02\u0352\u0345\x03\x02\x02\x02" +
 		"\u0352\u0347\x03\x02\x02\x02\u0352\u0351\x03\x02\x02\x02\u0353a\x03\x02" +
 		"\x02\x02\u0354\u0356\x05\xCEh\x02\u0355\u0354\x03\x02\x02\x02\u0355\u0356" +
-		"\x03\x02\x02\x02\u0356\u035B\x03\x02\x02\x02\u0357\u035C\x07\x88\x02\x02" +
+		"\x03\x02\x02\x02\u0356\u035B\x03\x02\x02\x02\u0357\u035C\x07\x89\x02\x02" +
 		"\u0358\u0359\x07\x11\x02\x02\u0359\u035C\x05^0\x02\u035A\u035C\x07\x1C" +
 		"\x02\x02\u035B\u0357\x03\x02\x02\x02\u035B\u0358\x03\x02\x02\x02\u035B" +
 		"\u035A\x03\x02\x02\x02\u035C\u035D\x03\x02\x02\x02\u035D\u035E\x07\x7F" +
@@ -12281,7 +12284,7 @@ export class CPP14Parser extends Parser {
 		"\x07<\x02\x02\u03C2\u03C5\x05\\/\x02\u03C3\u03C5\x05\u0116\x8C\x02\u03C4" +
 		"\u03C2\x03\x02\x02\x02\u03C4\u03C3\x03\x02\x02\x02\u03C4\u03C5\x03\x02" +
 		"\x02\x02\u03C5\u03C9\x03\x02\x02\x02\u03C6\u03C7\x07+\x02\x02\u03C7\u03C9" +
-		"\x07\x88\x02\x02\u03C8\u03BF\x03\x02\x02\x02\u03C8\u03C0\x03\x02\x02\x02" +
+		"\x07\x89\x02\x02\u03C8\u03BF\x03\x02\x02\x02\u03C8\u03C0\x03\x02\x02\x02" +
 		"\u03C8\u03C1\x03\x02\x02\x02\u03C8\u03C6\x03\x02\x02\x02\u03C9\u03CA\x03" +
 		"\x02\x02\x02\u03CA\u03CB\x07\x81\x02\x02\u03CBw\x03\x02\x02\x02\u03CC" +
 		"\u03CD\x05\x82B\x02\u03CDy\x03\x02\x02\x02\u03CE\u03D0\x05|?\x02\u03CF" +
@@ -12299,8 +12302,8 @@ export class CPP14Parser extends Parser {
 		"\u03E2\u03E3\x07h\x02\x02\u03E3\u03E9\x03\x02\x02\x02\u03E4\u03E5\x07" +
 		"\x86\x02\x02\u03E5\u03E6\x05\x80A\x02\u03E6\u03E7\x07\x85\x02\x02\u03E7" +
 		"\u03E9\x03\x02\x02\x02\u03E8\u03DF\x03\x02\x02\x02\u03E8\u03E4\x03\x02" +
-		"\x02\x02\u03E9\x7F\x03\x02\x02\x02\u03EA\u03EF\x07\x88\x02\x02\u03EB\u03EC" +
-		"\x07_\x02\x02\u03EC\u03EE\x07\x88\x02\x02\u03ED\u03EB\x03\x02\x02\x02" +
+		"\x02\x02\u03E9\x7F\x03\x02\x02\x02\u03EA\u03EF\x07\x89\x02\x02\u03EB\u03EC" +
+		"\x07_\x02\x02\u03EC\u03EE\x07\x89\x02\x02\u03ED\u03EB\x03\x02\x02\x02" +
 		"\u03EE\u03F1\x03\x02\x02\x02\u03EF\u03ED\x03\x02\x02\x02\u03EF\u03F0\x03" +
 		"\x02\x02\x02\u03F0\u03F4\x03\x02\x02\x02\u03F1\u03EF\x03\x02\x02\x02\u03F2" +
 		"\u03F3\x07\x82\x02\x02\u03F3\u03F5\x07\x87\x02\x02\u03F4\u03F2\x03\x02" +
@@ -12311,7 +12314,7 @@ export class CPP14Parser extends Parser {
 		"\x02\x02\u03FE\u03F7\x03\x02\x02\x02\u03FE\u03F8\x03\x02\x02\x02\u03FE" +
 		"\u03F9\x03\x02\x02\x02\u03FE\u03FA\x03\x02\x02\x02\u03FE\u03FB\x03\x02" +
 		"\x02\x02\u03FE\u03FC\x03\x02\x02\x02\u03FE\u03FD\x03\x02\x02\x02\u03FF" +
-		"\x83\x03\x02\x02\x02\u0400\u0401\x07P\x02\x02\u0401\u0403\x07\x88\x02" +
+		"\x83\x03\x02\x02\x02\u0400\u0401\x07P\x02\x02\u0401\u0403\x07\x89\x02" +
 		"\x02\u0402\u0404\x05\xCEh\x02\u0403\u0402\x03\x02\x02\x02\u0403\u0404" +
 		"\x03\x02\x02\x02\u0404\u0405\x03\x02\x02\x02\u0405\u0406\x07f\x02\x02" +
 		"\u0406\u0407\x05\xF8}\x02\u0407\u0408\x07\x81\x02\x02\u0408\x85\x03\x02" +
@@ -12337,7 +12340,7 @@ export class CPP14Parser extends Parser {
 		"\u0432\x03\x02\x02\x02\u0432\u0434\x03\x02\x02\x02\u0433\u0435\x05\xCE" +
 		"h\x02\u0434\u0433\x03\x02\x02\x02\u0434\u0435\x03\x02\x02\x02\u0435\x91" +
 		"\x03\x02\x02\x02\u0436\u0437\t\r\x02\x02\u0437\x93\x03\x02\x02\x02\u0438" +
-		"\u0439\t\x0E\x02\x02\u0439\x95\x03\x02\x02\x02\u043A\u043B\x07\x88\x02" +
+		"\u0439\t\x0E\x02\x02\u0439\x95\x03\x02\x02\x02\u043A\u043B\x07\x89\x02" +
 		"\x02\u043B\x97\x03\x02\x02\x02\u043C\u0440\x05\x9AN\x02\u043D\u0440\x05" +
 		"\u011A\x8E\x02\u043E\u0440\x05\xAAV\x02\u043F\u043C\x03\x02\x02\x02\u043F" +
 		"\u043D\x03\x02\x02\x02\u043F\u043E\x03\x02\x02\x02\u0440\x99\x03\x02\x02" +
@@ -12378,16 +12381,16 @@ export class CPP14Parser extends Parser {
 		"\x02\x02\u047E\u048D\x05\u0122\x92\x02\u047F\u0481\x05\xCEh\x02\u0480" +
 		"\u047F\x03\x02\x02\x02\u0480\u0481\x03\x02\x02\x02\u0481\u0483\x03\x02" +
 		"\x02\x02\u0482\u0484\x05\f\x07\x02\u0483\u0482\x03\x02\x02\x02\u0483\u0484" +
-		"\x03\x02\x02\x02\u0484\u0485\x03\x02\x02\x02\u0485\u048E\x07\x88\x02\x02" +
+		"\x03\x02\x02\x02\u0484\u0485\x03\x02\x02\x02\u0485\u048E\x07\x89\x02\x02" +
 		"\u0486\u048E\x05\u0158\xAD\x02\u0487\u0489\x05\f\x07\x02\u0488\u048A\x07" +
 		"E\x02\x02\u0489\u0488\x03\x02\x02\x02\u0489\u048A\x03\x02\x02\x02\u048A" +
 		"\u048B\x03\x02\x02\x02\u048B\u048C\x05\u0158\xAD\x02\u048C\u048E\x03\x02" +
 		"\x02\x02\u048D\u0480\x03\x02\x02\x02\u048D\u0486\x03\x02\x02\x02\u048D" +
 		"\u0487\x03\x02\x02\x02\u048E\u0495\x03\x02\x02\x02\u048F\u0491\x07\"\x02" +
 		"\x02\u0490\u0492\x05\f\x07\x02\u0491\u0490\x03\x02\x02\x02\u0491\u0492" +
-		"\x03\x02\x02\x02\u0492\u0493\x03\x02\x02\x02\u0493\u0495\x07\x88\x02\x02" +
+		"\x03\x02\x02\x02\u0492\u0493\x03\x02\x02\x02\u0493\u0495\x07\x89\x02\x02" +
 		"\u0494\u047E\x03\x02\x02\x02\u0494\u048F\x03\x02\x02\x02\u0495\xA7\x03" +
-		"\x02\x02\x02\u0496\u0497\x07\x88\x02\x02\u0497\xA9\x03\x02\x02\x02\u0498" +
+		"\x02\x02\x02\u0496\u0497\x07\x89\x02\x02\u0497\xA9\x03\x02\x02\x02\u0498" +
 		"\u0499\x05\xACW\x02\u0499\u049E\x07Z\x02\x02\u049A\u049C\x05\xB4[\x02" +
 		"\u049B\u049D\x07{\x02\x02\u049C\u049B\x03\x02\x02\x02\u049C\u049D\x03" +
 		"\x02\x02\x02\u049D\u049F\x03\x02\x02\x02\u049E\u049A\x03\x02\x02\x02\u049E" +
@@ -12396,12 +12399,12 @@ export class CPP14Parser extends Parser {
 		"\xCEh\x02\u04A4\u04A3\x03\x02\x02\x02\u04A4\u04A5\x03\x02\x02\x02\u04A5" +
 		"\u04AA\x03\x02\x02\x02\u04A6\u04A8\x05\f\x07\x02\u04A7\u04A6\x03\x02\x02" +
 		"\x02\u04A7\u04A8\x03\x02\x02\x02\u04A8\u04A9\x03\x02\x02\x02\u04A9\u04AB" +
-		"\x07\x88\x02\x02\u04AA\u04A7\x03\x02\x02\x02\u04AA\u04AB\x03\x02\x02\x02" +
+		"\x07\x89\x02\x02\u04AA\u04A7\x03\x02\x02\x02\u04AA\u04AB\x03\x02\x02\x02" +
 		"\u04AB\u04AD\x03\x02\x02\x02\u04AC\u04AE\x05\xB2Z\x02\u04AD\u04AC\x03" +
 		"\x02\x02\x02\u04AD\u04AE\x03\x02\x02\x02\u04AE\xAD\x03\x02\x02\x02\u04AF" +
 		"\u04B1\x05\xB0Y\x02\u04B0\u04B2\x05\xCEh\x02\u04B1\u04B0\x03\x02\x02\x02" +
 		"\u04B1\u04B2\x03\x02\x02\x02\u04B2\u04B3\x03\x02\x02\x02\u04B3\u04B5\x07" +
-		"\x88\x02\x02\u04B4\u04B6\x05\xB2Z\x02\u04B5\u04B4\x03\x02\x02\x02\u04B5" +
+		"\x89\x02\x02\u04B4\u04B6\x05\xB2Z\x02\u04B5\u04B4\x03\x02\x02\x02\u04B5" +
 		"\u04B6\x03\x02\x02\x02\u04B6\u04B7\x03\x02\x02\x02\u04B7\u04B8\x07\x81" +
 		"\x02\x02\u04B8\xAF\x03\x02\x02\x02\u04B9\u04BB\x07\"\x02\x02\u04BA\u04BC" +
 		"\t\x0F\x02\x02\u04BB\u04BA\x03\x02\x02\x02\u04BB\u04BC\x03\x02\x02\x02" +
@@ -12412,18 +12415,18 @@ export class CPP14Parser extends Parser {
 		"\x02\x02\u04C6\xB5\x03\x02\x02\x02\u04C7\u04C5\x03\x02\x02\x02\u04C8\u04CB" +
 		"\x05\xB8]\x02\u04C9\u04CA\x07f\x02\x02\u04CA\u04CC\x05^0\x02\u04CB\u04C9" +
 		"\x03\x02\x02\x02\u04CB\u04CC\x03\x02\x02\x02\u04CC\xB7\x03\x02\x02\x02" +
-		"\u04CD\u04CE\x07\x88\x02\x02\u04CE\xB9\x03\x02\x02\x02\u04CF\u04D2\x05" +
+		"\u04CD\u04CE\x07\x89\x02\x02\u04CE\xB9\x03\x02\x02\x02\u04CF\u04D2\x05" +
 		"\xBC_\x02\u04D0\u04D2\x05\xC0a\x02\u04D1\u04CF\x03\x02\x02\x02\u04D1\u04D0" +
-		"\x03\x02\x02\x02\u04D2\xBB\x03\x02\x02\x02\u04D3\u04D4\x07\x88\x02\x02" +
+		"\x03\x02\x02\x02\u04D2\xBB\x03\x02\x02\x02\u04D3\u04D4\x07\x89\x02\x02" +
 		"\u04D4\xBD\x03\x02\x02\x02\u04D5\u04D7\x07-\x02\x02\u04D6\u04D5\x03\x02" +
 		"\x02\x02\u04D6\u04D7\x03\x02\x02\x02\u04D7\u04D8\x03\x02\x02\x02\u04D8" +
-		"\u04DB\x071\x02\x02\u04D9\u04DC\x07\x88\x02\x02\u04DA\u04DC\x05\xBC_\x02" +
+		"\u04DB\x071\x02\x02\u04D9\u04DC\x07\x89\x02\x02\u04DA\u04DC\x05\xBC_\x02" +
 		"\u04DB\u04D9\x03\x02\x02\x02\u04DB\u04DA\x03\x02\x02\x02\u04DB\u04DC\x03" +
 		"\x02\x02\x02\u04DC\u04DD\x03\x02\x02\x02\u04DD\u04DF\x07Z\x02\x02\u04DE" +
 		"\u04E0\x05z>\x02\u04DF\u04DE\x03\x02\x02\x02\u04DF\u04E0\x03\x02\x02\x02" +
 		"\u04E0\u04E1\x03\x02\x02\x02\u04E1\u04E2\x07[\x02\x02\u04E2\xBF\x03\x02" +
-		"\x02\x02\u04E3\u04E4\x07\x88\x02\x02\u04E4\xC1\x03\x02\x02\x02\u04E5\u04E6" +
-		"\x071\x02\x02\u04E6\u04E7\x07\x88\x02\x02\u04E7\u04E8\x07f\x02\x02\u04E8" +
+		"\x02\x02\u04E3\u04E4\x07\x89\x02\x02\u04E4\xC1\x03\x02\x02\x02\u04E5\u04E6" +
+		"\x071\x02\x02\u04E6\u04E7\x07\x89\x02\x02\u04E7\u04E8\x07f\x02\x02\u04E8" +
 		"\u04E9\x05\xC4c\x02\u04E9\u04EA\x07\x81\x02\x02\u04EA\xC3\x03\x02\x02" +
 		"\x02\u04EB\u04ED\x05\f\x07\x02\u04EC\u04EB\x03\x02\x02\x02\u04EC\u04ED" +
 		"\x03\x02\x02\x02\u04ED\u04EE\x03\x02\x02\x02\u04EE\u04EF\x05\xBA^\x02" +
@@ -12462,9 +12465,9 @@ export class CPP14Parser extends Parser {
 		"\x84\x02\x02\u0539\u0538\x03\x02\x02\x02\u0539\u053A\x03\x02\x02\x02\u053A" +
 		"\xD5\x03\x02\x02\x02\u053B\u053C\x05\xD8m\x02\u053C\u053D\x07\x80\x02" +
 		"\x02\u053D\u053F\x03\x02\x02\x02\u053E\u053B\x03\x02\x02\x02\u053E\u053F" +
-		"\x03\x02\x02\x02\u053F\u0540\x03\x02\x02\x02\u0540\u0542\x07\x88\x02\x02" +
+		"\x03\x02\x02\x02\u053F\u0540\x03\x02\x02\x02\u0540\u0542\x07\x89\x02\x02" +
 		"\u0541\u0543\x05\xDAn\x02\u0542\u0541\x03\x02\x02\x02\u0542\u0543\x03" +
-		"\x02\x02\x02\u0543\xD7\x03\x02\x02\x02\u0544\u0545\x07\x88\x02\x02\u0545" +
+		"\x02\x02\x02\u0543\xD7\x03\x02\x02\x02\u0544\u0545\x07\x89\x02\x02\u0545" +
 		"\xD9\x03\x02\x02\x02\u0546\u0548\x07V\x02\x02\u0547\u0549\x05\xDCo\x02" +
 		"\u0548\u0547\x03\x02\x02\x02\u0548\u0549\x03\x02\x02\x02\u0549\u054A\x03" +
 		"\x02\x02\x02\u054A\u054B\x07W\x02\x02\u054B\xDB\x03\x02\x02\x02\u054C" +
@@ -12614,7 +12617,7 @@ export class CPP14Parser extends Parser {
 		"\x8B\x02\u067C\u067E\x07{\x02\x02\u067D\u067C\x03\x02\x02\x02\u067D\u067E" +
 		"\x03\x02\x02\x02\u067E\u0680\x03\x02\x02\x02\u067F\u067B\x03\x02\x02\x02" +
 		"\u067F\u0680\x03\x02\x02\x02\u0680\u0681\x03\x02\x02\x02\u0681\u0682\x07" +
-		"[\x02\x02\u0682\u0117\x03\x02\x02\x02\u0683\u0686\x07\x88\x02\x02\u0684" +
+		"[\x02\x02\u0682\u0117\x03\x02\x02\x02\u0683\u0686\x07\x89\x02\x02\u0684" +
 		"\u0686\x05\u0158\xAD\x02\u0685\u0683\x03\x02\x02\x02\u0685\u0684\x03\x02" +
 		"\x02\x02\u0686\u0119\x03\x02\x02\x02\u0687\u0688\x05\u011C\x8F\x02\u0688" +
 		"\u068A\x07Z\x02\x02\u0689\u068B\x05\u0124\x93\x02\u068A\u0689\x03\x02" +
@@ -12661,7 +12664,7 @@ export class CPP14Parser extends Parser {
 		"\u06DD\x03\x02\x02\x02\u06D9\u06DB\x05\u0110\x89\x02\u06DA\u06D9\x03\x02" +
 		"\x02\x02\u06DA\u06DB\x03\x02\x02\x02\u06DB\u06DD\x03\x02\x02\x02\u06DC" +
 		"\u06D4\x03\x02\x02\x02\u06DC\u06DA\x03\x02\x02\x02\u06DD\u06E7\x03\x02" +
-		"\x02\x02\u06DE\u06E0\x07\x88\x02\x02\u06DF\u06DE\x03\x02\x02\x02\u06DF" +
+		"\x02\x02\u06DE\u06E0\x07\x89\x02\x02\u06DF\u06DE\x03\x02\x02\x02\u06DF" +
 		"\u06E0\x03\x02\x02\x02\u06E0\u06E2\x03\x02\x02\x02\u06E1\u06E3\x05\xCE" +
 		"h\x02\u06E2\u06E1\x03\x02\x02\x02\u06E2\u06E3\x03\x02\x02\x02\u06E3\u06E4" +
 		"\x03\x02\x02\x02\u06E4\u06E5\x07\x7F\x02\x02\u06E5\u06E7\x05^0\x02\u06E6" +
@@ -12669,7 +12672,7 @@ export class CPP14Parser extends Parser {
 		"\x02\x02\u06E8\u06EA\x05\u012E\x98\x02\u06E9\u06E8\x03\x02\x02\x02\u06EA" +
 		"\u06EB\x03\x02\x02\x02\u06EB\u06E9\x03\x02\x02\x02\u06EB\u06EC\x03\x02" +
 		"\x02\x02\u06EC\u012D\x03\x02\x02\x02\u06ED\u06EE\t\x14\x02\x02\u06EE\u012F" +
-		"\x03\x02\x02\x02\u06EF\u06F0\x07f\x02\x02\u06F0\u06F1\x07\x8A\x02\x02" +
+		"\x03\x02\x02\x02\u06EF\u06F0\x07f\x02\x02\u06F0\u06F1\x07\x8B\x02\x02" +
 		"\u06F1\u06F2\b\x99\x01\x02\u06F2\u0131\x03\x02\x02\x02\u06F3\u06F4\x07" +
 		"\x7F\x02\x02\u06F4\u06F5\x05\u0134\x9B\x02\u06F5\u0133\x03\x02\x02\x02" +
 		"\u06F6\u06F8\x05\u0136\x9C\x02\u06F7\u06F9\x07\x84\x02\x02\u06F8\u06F7" +
@@ -12710,11 +12713,11 @@ export class CPP14Parser extends Parser {
 		"\u073F\u0740\x03\x02\x02\x02\u0740\u0741\x03\x02\x02\x02\u0741\u0744\x07" +
 		"W\x02\x02\u0742\u0744\x05\u0116\x8C\x02\u0743\u073D\x03\x02\x02\x02\u0743" +
 		"\u0742\x03\x02\x02\x02\u0744\u0149\x03\x02\x02\x02\u0745\u0748\x05\u0138" +
-		"\x9D\x02\u0746\u0748\x07\x88\x02\x02\u0747\u0745\x03\x02\x02\x02\u0747" +
+		"\x9D\x02\u0746\u0748\x07\x89\x02\x02\u0747\u0745\x03\x02\x02\x02\u0747" +
 		"\u0746\x03\x02\x02\x02\u0748\u014B\x03\x02\x02\x02\u0749\u074A\x075\x02" +
 		"\x02\u074A\u074B\x05\u017C\xBF\x02\u074B\u014D\x03\x02\x02\x02\u074C\u0750" +
-		"\x075\x02\x02\u074D\u074E\x07\x06\x02\x02\u074E\u0751\x07\x88\x02\x02" +
-		"\u074F\u0751\x07\x90\x02\x02\u0750\u074D\x03\x02\x02\x02\u0750\u074F\x03" +
+		"\x075\x02\x02\u074D\u074E\x07\x06\x02\x02\u074E\u0751\x07\x89\x02\x02" +
+		"\u074F\u0751\x07\x91\x02\x02\u0750\u074D\x03\x02\x02\x02\u0750\u074F\x03" +
 		"\x02\x02\x02\u0751\u014F\x03\x02\x02\x02\u0752\u0753\x07E\x02\x02\u0753" +
 		"\u0754\x07g\x02\x02\u0754\u0755\x05\u0152\xAA\x02\u0755\u0756\x07h\x02" +
 		"\x02\u0756\u0757\x05|?\x02\u0757\u0151\x03\x02\x02\x02\u0758\u075D\x05" +
@@ -12730,8 +12733,8 @@ export class CPP14Parser extends Parser {
 		"\x02\u076D\u0769\x03\x02\x02\x02\u076D\u076C\x03\x02\x02\x02\u076E\u077A" +
 		"\x03\x02\x02\x02\u076F\u0771\x07\x84\x02\x02\u0770\u076F\x03\x02\x02\x02" +
 		"\u0770\u0771\x03\x02\x02\x02\u0771\u0773\x03\x02\x02\x02\u0772\u0774\x07" +
-		"\x88\x02\x02\u0773\u0772\x03\x02\x02\x02\u0773\u0774\x03\x02\x02\x02\u0774" +
-		"\u077B\x03\x02\x02\x02\u0775\u0777\x07\x88\x02\x02\u0776\u0775\x03\x02" +
+		"\x89\x02\x02\u0773\u0772\x03\x02\x02\x02\u0773\u0774\x03\x02\x02\x02\u0774" +
+		"\u077B\x03\x02\x02\x02\u0775\u0777\x07\x89\x02\x02\u0776\u0775\x03\x02" +
 		"\x02\x02\u0776\u0777\x03\x02\x02\x02\u0777\u0778\x03\x02\x02\x02\u0778" +
 		"\u0779\x07f\x02\x02\u0779\u077B\x05\xF8}\x02\u077A\u0770\x03\x02\x02\x02" +
 		"\u077A\u0776\x03\x02\x02\x02\u077B\u0157\x03\x02\x02\x02\u077C\u077D\x05" +
@@ -12744,7 +12747,7 @@ export class CPP14Parser extends Parser {
 		"\u015E\xB0\x02\u078A\u0789\x03\x02\x02\x02\u078A\u078B\x03\x02\x02\x02" +
 		"\u078B\u078C\x03\x02\x02\x02\u078C\u078D\x07h\x02\x02\u078D\u078F\x03" +
 		"\x02\x02\x02\u078E\u0783\x03\x02\x02\x02\u078E\u0786\x03\x02\x02\x02\u078F" +
-		"\u015B\x03\x02\x02\x02\u0790\u0791\x07\x88\x02\x02\u0791\u015D\x03\x02" +
+		"\u015B\x03\x02\x02\x02\u0790\u0791\x07\x89\x02\x02\u0791\u015D\x03\x02" +
 		"\x02\x02\u0792\u0794\x05\u0160\xB1\x02\u0793\u0795\x07\x84\x02\x02\u0794" +
 		"\u0793\x03\x02\x02\x02\u0794\u0795\x03\x02\x02\x02\u0795\u079D\x03\x02" +
 		"\x02\x02\u0796\u0797\x07{\x02\x02\u0797\u0799\x05\u0160\xB1\x02\u0798" +
@@ -12755,7 +12758,7 @@ export class CPP14Parser extends Parser {
 		"\u07A4\x05\xF8}\x02\u07A1\u07A4\x05^0\x02\u07A2\u07A4\x05\x06\x04\x02" +
 		"\u07A3\u07A0\x03\x02\x02\x02\u07A3\u07A1\x03\x02\x02\x02\u07A3\u07A2\x03" +
 		"\x02\x02\x02\u07A4\u0161\x03\x02\x02\x02\u07A5\u07A6\x07M\x02\x02\u07A6" +
-		"\u07AC\x05\f\x07\x02\u07A7\u07AD\x07\x88\x02\x02\u07A8\u07AA\x07E\x02" +
+		"\u07AC\x05\f\x07\x02\u07A7\u07AD\x07\x89\x02\x02\u07A8\u07AA\x07E\x02" +
 		"\x02\u07A9\u07A8\x03\x02\x02\x02\u07A9\u07AA\x03\x02\x02\x02\u07AA\u07AB" +
 		"\x03\x02\x02\x02\u07AB\u07AD\x05\u0158\xAD\x02\u07AC\u07A7\x03\x02\x02" +
 		"\x02\u07AC\u07A9\x03\x02\x02\x02\u07AD\u0163\x03\x02\x02\x02\u07AE\u07B0" +
