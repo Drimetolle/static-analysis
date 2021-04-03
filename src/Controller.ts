@@ -8,6 +8,7 @@ import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
 import ScopeTree, { Scope } from "./source-analysis/data-flow/ScopeTree";
+import MethodsVisitor from "./visitors/MethodsVisitor";
 
 @singleton()
 export default class Controller {
@@ -31,17 +32,16 @@ export default class Controller {
     const tree = parser.translationUnit();
 
     const visitor = new DataFlowVisitor(contentL?.path ?? "", new ScopeTree());
+    const methodsVisitor = new MethodsVisitor(contentL?.path ?? "");
 
     const walkers = container.resolve(WalkersHelper);
-    const data = await walkers.analyze(visitor, tree);
+    const scope = await walkers.analyze(visitor, tree);
+    const methods = await walkers.analyze(methodsVisitor, tree);
+
+    console.log(methods.getMethodSignature(contentL?.path ?? "", "func"));
 
     context.create(
-      new LinterContext(
-        contentL?.path ?? "",
-        tree,
-        data.scope as Scope,
-        data.methods
-      )
+      new LinterContext(contentL?.path ?? "", tree, scope as Scope, methods)
     );
   }
 }

@@ -26,11 +26,8 @@ import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { KeyWords } from "../source-analysis/data-objects/LanguageKeyWords";
 import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
-import { declareMethod } from "./VisitFunctionStatment";
 import { parseSingleType } from "../utils/TypeInference";
-import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
-import HeaderScope from "../source-analysis/methods/HeaderScope";
-import { Information, Walker } from "../linter/walkers/Walker";
+import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export interface DeclarationVarAndNode {
@@ -39,15 +36,13 @@ export interface DeclarationVarAndNode {
 }
 
 export default class DataFlowVisitor
-  implements CPP14ParserVisitor<any>, Walker<Information> {
+  implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
   private readonly scopeTree: ScopeTree;
-  private readonly methods: DeclaredMethods;
   private readonly name: string;
 
   constructor(fileName: string, scopeTree: ScopeTree) {
     this.scopeTree = scopeTree;
     this.name = fileName;
-    this.methods = new DeclaredMethods([new HeaderScope(this.name)]);
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -225,24 +220,12 @@ export default class DataFlowVisitor
       .declarator()
       .pointerDeclarator()
       ?.noPointerDeclarator();
-    const functionName = alias?.noPointerDeclarator();
-    const functionType = functionDef.declSpecifierSeq();
     const functionArgs =
       alias
         ?.parametersAndQualifiers()
         ?.parameterDeclarationClause()
         ?.parameterDeclarationList()
         ?.parameterDeclaration() ?? [];
-
-    if (functionName && functionType) {
-      const signature = declareMethod(
-        functionName.text,
-        functionArgs,
-        functionType
-      );
-
-      this.methods.addMethodInScope(this.name, signature);
-    }
 
     const functionBody =
       functionDef
@@ -344,7 +327,7 @@ export default class DataFlowVisitor
     return this.scopeTree?.add(declare, toNode);
   }
 
-  async start(tree: TranslationUnitContext): Promise<Information> {
-    return { scope: this.visit(tree), methods: this.methods };
+  async start(tree: TranslationUnitContext): Promise<ScopeTree> {
+    return this.visit(tree);
   }
 }
