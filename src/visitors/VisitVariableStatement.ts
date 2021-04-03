@@ -7,7 +7,7 @@ import {
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
-import { parseTypeFunction } from "../utils/TypeInference";
+import { parseType } from "../utils/TypeInference";
 import defaultValueByType from "../utils/DefaultValues";
 import { DeclarationVarAndNode } from "./DataFlowVisitor";
 
@@ -16,7 +16,7 @@ export function createDeclaration(
   init?: InitializerClauseContext,
   decSeq?: DeclSpecifierSeqContext
 ): DeclarationVar {
-  const type = parseTypeFunction(decSeq);
+  const type = parseType(decSeq);
   const initInner = parseInitStatement(init?.text, type);
 
   return new DeclarationVar(

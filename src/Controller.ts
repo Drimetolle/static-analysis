@@ -38,8 +38,6 @@ export default class Controller {
     const scope = await walkers.analyze(visitor, tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
 
-    console.log(methods.getMethodSignature(contentL?.path ?? "", "func"));
-
     context.create(
       new LinterContext(contentL?.path ?? "", tree, scope as Scope, methods)
     );

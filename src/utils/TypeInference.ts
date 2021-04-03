@@ -4,22 +4,20 @@ import {
 } from "../grammar/CPP14Parser";
 import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 
-export function parseSingleType(
+export function parseType(
   declaration?: DeclSpecifierSeqContext
 ): TypeSpecifier {
-  return parseType(declaration?.declSpecifier().slice().slice(0, -1) ?? []);
+  return _parseType(declaration?.declSpecifier().slice(0, -1) ?? []);
 }
 
-export function parseTypeFunction(
+export function parseFunctionReturnType(
   declaration?: DeclSpecifierSeqContext
 ): TypeSpecifier {
-  return parseType(declaration?.declSpecifier() ?? []);
+  return _parseType(declaration?.declSpecifier() ?? []);
 }
 
-function parseType(declarations: Array<DeclSpecifierContext>): TypeSpecifier {
-  const rawType =
-    declarations.map((d) => d.text.toUpperCase()).join("_") ??
-    TypeSpecifier.VOID;
+function _parseType(declarations: Array<DeclSpecifierContext>): TypeSpecifier {
+  const rawType = declarations.map((d) => d.text.toUpperCase()).join("_");
   return (
     TypeSpecifier[rawType as keyof typeof TypeSpecifier] ?? TypeSpecifier.VOID
   );

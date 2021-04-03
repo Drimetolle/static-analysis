@@ -26,7 +26,7 @@ import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { KeyWords } from "../source-analysis/data-objects/LanguageKeyWords";
 import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
-import { parseSingleType } from "../utils/TypeInference";
+import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
@@ -88,7 +88,7 @@ export default class DataFlowVisitor
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
   ): DeclarationVar | null {
-    const type = parseSingleType(ctx.declSpecifierSeq());
+    const type = parseType(ctx.declSpecifierSeq());
     const name = ctx.declSpecifierSeq().declSpecifier(1).text;
 
     return new DeclarationVar(

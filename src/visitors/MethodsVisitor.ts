@@ -7,12 +7,15 @@ import { Walker } from "../linter/walkers/Walker";
 import {
   DeclarationContext,
   DeclarationseqContext,
+  DeclSpecifierSeqContext,
   FunctionDefinitionContext,
+  ParameterDeclarationContext,
   TranslationUnitContext,
 } from "../grammar/CPP14Parser";
 import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
-import { declareMethod } from "./VisitFunctionStatment";
 import HeaderScope from "../source-analysis/methods/HeaderScope";
+import MethodSignature from "../source-analysis/methods/MethodSignature";
+import { parseFunctionReturnType, parseType } from "../utils/TypeInference";
 
 export default class MethodsVisitor
   implements CPP14ParserVisitor<any>, Walker<DeclaredMethods> {
@@ -57,7 +60,7 @@ export default class MethodsVisitor
         ?.parameterDeclaration() ?? [];
 
     if (functionName && functionType) {
-      const signature = declareMethod(
+      const signature = MethodsVisitor.declareMethod(
         functionName.text,
         functionArgs,
         functionType
@@ -65,6 +68,17 @@ export default class MethodsVisitor
 
       this.methods.addMethodInScope(this.name, signature);
     }
+  }
+
+  private static declareMethod(
+    name: string,
+    args: Array<ParameterDeclarationContext>,
+    type: DeclSpecifierSeqContext
+  ): MethodSignature {
+    const cppType = parseFunctionReturnType(type);
+    const argTypes = args.map((i) => parseType(i.declSpecifierSeq()));
+
+    return new MethodSignature(name, argTypes, cppType);
   }
 
   visitChildren(node: RuleNode): never {
