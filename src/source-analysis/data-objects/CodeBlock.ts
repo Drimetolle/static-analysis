@@ -1,7 +1,5 @@
 import { FlowGraphNumeration } from "./DiagnosticsInterfaceses";
-import DeclaredVariablesInScope, {
-  DeclaredVariables,
-} from "../data-flow/DeclaredVariablesInScope";
+import DeclaredVariablesInScope from "../data-flow/DeclaredVariablesInScope";
 
 export default class CodeBlock implements FlowGraphNumeration {
   post: number;
@@ -25,10 +23,4 @@ export default class CodeBlock implements FlowGraphNumeration {
     this.declaredVariables =
       declaredVariables ?? new DeclaredVariablesInScope();
   }
-}
-
-export class Block implements FlowGraphNumeration {
-  post!: number;
-  pre!: number;
-  declaredVariables!: DeclaredVariables;
 }

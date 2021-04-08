@@ -7,7 +7,7 @@ import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
-import ScopeTree, { Scope } from "./source-analysis/data-flow/ScopeTree";
+import ScopeTree from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
 import HeadersVisitor from "./visitors/HeadersVisitor";
 
@@ -45,16 +45,7 @@ export default class Controller {
     methods.getMethodSignature(contentL?.path ?? "", "func");
 
     context.create(
-      new LinterContext(
-        contentL?.path ?? "",
-        tree,
-        Controller.castToScope(scope),
-        methods
-      )
+      new LinterContext(contentL?.path ?? "", tree, scope, methods)
     );
-  }
-
-  private static castToScope<T extends ScopeTree>(tree: T): Scope {
-    return tree as Scope;
   }
 }

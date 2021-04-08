@@ -1,5 +1,5 @@
 import { Node, Tree } from "../../utils/Tree";
-import CodeBlock, { Block } from "../data-objects/CodeBlock";
+import CodeBlock from "../data-objects/CodeBlock";
 import { VariableState } from "../data-objects/VariableDeclaration";
 
 export type ScopeNode = Node<CodeBlock>;
@@ -33,20 +33,6 @@ export default class ScopeTree extends Tree<CodeBlock> {
         }
       }
     });
-
-    return result;
-  }
-}
-
-export class Scope extends Tree<Block> {
-  get getRoot(): Node<Block> {
-    return this.root;
-  }
-
-  toArray(): Array<Node<Block>> {
-    const result = new Array<Node<Block>>();
-
-    this.traverseDF((node: Node<Block>) => result.push(node));
 
     return result;
   }
