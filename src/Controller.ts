@@ -45,7 +45,16 @@ export default class Controller {
     methods.getMethodSignature(contentL?.path ?? "", "func");
 
     context.create(
-      new LinterContext(contentL?.path ?? "", tree, scope as Scope, methods)
+      new LinterContext(
+        contentL?.path ?? "",
+        tree,
+        Controller.castToScope(scope),
+        methods
+      )
     );
+  }
+
+  private static castToScope<T extends ScopeTree>(tree: T): Scope {
+    return tree as Scope;
   }
 }
