@@ -85,4 +85,19 @@ export class Tree<T> {
       currentTree = queue.slice(0, 1)[0];
     }
   }
+
+  traverseToRoot(
+    startNode: Node<T>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback: (...args: Array<any>) => void
+  ): void {
+    let currentNode = startNode;
+
+    callback(currentNode);
+
+    while (currentNode.parent) {
+      currentNode = currentNode.parent;
+      callback(currentNode);
+    }
+  }
 }

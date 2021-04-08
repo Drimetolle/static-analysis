@@ -8,12 +8,12 @@ export enum VariableState {
 }
 
 export default class VariableDeclaration implements IHavePosition {
-  position: PositionInFile;
+  readonly position: PositionInFile;
   expression?: string;
   blockId: number;
-  name: string;
+  readonly name: string;
   state: VariableState;
-  node: ParserRuleContext;
+  readonly node: ParserRuleContext;
 
   constructor(
     position: PositionInFile,

@@ -29,6 +29,7 @@ import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
 import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -122,7 +123,7 @@ export default class DataFlowVisitor
     );
   }
 
-  private static setAssignScope(
+  private setAssignScope(
     root: ScopeNode,
     ctx: AssignmentExpressionContext,
     node: ParserRuleContext
@@ -131,8 +132,10 @@ export default class DataFlowVisitor
     const init = ctx.initializerClause();
 
     if (variable) {
+      const variableName = variable.text;
+
       root.data.declaredVariables.assign(
-        variable.text,
+        variableName,
         new GrammarDerivation(
           ctx.start.startIndex,
           ctx.start.stopIndex,
@@ -142,6 +145,19 @@ export default class DataFlowVisitor
         new PositionInFile(ctx.start.line, ctx.start.startIndex),
         node
       );
+
+      this.changeVariableState(root, variableName);
+    }
+  }
+
+  private changeVariableState(root: ScopeNode, variableName: string) {
+    const isDefined = this.scopeTree.isDefined(root, variableName);
+    if (isDefined) {
+      const variable = root.data.declaredVariables.getVariable(variableName);
+
+      if (variable) {
+        variable.state = VariableState.defined;
+      }
     }
   }
 
@@ -192,14 +208,14 @@ export default class DataFlowVisitor
     }
   }
 
-  private static assignStatement(
+  private assignStatement(
     ctx: ExpressionStatementContext,
     toNode: ScopeNode
   ): void {
     const expressions = ctx.expression()?.assignmentExpression() ?? [];
     for (const assign of expressions) {
       if (assign) {
-        DataFlowVisitor.setAssignScope(toNode, assign, assign);
+        this.setAssignScope(toNode, assign, assign);
       }
     }
   }
@@ -273,7 +289,7 @@ export default class DataFlowVisitor
       if (declaration) {
         this.declarationStatement(declaration, node);
       } else if (assign) {
-        DataFlowVisitor.assignStatement(assign, node);
+        this.assignStatement(assign, node);
       } else if (ifElse) {
         for (const s of ifElseStatement(ifElse)) {
           const childNode = this.createNode(node);
