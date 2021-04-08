@@ -7,6 +7,7 @@ export default class CodeIssue {
   readonly link: PositionInFile;
   readonly fileName: string;
   readonly severity: Severity;
+  readonly line?: string;
 
   constructor(
     errorCode: number,
@@ -14,12 +15,29 @@ export default class CodeIssue {
     link: PositionInFile,
     fileName: string,
     severity: Severity
+  );
+  constructor(
+    errorCode: number,
+    description: string,
+    link: PositionInFile,
+    fileName: string,
+    severity: Severity,
+    line: string
+  );
+  constructor(
+    errorCode: number,
+    description: string,
+    link: PositionInFile,
+    fileName: string,
+    severity: Severity,
+    line?: string
   ) {
     this.errorCode = errorCode;
     this.description = description;
     this.link = link;
     this.fileName = fileName;
     this.severity = severity;
+    this.line = line;
   }
 
   toString(): string {

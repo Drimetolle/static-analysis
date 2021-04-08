@@ -4,6 +4,10 @@ import { mapSeverity, messageLevel } from "../linter/issue/Severity";
 
 export default class Formatter {
   static formatMessage(issue: CodeIssue): string {
+    const line = `\t${issue.line}`;
+    const underline = `${line}\n\t${chalk.red(
+      new Array(line.length - 1).fill("~").join("")
+    )}`;
     return `${issue.fileName}:${issue.link.line}:${
       issue.link.start
     } - ${this.coloredSeverity(mapSeverity(issue.severity))} ${chalk.gray(
@@ -12,7 +16,7 @@ export default class Formatter {
       issue.description.endsWith(".")
         ? issue.description
         : issue.description + "."
-    }`;
+    }\n${underline}`;
   }
 
   private static coloredSeverity(severity: messageLevel): string {
