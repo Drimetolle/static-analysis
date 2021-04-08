@@ -1,6 +1,7 @@
 import PositionInFile from "./PositionInFile";
 import { IHavePosition } from "./DiagnosticsInterfaceses";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import Expression from "./Expression";
 
 export enum VariableState {
   defined = "defined",
@@ -9,7 +10,7 @@ export enum VariableState {
 
 export default class VariableDeclaration implements IHavePosition {
   readonly position: PositionInFile;
-  expression?: string;
+  expression: Expression;
   blockId: number;
   readonly name: string;
   state: VariableState;
@@ -17,14 +18,14 @@ export default class VariableDeclaration implements IHavePosition {
 
   constructor(
     position: PositionInFile,
-    expression: string,
+    expression: Expression,
     blockId: number,
     name: string,
     node: ParserRuleContext
   );
   constructor(
     position: PositionInFile,
-    expression: string,
+    expression: Expression,
     blockId: number,
     name: string,
     node: ParserRuleContext,
@@ -32,7 +33,7 @@ export default class VariableDeclaration implements IHavePosition {
   );
   constructor(
     position: PositionInFile,
-    expression: string,
+    expression: Expression,
     blockId: number,
     name: string,
     node: ParserRuleContext,

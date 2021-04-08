@@ -1,10 +1,10 @@
 import VariableDeclaration, {
   VariableState,
 } from "../data-objects/VariableDeclaration";
-import GrammarDerivation from "../data-objects/GrammarDerivation";
 import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import Expression from "../data-objects/Expression";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
@@ -28,7 +28,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   declare(
     declaration: string,
-    expression: GrammarDerivation,
+    expression: Expression,
     id: PositionInFile,
     node: ParserRuleContext
   ): void {
@@ -37,7 +37,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   assign(
     declaration: string,
-    expression: GrammarDerivation,
+    expression: Expression,
     id: PositionInFile,
     node: ParserRuleContext
   ): void {
@@ -46,7 +46,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   private setVariable(
     variable: string,
-    expression: GrammarDerivation,
+    expression: Expression,
     id: PositionInFile,
     node: ParserRuleContext
   ) {
@@ -69,7 +69,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   private assignVariable(
     variable: string,
-    expression: GrammarDerivation,
+    expression: Expression,
     id: PositionInFile,
     node: ParserRuleContext
   ) {
@@ -96,15 +96,14 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   private static createDeclaration(
     variable: string,
-    expression: GrammarDerivation,
+    expression: Expression,
     id: PositionInFile,
     type: VariableState,
     node: ParserRuleContext
   ): VariableDeclaration {
-    const { line, text, start } = expression;
     return new VariableDeclaration(
-      new PositionInFile(line, start),
-      text,
+      id,
+      expression,
       id.start,
       variable,
       node,

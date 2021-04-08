@@ -16,6 +16,9 @@ int main() {
     float d = 1.5;
     xA, yA = 1, zA = 5;
 
+    auto fromFunction = func(1, '2');
+    fromFunctionNotDeclaration = func(1, '2'), z = 10;
+
     z = 1;
 
     if (int iInitIf = 0) {

@@ -20,16 +20,15 @@ import {
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
-import GrammarDerivation from "../source-analysis/data-objects/GrammarDerivation";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
-import { KeyWords } from "../source-analysis/data-objects/LanguageKeyWords";
 import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
 import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
+import Expression from "../source-analysis/data-objects/Expression";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -92,16 +91,7 @@ export default class DataFlowVisitor
     const type = parseType(ctx.declSpecifierSeq());
     const name = ctx.declSpecifierSeq().declSpecifier(1).text;
 
-    return new DeclarationVar(
-      name,
-      new GrammarDerivation(
-        ctx.start.startIndex,
-        ctx.start.stopIndex,
-        ctx.start.line,
-        KeyWords.Null
-      ),
-      type
-    );
+    return new DeclarationVar(name, type);
   }
 
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
@@ -115,10 +105,17 @@ export default class DataFlowVisitor
     ctx: DeclarationVar,
     node: ParserRuleContext
   ): void {
+    let expression: Expression;
+    if (ctx.expression) {
+      expression = new Expression(ctx.expression);
+    } else {
+      expression = new Expression();
+    }
+
     root.data.declaredVariables.declare(
       ctx.variable,
-      ctx.grammar,
-      new PositionInFile(ctx.grammar.line, ctx.grammar.start),
+      expression,
+      new PositionInFile(node.start.line, node.start.startIndex),
       node
     );
   }
@@ -129,19 +126,14 @@ export default class DataFlowVisitor
     node: ParserRuleContext
   ) {
     const variable = ctx.logicalOrExpression() ?? ctx.conditionalExpression();
-    const init = ctx.initializerClause();
+    const init = ctx.initializerClause()?.assignmentExpression();
 
-    if (variable) {
+    if (variable && init) {
       const variableName = variable.text;
 
       root.data.declaredVariables.assign(
         variableName,
-        new GrammarDerivation(
-          ctx.start.startIndex,
-          ctx.start.stopIndex,
-          ctx.start.line,
-          init?.text ?? ""
-        ),
+        new Expression(init),
         new PositionInFile(ctx.start.line, ctx.start.startIndex),
         node
       );
@@ -190,7 +182,7 @@ export default class DataFlowVisitor
   private static conditionStatement(ctx: ConditionContext, toNode: ScopeNode) {
     const decSeq = ctx.declSpecifierSeq();
     const dec = ctx.declarator();
-    const init = ctx.initializerClause();
+    const init = ctx.initializerClause()?.assignmentExpression();
 
     if (decSeq && dec && init) {
       const varDeclaration = createDeclaration(dec, init, decSeq);
@@ -213,6 +205,7 @@ export default class DataFlowVisitor
     toNode: ScopeNode
   ): void {
     const expressions = ctx.expression()?.assignmentExpression() ?? [];
+
     for (const assign of expressions) {
       if (assign) {
         this.setAssignScope(toNode, assign, assign);

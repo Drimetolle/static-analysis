@@ -1,17 +1,17 @@
 import DeclaredVariablesInScope from "../src/source-analysis/data-flow/DeclaredVariablesInScope";
-import GrammarDerivation from "../src/source-analysis/data-objects/GrammarDerivation";
 import PositionInFile from "../src/source-analysis/data-objects/PositionInFile";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../src/source-analysis/data-objects/VariableDeclaration";
 import VariableAlreadyDefinedException from "../src/exceptions/VariableAlreadyDefinedException";
+import Expression from "../src/source-analysis/data-objects/Expression";
 
 describe("checking the context was work correctly", () => {
   let variables: DeclaredVariablesInScope;
-  let grammarDerivation: GrammarDerivation;
+  let expression: Expression;
   let position: PositionInFile;
 
   beforeAll(() => {
-    grammarDerivation = new GrammarDerivation(1, 1, 1, "1");
+    expression = new Expression();
     position = new PositionInFile(1, 1);
   });
 
@@ -21,12 +21,7 @@ describe("checking the context was work correctly", () => {
 
   test("checking declare method if variables are empty", () => {
     const name = "a";
-    variables.declare(
-      name,
-      grammarDerivation,
-      position,
-      {} as ParserRuleContext
-    );
+    variables.declare(name, expression, position, {} as ParserRuleContext);
 
     const declaration = variables.variables[0];
 
@@ -38,31 +33,16 @@ describe("checking the context was work correctly", () => {
 
   test("checking declare method if variables contains same variable", () => {
     const name = "a";
-    variables.declare(
-      name,
-      grammarDerivation,
-      position,
-      {} as ParserRuleContext
-    );
+    variables.declare(name, expression, position, {} as ParserRuleContext);
 
     expect(() => {
-      variables.declare(
-        name,
-        grammarDerivation,
-        position,
-        {} as ParserRuleContext
-      );
+      variables.declare(name, expression, position, {} as ParserRuleContext);
     }).toThrow(VariableAlreadyDefinedException);
   });
 
   test("checking assign method if variables are empty", () => {
     const name = "a";
-    variables.assign(
-      name,
-      new GrammarDerivation(1, 1, 1, "10"),
-      position,
-      {} as ParserRuleContext
-    );
+    variables.assign(name, expression, position, {} as ParserRuleContext);
 
     const declaration = variables.variables[0];
     expect(declaration).not.toBeNull();
@@ -73,18 +53,9 @@ describe("checking the context was work correctly", () => {
 
   test("checking assign method if variables already declared", () => {
     const name = "a";
-    variables.declare(
-      name,
-      grammarDerivation,
-      position,
-      {} as ParserRuleContext
-    );
-    variables.assign(
-      name,
-      new GrammarDerivation(1, 1, 1, "10"),
-      position,
-      {} as ParserRuleContext
-    );
+    const newExpression = new Expression();
+    variables.declare(name, expression, position, {} as ParserRuleContext);
+    variables.assign(name, newExpression, position, {} as ParserRuleContext);
 
     const declaration = variables.variables[0];
 
@@ -92,17 +63,12 @@ describe("checking the context was work correctly", () => {
     expect(variables.variables.length).toBe(1);
     expect(declaration.state).toBe(VariableState.defined);
     expect(declaration.name).toBe(name);
-    expect(declaration.expression).toBe("10");
+    expect(declaration.expression).toEqual(newExpression);
   });
 
   test("checking get method if variables exist", () => {
     const name = "a";
-    variables.declare(
-      name,
-      grammarDerivation,
-      position,
-      {} as ParserRuleContext
-    );
+    variables.declare(name, expression, position, {} as ParserRuleContext);
 
     const declaration = variables.variables[0];
 
