@@ -1,7 +1,6 @@
 import Rule from "../linter/Rule";
 import LinterContext from "../linter/LinterContext";
 import Report from "../linter/issue/Report";
-import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
 
 export default class UndeclaredVariable extends Rule {
   constructor() {
@@ -13,9 +12,11 @@ export default class UndeclaredVariable extends Rule {
     context.scope
       .toArray()
       .flatMap((_) => _.data.declaredVariables.variables)
-      .filter((_) => _.state != VariableState.defined)
+      .filter((_) => _.variable.isUndefined())
       .forEach((r) =>
-        reports.push(new Report(`Variable ${r.name} is undefined`, r.node))
+        reports.push(
+          new Report(`Variable ${r.variable.name} is undefined`, r.node)
+        )
       );
 
     return reports;

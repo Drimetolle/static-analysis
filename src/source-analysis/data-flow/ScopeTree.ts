@@ -1,6 +1,5 @@
 import { Node, Tree } from "../../utils/Tree";
 import CodeBlock from "../data-objects/CodeBlock";
-import { VariableState } from "../data-objects/VariableDeclaration";
 
 export type ScopeNode = Node<CodeBlock>;
 
@@ -28,7 +27,7 @@ export default class ScopeTree extends Tree<CodeBlock> {
       const tmp = node.data.declaredVariables.getVariable(variableName);
 
       if (tmp) {
-        if (tmp.state == VariableState.defined) {
+        if (tmp.variable.isDefined()) {
           result = true;
         }
       }

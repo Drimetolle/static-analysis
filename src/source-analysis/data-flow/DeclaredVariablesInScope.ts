@@ -5,6 +5,7 @@ import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "../data-objects/Expression";
+import Variable from "./Variable";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
@@ -105,9 +106,8 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       id,
       expression,
       id.start,
-      variable,
-      node,
-      type
+      new Variable(variable, type),
+      node
     );
   }
 }

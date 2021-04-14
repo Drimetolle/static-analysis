@@ -148,7 +148,7 @@ export default class DataFlowVisitor
       const variable = root.data.declaredVariables.getVariable(variableName);
 
       if (variable) {
-        variable.state = VariableState.defined;
+        variable.variable.state = VariableState.defined;
       }
     }
   }

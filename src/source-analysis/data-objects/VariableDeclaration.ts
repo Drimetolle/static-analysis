@@ -2,6 +2,7 @@ import PositionInFile from "./PositionInFile";
 import { IHavePosition } from "./DiagnosticsInterfaceses";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "./Expression";
+import Variable from "../data-flow/Variable";
 
 export enum VariableState {
   defined = "defined",
@@ -12,38 +13,20 @@ export default class VariableDeclaration implements IHavePosition {
   readonly position: PositionInFile;
   expression: Expression;
   blockId: number;
-  readonly name: string;
-  state: VariableState;
+  readonly variable: Variable;
   readonly node: ParserRuleContext;
 
   constructor(
     position: PositionInFile,
     expression: Expression,
     blockId: number,
-    name: string,
+    variable: Variable,
     node: ParserRuleContext
-  );
-  constructor(
-    position: PositionInFile,
-    expression: Expression,
-    blockId: number,
-    name: string,
-    node: ParserRuleContext,
-    type: VariableState
-  );
-  constructor(
-    position: PositionInFile,
-    expression: Expression,
-    blockId: number,
-    name: string,
-    node: ParserRuleContext,
-    type?: VariableState
   ) {
     this.position = position;
     this.expression = expression;
     this.blockId = blockId;
-    this.name = name;
-    this.state = type ?? VariableState.defined;
     this.node = node;
+    this.variable = variable;
   }
 }
