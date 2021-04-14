@@ -13,7 +13,9 @@ import {
 } from "../grammar/CPP14Parser";
 import DeclaredMethods from "../source-analysis/methods/DeclaredMethods";
 import HeaderScope from "../source-analysis/methods/HeaderScope";
-import MethodSignature from "../source-analysis/methods/MethodSignature";
+import MethodSignature, {
+  MethodArgument,
+} from "../source-analysis/methods/MethodSignature";
 import { parseFunctionReturnType, parseType } from "../utils/TypeInference";
 
 export default class MethodsVisitor
@@ -79,9 +81,23 @@ export default class MethodsVisitor
     type: DeclSpecifierSeqContext
   ): MethodSignature {
     const cppType = parseFunctionReturnType(type);
-    const argTypes = args.map((i) => parseType(i.declSpecifierSeq()));
+    const argsTmp = args.map((i) => {
+      return {
+        type: parseType(i.declSpecifierSeq()),
+        pointers: i
+          .declarator()
+          ?.pointerDeclarator()
+          ?.pointerOperator()
+          .map((_) => _.text),
+        const: i.declSpecifierSeq().declSpecifier(0)?.text,
+      };
+    });
 
-    return new MethodSignature(name, argTypes, cppType);
+    return new MethodSignature(
+      name,
+      argsTmp.map((t) => new MethodArgument(t.type, false, t.pointers)),
+      cppType
+    );
   }
 
   visitChildren(node: RuleNode): never {

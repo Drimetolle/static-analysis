@@ -89,9 +89,21 @@ export default class DataFlowVisitor
     ctx: ParameterDeclarationContext
   ): DeclarationVar | null {
     const type = parseType(ctx.declSpecifierSeq());
-    const name = ctx.declSpecifierSeq().declSpecifier(1).text;
+    const argumentByOther = ctx.declarator();
 
-    return new DeclarationVar(name, type);
+    if (argumentByOther) {
+      const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
+        ?.text;
+      return new DeclarationVar(name!, type);
+    }
+
+    const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
+
+    if (argumentByValue) {
+      return new DeclarationVar(argumentByValue, type);
+    }
+
+    return null;
   }
 
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
@@ -115,7 +127,7 @@ export default class DataFlowVisitor
     root.data.declaredVariables.declare(
       ctx.variable,
       expression,
-      new PositionInFile(node.start.line, node.start.startIndex),
+      new PositionInFile(node.start.line, node.start.charPositionInLine),
       node
     );
   }
@@ -134,7 +146,7 @@ export default class DataFlowVisitor
       root.data.declaredVariables.assign(
         variableName,
         new Expression(init),
-        new PositionInFile(ctx.start.line, ctx.start.startIndex),
+        new PositionInFile(ctx.start.line, ctx.start.charPositionInLine),
         node
       );
 

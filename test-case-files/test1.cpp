@@ -5,7 +5,7 @@ using namespace std;
 
 float c = "1";
 
-long long func(int aF, char hF) {
+long long func(int **aF, const char hF, double &dF) {
     return a;
 }
 
