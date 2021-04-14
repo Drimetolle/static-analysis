@@ -27,8 +27,8 @@ describe("checking the context was work correctly", () => {
 
     expect(declaration).not.toBeNull();
     expect(variables.variables.length).toBe(1);
-    expect(declaration.state).toBe(VariableState.defined);
-    expect(declaration.name).toBe(name);
+    expect(declaration.variable.state).toBe(VariableState.defined);
+    expect(declaration.variable.name).toBe(name);
   });
 
   test("checking declare method if variables contains same variable", () => {
@@ -47,8 +47,8 @@ describe("checking the context was work correctly", () => {
     const declaration = variables.variables[0];
     expect(declaration).not.toBeNull();
     expect(variables.variables.length).toBe(1);
-    expect(declaration.state).toBe(VariableState.undefined);
-    expect(declaration.name).toBe(name);
+    expect(declaration.variable.state).toBe(VariableState.undefined);
+    expect(declaration.variable.name).toBe(name);
   });
 
   test("checking assign method if variables already declared", () => {
@@ -61,8 +61,8 @@ describe("checking the context was work correctly", () => {
 
     expect(declaration).not.toBeNull();
     expect(variables.variables.length).toBe(1);
-    expect(declaration.state).toBe(VariableState.defined);
-    expect(declaration.name).toBe(name);
+    expect(declaration.variable.state).toBe(VariableState.defined);
+    expect(declaration.variable.name).toBe(name);
     expect(declaration.expression).toEqual(newExpression);
   });
 
