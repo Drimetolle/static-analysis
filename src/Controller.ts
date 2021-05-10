@@ -9,10 +9,16 @@ import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
 import ScopeTree from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
-import HeadersVisitor from "./visitors/HeadersVisitor";
+import AppConfig from "./AppConfig";
 
 @singleton()
 export default class Controller {
+  private readonly config: AppConfig;
+
+  constructor(config: AppConfig) {
+    this.config = config;
+  }
+
   async run(): Promise<void> {
     let inputStream!: ANTLRInputStream;
 
@@ -34,13 +40,14 @@ export default class Controller {
     const tree = parser.translationUnit();
 
     const visitor = new DataFlowVisitor(contentL?.path ?? "", new ScopeTree());
-    const methodsVisitor = new MethodsVisitor(contentL?.path ?? "");
-    const headersVisitor = new HeadersVisitor();
+    const methodsVisitor = new MethodsVisitor(
+      contentL?.path ?? "",
+      this.config.includePath
+    );
 
     const walkers = container.resolve(WalkersHelper);
     const scope = await walkers.analyze(visitor, tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
-    headersVisitor.visit(tree);
 
     methods.getMethodSignature(contentL?.path ?? "", "func");
 

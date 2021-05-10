@@ -17,15 +17,23 @@ import MethodSignature, {
   MethodArgument,
 } from "../source-analysis/methods/MethodSignature";
 import { parseFunctionReturnType, parseType } from "../utils/TypeInference";
+import FileManager from "../file-system/FileManager";
+import Lexer from "../parsers/Lexer";
+import Parser from "../parsers/Parser";
+import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 
 export default class MethodsVisitor
   implements CPP14ParserVisitor<any>, Walker<DeclaredMethods> {
   private readonly methods: DeclaredMethods;
   private readonly name: string;
+  private readonly includePath: string;
+  private readonly fileManager: FileManager;
 
-  constructor(fileName: string) {
+  constructor(fileName: string, includePath: string) {
     this.name = fileName;
     this.methods = new DeclaredMethods([new HeaderScope(this.name)]);
+    this.includePath = includePath;
+    this.fileManager = new FileManager(includePath);
   }
   visit(tree: TranslationUnitContext): DeclaredMethods {
     const sequence = tree.declarationseq();
@@ -35,16 +43,48 @@ export default class MethodsVisitor
     return this.methods;
   }
 
-  visitDeclarationseq(ctx: DeclarationseqContext): any {
-    if (ctx.children) {
+  async visitDeclarationseq(ctx: DeclarationseqContext): Promise<any> {
+    if (ctx.childCount > 0) {
       for (const i of ctx.declaration()) {
+        const include = i.includeDefinition();
         const functionDef = i.functionDefinition();
-        const functionDefInHeader = i.blockDeclaration()?.simpleDeclaration();
+        const functionDef1 = i.blockDeclaration();
+
+        // console.log(functionDef1?.text);
 
         if (functionDef) {
           this.parseFunctionSignature(functionDef);
-        } else if (functionDefInHeader) {
-          //TODO
+        } else if (include) {
+          if (include.Include()) {
+            const fileContent = await this.fileManager.findFile(
+              include.fileName().text
+            );
+            console.log(fileContent);
+            const stream = new ANTLRInputStream(fileContent);
+
+            const lexer = new Lexer(stream);
+            const tokenStream = new CommonTokenStream(lexer);
+            const parser = new Parser(tokenStream);
+
+            const tree = parser.translationUnit();
+
+            const a = new MethodsVisitor(
+              include.fileName().text,
+              this.includePath
+            );
+
+            const asd = await a.start(tree);
+
+            const af = 1;
+
+            // console.log(
+            //   (await a.start(tree)).getMethodSignature("stdio.h", "setbuf")
+            // );
+
+            // console.log(include?.fileName().text);
+          } else if (include.IncludeQuote()) {
+            // console.log(include?.fileName().text);
+          }
         }
       }
     }
