@@ -59,7 +59,7 @@ export default class MethodsVisitor
             const fileContent = await this.fileManager.findFile(
               include.fileName().text
             );
-            console.log(fileContent);
+
             const stream = new ANTLRInputStream(fileContent);
 
             const lexer = new Lexer(stream);
@@ -73,7 +73,7 @@ export default class MethodsVisitor
               this.includePath
             );
 
-            const asd = await a.start(tree);
+            // const asd = await a.start(tree);
 
             const af = 1;
 

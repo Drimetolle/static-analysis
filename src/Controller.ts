@@ -3,13 +3,16 @@ import FileManager from "./file-system/FileManager";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
 import DataFlowVisitor from "./visitors/DataFlowVisitor";
-import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
+import { CharStreams, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
 import ScopeTree from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
 import AppConfig from "./AppConfig";
+import StartBlock from "./source-analysis/control-flow/StartBlock";
+import CFGVisitor from "./visitors/CFGVisitor";
+import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 
 @singleton()
 export default class Controller {
@@ -20,7 +23,7 @@ export default class Controller {
   }
 
   async run(): Promise<void> {
-    let inputStream!: ANTLRInputStream;
+    let inputStream!: CodePointCharStream;
 
     const fileManager = container.resolve(FileManager);
     const context = container.resolve(ProjectContext);
@@ -29,7 +32,7 @@ export default class Controller {
 
     for (const content of fileManager.read()) {
       contentL = content;
-      inputStream = new ANTLRInputStream(content.text);
+      inputStream = CharStreams.fromString(content.text);
     }
     console.log(contentL?.path);
 
@@ -45,14 +48,17 @@ export default class Controller {
       this.config.includePath
     );
 
+    const cfgVisitor = new CFGVisitor();
+
     const walkers = container.resolve(WalkersHelper);
     const scope = await walkers.analyze(visitor, tree);
-    const methods = await walkers.analyze(methodsVisitor, tree);
+    // const cfg = await walkers.analyze(cfgVisitor, tree);
+    // const methods = await walkers.analyze(methodsVisitor, tree);
 
-    methods.getMethodSignature(contentL?.path ?? "", "func");
-
-    context.create(
-      new LinterContext(contentL?.path ?? "", tree, scope, methods)
-    );
+    // methods.getMethodSignature(contentL?.path ?? "", "func");
+    //
+    // context.create(
+    //   new LinterContext(contentL?.path ?? "", tree, scope, methods)
+    // );
   }
 }

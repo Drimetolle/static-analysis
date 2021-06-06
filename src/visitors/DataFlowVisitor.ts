@@ -112,7 +112,7 @@ export default class DataFlowVisitor
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
-  private static setScope(
+  private setScope(
     root: ScopeNode,
     ctx: DeclarationVar,
     node: ParserRuleContext
@@ -186,19 +186,19 @@ export default class DataFlowVisitor
       const result = this.visitSimpleDeclaration(simpleDeclaration);
 
       for (const { declaration, node } of result) {
-        DataFlowVisitor.setScope(toNode, declaration, node);
+        this.setScope(toNode, declaration, node);
       }
     }
   }
 
-  private static conditionStatement(ctx: ConditionContext, toNode: ScopeNode) {
+  private conditionStatement(ctx: ConditionContext, toNode: ScopeNode) {
     const decSeq = ctx.declSpecifierSeq();
     const dec = ctx.declarator();
     const init = ctx.initializerClause()?.assignmentExpression();
 
     if (decSeq && dec && init) {
       const varDeclaration = createDeclaration(dec, init, decSeq);
-      DataFlowVisitor.setScope(toNode, varDeclaration, dec);
+      this.setScope(toNode, varDeclaration, dec);
     }
   }
 
@@ -208,7 +208,7 @@ export default class DataFlowVisitor
   ): void {
     const result = this.visitParameterDeclaration(ctx);
     if (result) {
-      DataFlowVisitor.setScope(toNode, result, ctx);
+      this.setScope(toNode, result, ctx);
     }
   }
 
@@ -231,7 +231,7 @@ export default class DataFlowVisitor
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
 
       for (const { declaration, node } of tmp) {
-        DataFlowVisitor.setScope(this.scopeTree?.getRoot, declaration, node);
+        this.setScope(this.scopeTree?.getRoot, declaration, node);
       }
     }
   }
@@ -299,7 +299,7 @@ export default class DataFlowVisitor
         for (const s of ifElseStatement(ifElse)) {
           const childNode = this.createNode(node);
           if (childNode) {
-            DataFlowVisitor.conditionStatement(s.condition, childNode);
+            this.conditionStatement(s.condition, childNode);
             this.statementSequence(s.statement, childNode);
           }
         }
