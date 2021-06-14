@@ -66,16 +66,16 @@ export default class MethodsVisitor
             const tokenStream = new CommonTokenStream(lexer);
             const parser = new Parser(tokenStream);
 
-            const tree = parser.translationUnit();
-
-            const a = new MethodsVisitor(
-              include.fileName().text,
-              this.includePath
-            );
+            // const tree = parser.translationUnit();
+            //
+            // const a = new MethodsVisitor(
+            //   include.fileName().text,
+            //   this.includePath
+            // );
 
             // const asd = await a.start(tree);
 
-            const af = 1;
+            // const af = 1;
 
             // console.log(
             //   (await a.start(tree)).getMethodSignature("stdio.h", "setbuf")

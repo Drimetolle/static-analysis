@@ -29,6 +29,13 @@ import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
 import Expression from "../source-analysis/data-objects/Expression";
+import BasicBlock from "../source-analysis/control-flow/blocks/BasicBlock";
+import FunctionBlock from "../source-analysis/control-flow/blocks/FunctionBlock";
+import LinearBlock from "../source-analysis/control-flow/blocks/LinearBlock";
+import LoopBlock from "../source-analysis/control-flow/blocks/LoopBlock";
+import IfBlock from "../source-analysis/control-flow/blocks/IfBlock";
+import StubBlock from "../source-analysis/control-flow/blocks/StubBlock";
+import CFGValidator from "../source-analysis/control-flow/CFGValidator";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -38,11 +45,13 @@ export interface DeclarationVarAndNode {
 export default class DataFlowVisitor
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
   private readonly scopeTree: ScopeTree;
+  private readonly cfg: BasicBlock;
   private readonly name: string;
 
-  constructor(fileName: string, scopeTree: ScopeTree) {
+  constructor(fileName: string, scopeTree: ScopeTree, cfg: BasicBlock) {
     this.scopeTree = scopeTree;
     this.name = fileName;
+    this.cfg = cfg;
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -51,11 +60,15 @@ export default class DataFlowVisitor
       this.visitDeclarationseq(sequence);
     }
 
+    new CFGValidator().validate(this.cfg.blocks[0]);
+
     return this.scopeTree;
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
+      const firstRay = new LinearBlock("");
+
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
         const functionDef = (i as DeclarationContext).functionDefinition();
@@ -63,9 +76,13 @@ export default class DataFlowVisitor
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          this.topLevelFunctionStatement(functionDef);
+          const block = new FunctionBlock(functionDef.text);
+          this.cfg.createEdge(block);
+          this.topLevelFunctionStatement(functionDef, block);
         }
       }
+
+      this.cfg.createEdge(firstRay);
     }
   }
 
@@ -128,6 +145,7 @@ export default class DataFlowVisitor
       ctx.variable,
       expression,
       new PositionInFile(node.start.line, node.start.charPositionInLine),
+      node.start.startIndex,
       node
     );
   }
@@ -147,6 +165,7 @@ export default class DataFlowVisitor
         variableName,
         new Expression(init),
         new PositionInFile(ctx.start.line, ctx.start.charPositionInLine),
+        node.start.startIndex,
         node
       );
 
@@ -236,7 +255,10 @@ export default class DataFlowVisitor
     }
   }
 
-  private topLevelFunctionStatement(functionDef: FunctionDefinitionContext) {
+  private topLevelFunctionStatement(
+    functionDef: FunctionDefinitionContext,
+    functionBlock: BasicBlock
+  ) {
     const alias = functionDef
       .declarator()
       .pointerDeclarator()
@@ -265,7 +287,7 @@ export default class DataFlowVisitor
         this.parameterDeclarationStatement(d, scopeNode);
       }
 
-      this.statementSequence(functionBody, scopeNode);
+      this.statementSequence(functionBody, scopeNode, functionBlock);
     } else {
       throw new Error("Scope not created");
     }
@@ -273,52 +295,87 @@ export default class DataFlowVisitor
 
   private statementSequence(
     ctx: Array<StatementContext>,
-    node: ScopeNode
+    node: ScopeNode,
+    block: BasicBlock
   ): void;
-  private statementSequence(ctx: StatementSeqContext, node: ScopeNode): void;
-  private statementSequence(ctx: any, node: ScopeNode): void {
-    const a = new Array<StatementContext>();
+  private statementSequence(
+    ctx: StatementSeqContext,
+    node: ScopeNode,
+    block: BasicBlock
+  ): void;
+  private statementSequence(
+    ctx: any,
+    node: ScopeNode,
+    block: BasicBlock
+  ): void {
+    const statements = new Array<StatementContext>();
 
     if (ctx instanceof StatementSeqContext) {
-      a.push(...this.visitStatementSeq(ctx));
+      statements.push(...this.visitStatementSeq(ctx));
     } else if (ctx instanceof Array) {
-      a.push(...ctx);
+      statements.push(...ctx);
     }
 
-    for (const s of a) {
-      const declaration = s.declarationStatement();
-      const assign = s.expressionStatement();
-      const ifElse = s.selectionStatement();
-      const forLoop = s.iterationStatement();
+    statements.forEach((statement) => {
+      const declaration = statement.declarationStatement();
+      const assign = statement.expressionStatement();
+      const ifElse = statement.selectionStatement();
+      const forLoop = statement.iterationStatement();
 
       if (declaration) {
+        const newBlock = new LinearBlock(declaration.text);
+        block.createEdge(newBlock);
+        block = newBlock;
+
         this.declarationStatement(declaration, node);
       } else if (assign) {
+        const newBlock = new LinearBlock(assign.text);
+        block.createEdge(newBlock);
+        block = newBlock;
+
         this.assignStatement(assign, node);
       } else if (ifElse) {
-        for (const s of ifElseStatement(ifElse)) {
+        const outBlock = new StubBlock("next Block");
+        const selectionSequence = ifElseStatement(ifElse);
+
+        for (const s of selectionSequence) {
           const childNode = this.createNode(node);
+
           if (childNode) {
+            const newBlock = new IfBlock(s.condition.text, s.condition);
+            newBlock.createEdge(outBlock);
+            outBlock.parent = newBlock;
+            block.createEdge(newBlock);
+
             this.conditionStatement(s.condition, childNode);
-            this.statementSequence(s.statement, childNode);
+            this.statementSequence(s.statement, childNode, newBlock);
           }
         }
+        block = outBlock;
       } else if (forLoop) {
         const childNode = this.createNode(node);
+
         if (childNode) {
           const statement = loopStatement(forLoop);
           const declaration = forLoop.forInitStatement()?.simpleDeclaration();
+
+          const newBlock = new LoopBlock(
+            forLoop.text,
+            forLoop?.condition()?.text
+          );
+          block.createEdge(newBlock);
+          block = newBlock;
 
           if (declaration) {
             this.declarationStatement(declaration, childNode);
           }
 
           if (statement) {
-            this.statementSequence(statement, childNode);
+            this.statementSequence(statement, childNode, block);
           }
         }
       }
-    }
+    });
   }
 
   visitChildren(node: RuleNode): never {

@@ -10,9 +10,10 @@ import LinterContext from "./linter/LinterContext";
 import ScopeTree from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
 import AppConfig from "./AppConfig";
-import StartBlock from "./source-analysis/control-flow/StartBlock";
-import CFGVisitor from "./visitors/CFGVisitor";
+import StartBlock from "./source-analysis/control-flow/blocks/StartBlock";
 import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
+import Linter from "./linter/Linter";
+import JsonFormatter from "./utils/json-formatters/JsonFormatter";
 
 @singleton()
 export default class Controller {
@@ -27,6 +28,7 @@ export default class Controller {
 
     const fileManager = container.resolve(FileManager);
     const context = container.resolve(ProjectContext);
+    const linter = container.resolve(Linter);
 
     let contentL;
 
@@ -34,7 +36,6 @@ export default class Controller {
       contentL = content;
       inputStream = CharStreams.fromString(content.text);
     }
-    console.log(contentL?.path);
 
     const lexer = new Lexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
@@ -42,23 +43,26 @@ export default class Controller {
 
     const tree = parser.translationUnit();
 
-    const visitor = new DataFlowVisitor(contentL?.path ?? "", new ScopeTree());
+    const visitor = new DataFlowVisitor(
+      contentL?.path ?? "",
+      new ScopeTree(),
+      new StartBlock("")
+    );
     const methodsVisitor = new MethodsVisitor(
       contentL?.path ?? "",
       this.config.includePath
     );
 
-    const cfgVisitor = new CFGVisitor();
-
     const walkers = container.resolve(WalkersHelper);
     const scope = await walkers.analyze(visitor, tree);
-    // const cfg = await walkers.analyze(cfgVisitor, tree);
-    // const methods = await walkers.analyze(methodsVisitor, tree);
-
+    const methods = await walkers.analyze(methodsVisitor, tree);
+    // console.log(JsonFormatter.ScopeToJson(scope));
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     //
-    // context.create(
-    //   new LinterContext(contentL?.path ?? "", tree, scope, methods)
-    // );
+    context.create(
+      new LinterContext(contentL?.path ?? "", tree, scope, methods)
+    );
+
+    // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
   }
 }

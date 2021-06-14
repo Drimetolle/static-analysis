@@ -9,10 +9,11 @@ import IssuesQueue from "./linter/issue/IssuesQueue";
 import Formatter from "./cli-engine/Formatter";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
+import CheckScope from "./rules/CheckScope";
 
 // container registration
 container.register<Linter>(Linter, {
-  useValue: new Linter([UndeclaredVariable], { rules: { 1: 2 } }),
+  useValue: new Linter([UndeclaredVariable, CheckScope], { rules: { 1: 2 } }),
 });
 container.register<FileManager>(FileManager, {
   useValue: new FileManager(),
@@ -21,12 +22,12 @@ container.register<WalkersHelper>(WalkersHelper, {
   useValue: new WalkersHelper(),
 });
 
-// container
-//   .resolve(IssuesQueue)
-//   .subscribe((i) => console.log(Formatter.formatMessage(i)));
+container
+  .resolve(IssuesQueue)
+  .subscribe((i) => console.log(Formatter.formatMessage(i)));
 
 const controller = container.resolve(Controller);
-// controller.run();
+controller.run();
 //
 // import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
 //
