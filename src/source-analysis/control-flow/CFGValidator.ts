@@ -15,17 +15,17 @@ export default class CFGValidator {
     const dictionary = new Map<BasicBlock, BasicBlock>();
 
     const blocksWithoutStub = this.removeStubBlocks(block);
-    const result = CFGValidator.setOutBlocks(
+    const result = this.setOutBlocks(
       blocksWithoutStub,
       this.outBlock,
       dictionary
     );
-
-    // console.log(JsonFormatter.CFGToJson(block));
+    // console.log(1);
+    console.log(JsonFormatter.CFGToJson(block));
     return result;
   }
 
-  private static setOutBlocks(
+  private setOutBlocks(
     block: BasicBlock,
     out: BasicBlock,
     map: Map<BasicBlock, BasicBlock>
@@ -37,13 +37,7 @@ export default class CFGValidator {
       }
     }
 
-    for (let b of block.blocks) {
-      if (b.isLeaf() && b instanceof StubBlock) {
-        block.blocks[0] = new OutBlock("");
-        b = block.blocks[0];
-        out = b;
-      }
-
+    for (const b of block.blocks) {
       if (b.isLeaf() && !(b instanceof OutBlock)) {
         const parent = CFGValidator.findBlock(Array.from(map.keys()), b);
 
@@ -54,7 +48,7 @@ export default class CFGValidator {
         }
       }
 
-      CFGValidator.setOutBlocks(b, out, map);
+      this.setOutBlocks(b, out, map);
     }
 
     return block;
