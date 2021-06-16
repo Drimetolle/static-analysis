@@ -39,6 +39,7 @@ import IfBlock from "../source-analysis/control-flow/blocks/IfBlock";
 import StubBlock from "../source-analysis/control-flow/blocks/StubBlock";
 import CFGValidator from "../source-analysis/control-flow/CFGValidator";
 import { Node } from "../utils/Tree";
+import OutBlock from "../source-analysis/control-flow/blocks/OutBlock";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -287,7 +288,12 @@ export default class DataFlowVisitor
         this.parameterDeclarationStatement(d, scopeNode);
       }
 
-      this.statementSequence(functionBody, scopeNode, functionBlock);
+      const a: BasicBlock = this.statementSequence(
+        functionBody,
+        scopeNode,
+        functionBlock
+      );
+      a.createEdge(new OutBlock(""));
     }
   }
 
@@ -295,17 +301,13 @@ export default class DataFlowVisitor
     ctx: Array<StatementContext>,
     node: ScopeNode,
     block: BasicBlock
-  ): void;
+  ): any;
   private statementSequence(
     ctx: StatementSeqContext,
     node: ScopeNode,
     block: BasicBlock
-  ): void;
-  private statementSequence(
-    ctx: any,
-    node: ScopeNode,
-    block: BasicBlock
-  ): void {
+  ): any;
+  private statementSequence(ctx: any, node: ScopeNode, block: BasicBlock): any {
     const statements = new Array<StatementContext>();
 
     if (ctx instanceof StatementSeqContext) {
@@ -340,6 +342,8 @@ export default class DataFlowVisitor
         block = this.loopStatement(node, forLoop, block);
       }
     });
+
+    return block;
   }
 
   private ifElseStatement(
@@ -373,18 +377,27 @@ export default class DataFlowVisitor
     const statement = loopStatement(forLoop);
     const declaration = forLoop.forInitStatement()?.simpleDeclaration();
 
-    const newBlock = new LoopBlock(forLoop.text, forLoop?.condition()?.text);
+    const outBlock = new StubBlock("next Block");
+    const newBlock = new LoopBlock(
+      forLoop?.condition()?.text ?? "",
+      forLoop?.condition()?.text
+    );
+    newBlock.createEdge(outBlock);
+    // newBlock.createEdge(newBlock);
     block.createEdge(newBlock);
-    block = newBlock;
+    // block.createEdge(new StubBlock(""));
+    // newBlock.createEdge(new SelfBlock());
+    // block = newBlock;
 
     if (declaration) {
       this.declarationStatement(declaration, childNode);
     }
 
     if (statement) {
-      this.statementSequence(statement, childNode, block);
+      this.statementSequence(statement, childNode, newBlock);
     }
-    return block;
+
+    return outBlock;
   }
 
   visitChildren(node: RuleNode): never {

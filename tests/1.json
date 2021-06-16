@@ -1,0 +1,39 @@
+{
+  "text": "intmain(){while(true){while(true){autowhileInner2=1;}}}",
+  "name": "FunctionBlock",
+  "blocks": [
+    {
+      "text": "true",
+      "name": "LoopBlock",
+      "blocks": [
+        {
+          "text": "",
+          "name": "OutBlock",
+          "blocks": []
+        },
+        {
+          "text": "true",
+          "name": "LoopBlock",
+          "blocks": [
+            {
+              "text": "",
+              "name": "OutBlock",
+              "blocks": []
+            },
+            {
+              "text": "autowhileInner2=1;",
+              "name": "LinearBlock",
+              "blocks": [
+                {
+                  "text": "",
+                  "name": "OutBlock",
+                  "blocks": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,8 @@ import StubBlock from "./blocks/StubBlock";
 import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 import IfBlock from "./blocks/IfBlock";
 import OutBlock from "./blocks/OutBlock";
+import LoopBlock from "./blocks/LoopBlock";
+import LinearBlock from "./blocks/LinearBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
@@ -20,9 +22,9 @@ export default class CFGValidator {
       this.outBlock,
       dictionary
     );
-    // console.log(1);
+
     console.log(JsonFormatter.CFGToJson(block));
-    return result;
+    return block;
   }
 
   private setOutBlocks(
@@ -30,7 +32,7 @@ export default class CFGValidator {
     out: BasicBlock,
     map: Map<BasicBlock, BasicBlock>
   ): BasicBlock {
-    if (block instanceof IfBlock) {
+    if (block instanceof IfBlock || block instanceof LoopBlock) {
       if (block.blocks[0]) {
         out = block.blocks[0] ?? out;
         map.set(block, out);
@@ -38,13 +40,15 @@ export default class CFGValidator {
     }
 
     for (const b of block.blocks) {
-      if (b.isLeaf() && !(b instanceof OutBlock)) {
-        const parent = CFGValidator.findBlock(Array.from(map.keys()), b);
+      if (b instanceof IfBlock || b instanceof LinearBlock) {
+        if (b.isLeaf() && !(b instanceof OutBlock)) {
+          const parent = CFGValidator.findBlock(Array.from(map.keys()), b);
 
-        if (block.blocks.indexOf(b) == block.blocks.length - 1) {
-          b.createEdge(block.blocks[0]);
-        } else {
-          b.createEdge(map.get(parent)!);
+          if (block.blocks.indexOf(b) == block.blocks.length - 1) {
+            b.createEdge(block.blocks[0]);
+          } else {
+            b.createEdge(map.get(parent)!);
+          }
         }
       }
 
@@ -71,10 +75,7 @@ export default class CFGValidator {
 
   private removeStubBlocks(block: BasicBlock): BasicBlock {
     for (const b of block.blocks) {
-      if (b instanceof IfBlock) {
-        // Первый потомок блока if всегда выходной.
-        this.mergeBlock(b);
-      }
+      this.mergeBlock(b);
 
       this.removeStubBlocks(b);
     }
@@ -86,7 +87,7 @@ export default class CFGValidator {
     return block.blocks.findIndex((b) => b instanceof StubBlock);
   }
 
-  private mergeBlock(block: IfBlock) {
+  private mergeBlock(block: BasicBlock) {
     const stub = CFGValidator.findStub(block);
 
     if (stub >= 0 && !block.blocks[stub].isLeaf()) {
