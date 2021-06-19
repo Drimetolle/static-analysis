@@ -4,87 +4,61 @@ import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 import IfBlock from "./blocks/IfBlock";
 import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
-import LinearBlock from "./blocks/LinearBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
 
   constructor() {
-    this.outBlock = new OutBlock("");
+    this.outBlock = new OutBlock("", 0);
   }
 
   public validate(block: BasicBlock): BasicBlock {
-    const dictionary = new Map<BasicBlock, BasicBlock>();
-
-    const blocksWithoutStub = this.removeStubBlocks(block);
-    const result = this.setOutBlocks(
-      blocksWithoutStub,
-      this.outBlock,
-      dictionary
-    );
+    this.removeStubBlocks(block);
 
     console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 
-  private setOutBlocks(
-    block: BasicBlock,
-    out: BasicBlock,
-    map: Map<BasicBlock, BasicBlock>
-  ): BasicBlock {
-    if (block instanceof IfBlock || block instanceof LoopBlock) {
-      if (block.blocks[0]) {
-        out = block.blocks[0] ?? out;
-        map.set(block, out);
-      }
-    }
+  private static getNextBlockForLastBlockInScope(
+    block: BasicBlock
+  ): BasicBlock | null {
+    let previousBlock = block;
+    let nextBlock = block.parent;
 
-    for (const b of block.blocks) {
-      if (b instanceof IfBlock || b instanceof LinearBlock) {
-        if (b.isLeaf() && !(b instanceof OutBlock)) {
-          const parent = CFGValidator.findBlock(Array.from(map.keys()), b);
-
-          if (block.blocks.indexOf(b) == block.blocks.length - 1) {
-            b.createEdge(block.blocks[0]);
-          } else {
-            b.createEdge(map.get(parent)!);
-          }
-        }
+    while (nextBlock != null) {
+      if (
+        CFGValidator.isFlowBlock(nextBlock) &&
+        nextBlock.scopeDepth < previousBlock.scopeDepth &&
+        !(nextBlock.blocks[0] instanceof StubBlock)
+      ) {
+        return nextBlock.blocks[0];
       }
 
-      this.setOutBlocks(b, out, map);
+      previousBlock = nextBlock;
+      nextBlock = nextBlock.parent;
     }
 
-    return block;
+    return null;
   }
 
-  private static findBlock(
-    blocks: Array<BasicBlock>,
-    block: BasicBlock
-  ): BasicBlock {
-    for (const b of blocks) {
-      if (b == block) {
-        return b;
-      }
-
-      return b;
-    }
-
-    throw new Error("Block not find");
+  private static isFlowBlock(block: BasicBlock) {
+    return block instanceof IfBlock || block instanceof LoopBlock;
   }
 
   private removeStubBlocks(block: BasicBlock): BasicBlock {
     for (const b of block.blocks) {
       this.mergeBlock(b);
 
+      if (b.isLeaf() && !(b instanceof OutBlock)) {
+        b.createEdge(
+          CFGValidator.getNextBlockForLastBlockInScope(b) ?? this.outBlock
+        );
+      }
+
       this.removeStubBlocks(b);
     }
 
     return block;
-  }
-
-  private static findStub(block: BasicBlock): number {
-    return block.blocks.findIndex((b) => b instanceof StubBlock);
   }
 
   private mergeBlock(block: BasicBlock) {
@@ -94,7 +68,13 @@ export default class CFGValidator {
       // У stub всегда только 1 потомок.
       block.blocks[stub] = block.blocks[stub].blocks[0];
     } else if (stub >= 0 && block.blocks[stub].isLeaf()) {
-      block.blocks[stub] = this.outBlock;
+      block.blocks[stub] =
+        CFGValidator.getNextBlockForLastBlockInScope(block.blocks[stub]) ??
+        this.outBlock;
     }
+  }
+
+  private static findStub(block: BasicBlock): number {
+    return block.blocks.findIndex((b) => b instanceof StubBlock);
   }
 }

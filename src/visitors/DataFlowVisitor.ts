@@ -71,7 +71,7 @@ export default class DataFlowVisitor
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      const firstRay = new LinearBlock("");
+      const firstRay = new LinearBlock("", 0);
 
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
@@ -80,7 +80,7 @@ export default class DataFlowVisitor
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          const block = new FunctionBlock(functionDef.text);
+          const block = new FunctionBlock(functionDef.text, 0);
           this.cfg.createEdge(block);
           this.topLevelFunctionStatement(functionDef, block);
         }
@@ -288,26 +288,34 @@ export default class DataFlowVisitor
         this.parameterDeclarationStatement(d, scopeNode);
       }
 
-      const a: BasicBlock = this.statementSequence(
+      const lastBlock: BasicBlock = this.statementSequence(
         functionBody,
         scopeNode,
-        functionBlock
+        functionBlock,
+        functionBlock.scopeDepth
       );
-      a.createEdge(new OutBlock(""));
+      lastBlock.createEdge(new OutBlock("", 0));
     }
   }
 
   private statementSequence(
     ctx: Array<StatementContext>,
     node: ScopeNode,
-    block: BasicBlock
+    block: BasicBlock,
+    depth: number
   ): any;
   private statementSequence(
     ctx: StatementSeqContext,
     node: ScopeNode,
-    block: BasicBlock
+    block: BasicBlock,
+    depth: number
   ): any;
-  private statementSequence(ctx: any, node: ScopeNode, block: BasicBlock): any {
+  private statementSequence(
+    ctx: any,
+    node: ScopeNode,
+    block: BasicBlock,
+    depth: number
+  ): any {
     const statements = new Array<StatementContext>();
 
     if (ctx instanceof StatementSeqContext) {
@@ -323,23 +331,23 @@ export default class DataFlowVisitor
       const forLoop = statement.iterationStatement();
 
       if (declaration) {
-        const newBlock = new LinearBlock(declaration.text);
+        const newBlock = new LinearBlock(declaration.text, depth);
         block.createEdge(newBlock);
         block = newBlock;
 
         this.declarationStatement(declaration, node);
       } else if (assign) {
-        const newBlock = new LinearBlock(assign.text);
+        const newBlock = new LinearBlock(assign.text, depth);
         block.createEdge(newBlock);
         block = newBlock;
 
         this.assignStatement(assign, node);
       } else if (ifElse) {
         // method mutates block.
-        block = this.ifElseStatement(ifElse, node, block);
+        block = this.ifElseStatement(ifElse, node, block, depth);
       } else if (forLoop) {
         // method mutates block.
-        block = this.loopStatement(node, forLoop, block);
+        block = this.loopStatement(node, forLoop, block, depth);
       }
     });
 
@@ -349,20 +357,21 @@ export default class DataFlowVisitor
   private ifElseStatement(
     ifElse: SelectionStatementContext,
     node: Node<CodeBlock>,
-    block: BasicBlock
+    block: BasicBlock,
+    depth: number
   ) {
-    const outBlock = new StubBlock("next Block");
+    const outBlock = new StubBlock("next Block", depth);
     const selectionSequence = ifElseStatement(ifElse);
 
     for (const s of selectionSequence) {
       const childNode = this.createNode(node);
 
-      const newBlock = new IfBlock(s.condition.text, s.condition);
+      const newBlock = new IfBlock(s.condition.text, depth, s.condition);
       newBlock.createEdge(outBlock);
       block.createEdge(newBlock);
 
       this.conditionStatement(s.condition, childNode);
-      this.statementSequence(s.statement, childNode, newBlock);
+      this.statementSequence(s.statement, childNode, newBlock, ++depth);
     }
     return outBlock;
   }
@@ -370,31 +379,29 @@ export default class DataFlowVisitor
   private loopStatement(
     node: Node<CodeBlock>,
     forLoop: IterationStatementContext,
-    block: BasicBlock
+    block: BasicBlock,
+    depth: number
   ) {
     const childNode = this.createNode(node);
 
     const statement = loopStatement(forLoop);
     const declaration = forLoop.forInitStatement()?.simpleDeclaration();
 
-    const outBlock = new StubBlock("next Block");
+    const outBlock = new StubBlock("next Block", depth);
     const newBlock = new LoopBlock(
       forLoop?.condition()?.text ?? "",
+      depth,
       forLoop?.condition()?.text
     );
     newBlock.createEdge(outBlock);
-    // newBlock.createEdge(newBlock);
     block.createEdge(newBlock);
-    // block.createEdge(new StubBlock(""));
-    // newBlock.createEdge(new SelfBlock());
-    // block = newBlock;
 
     if (declaration) {
       this.declarationStatement(declaration, childNode);
     }
 
     if (statement) {
-      this.statementSequence(statement, childNode, newBlock);
+      this.statementSequence(statement, childNode, newBlock, ++depth);
     }
 
     return outBlock;

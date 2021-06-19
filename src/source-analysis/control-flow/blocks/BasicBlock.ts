@@ -1,10 +1,13 @@
 export default abstract class BasicBlock {
+  public parent!: BasicBlock;
   public readonly text: string;
   public blocks: Array<BasicBlock>;
+  public readonly scopeDepth: number;
 
-  protected constructor(text: string) {
+  protected constructor(text: string, scopeDepth: number) {
     this.text = text;
     this.blocks = [];
+    this.scopeDepth = scopeDepth;
   }
 
   public isLeaf(): boolean {
@@ -13,6 +16,7 @@ export default abstract class BasicBlock {
 
   public createEdge(block: BasicBlock): void {
     this.blocks.push(block);
+    block.parent = this;
   }
 
   protected get name(): string {
@@ -23,6 +27,7 @@ export default abstract class BasicBlock {
     return {
       text: this.text,
       name: this.name,
+      depth: this.scopeDepth,
       blocks: this.blocks,
     };
   }

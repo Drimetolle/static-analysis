@@ -46,7 +46,7 @@ export default class Controller {
     const visitor = new DataFlowVisitor(
       contentL?.path ?? "",
       new ScopeTree(),
-      new StartBlock("")
+      new StartBlock("", 0)
     );
     const methodsVisitor = new MethodsVisitor(
       contentL?.path ?? "",

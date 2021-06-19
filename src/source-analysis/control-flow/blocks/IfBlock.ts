@@ -3,8 +3,8 @@ import BasicBlock from "./BasicBlock";
 export default class IfBlock extends BasicBlock {
   private readonly condition: any;
 
-  constructor(text: string, condition: any) {
-    super(text);
+  constructor(text: string, scopeDepth: number, condition: any) {
+    super(text, scopeDepth);
     this.condition = condition;
   }
 }
