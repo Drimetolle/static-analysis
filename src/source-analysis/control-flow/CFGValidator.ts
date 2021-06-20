@@ -1,22 +1,55 @@
 import BasicBlock from "./blocks/BasicBlock";
 import StubBlock from "./blocks/StubBlock";
-import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 import IfBlock from "./blocks/IfBlock";
 import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
+import FunctionBlock from "./blocks/FunctionBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
 
-  constructor() {
-    this.outBlock = new OutBlock("", 0);
+  constructor(outBlock: OutBlock) {
+    this.outBlock = outBlock;
   }
 
-  public validate(block: BasicBlock): BasicBlock {
+  /**
+   * Mutate input block. Validate cfg.
+   */
+  public validateFunction(block: FunctionBlock): BasicBlock {
     this.removeStubBlocks(block);
+    this.setOutBlock(block);
+    //TODO need set selfRef for loop block
 
-    console.log(JsonFormatter.CFGToJson(block));
     return block;
+  }
+
+  private removeStubBlocks(block: BasicBlock): void {
+    for (const b of block.blocks) {
+      const stub = CFGValidator.findIndexStub(b);
+
+      if (stub >= 0 && !b.blocks[stub].isLeaf()) {
+        // У stub всегда только 1 потомок.
+        b.blocks[stub] = b.blocks[stub].blocks[0];
+      } else if (stub >= 0 && b.blocks[stub].isLeaf()) {
+        b.blocks[stub] =
+          CFGValidator.getNextBlockForLastBlockInScope(b.blocks[stub]) ??
+          this.outBlock;
+      }
+
+      this.removeStubBlocks(b);
+    }
+  }
+
+  private setOutBlock(block: BasicBlock): void {
+    block.blocks.forEach((b, i) => {
+      if (b.isLeaf() && !(b instanceof OutBlock)) {
+        b.createEdge(
+          CFGValidator.getNextBlockForLastBlockInScope(b) ?? this.outBlock
+        );
+      }
+
+      this.setOutBlock(b);
+    });
   }
 
   private static getNextBlockForLastBlockInScope(
@@ -45,36 +78,7 @@ export default class CFGValidator {
     return block instanceof IfBlock || block instanceof LoopBlock;
   }
 
-  private removeStubBlocks(block: BasicBlock): BasicBlock {
-    for (const b of block.blocks) {
-      this.mergeBlock(b);
-
-      if (b.isLeaf() && !(b instanceof OutBlock)) {
-        b.createEdge(
-          CFGValidator.getNextBlockForLastBlockInScope(b) ?? this.outBlock
-        );
-      }
-
-      this.removeStubBlocks(b);
-    }
-
-    return block;
-  }
-
-  private mergeBlock(block: BasicBlock) {
-    const stub = CFGValidator.findStub(block);
-
-    if (stub >= 0 && !block.blocks[stub].isLeaf()) {
-      // У stub всегда только 1 потомок.
-      block.blocks[stub] = block.blocks[stub].blocks[0];
-    } else if (stub >= 0 && block.blocks[stub].isLeaf()) {
-      block.blocks[stub] =
-        CFGValidator.getNextBlockForLastBlockInScope(block.blocks[stub]) ??
-        this.outBlock;
-    }
-  }
-
-  private static findStub(block: BasicBlock): number {
+  private static findIndexStub(block: BasicBlock): number {
     return block.blocks.findIndex((b) => b instanceof StubBlock);
   }
 }

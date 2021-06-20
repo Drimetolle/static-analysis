@@ -38,11 +38,11 @@ int main() {
     while(true) {
 //        auto while1 = 1;
 //
-         while(true) {
+         for(int a = 0; a < 100; a++) {
                 auto whileInner2 = 1;
             }
 //
-//         auto while2 = 1;
+         auto while2 = 1;
     }
 
 //    auto autoV123 = 1;

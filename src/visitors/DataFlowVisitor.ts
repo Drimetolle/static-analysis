@@ -64,14 +64,12 @@ export default class DataFlowVisitor
       this.visitDeclarationseq(sequence);
     }
 
-    new CFGValidator().validate(this.cfg.blocks[0]);
-
     return this.scopeTree;
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      const firstRay = new LinearBlock("", 0);
+      const firstRay = new LinearBlock(0);
 
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
@@ -80,7 +78,7 @@ export default class DataFlowVisitor
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          const block = new FunctionBlock(functionDef.text, 0);
+          const block = new FunctionBlock(0);
           this.cfg.createEdge(block);
           this.topLevelFunctionStatement(functionDef, block);
         }
@@ -261,7 +259,7 @@ export default class DataFlowVisitor
 
   private topLevelFunctionStatement(
     functionDef: FunctionDefinitionContext,
-    functionBlock: BasicBlock
+    functionBlock: FunctionBlock
   ) {
     const alias = functionDef
       .declarator()
@@ -288,13 +286,16 @@ export default class DataFlowVisitor
         this.parameterDeclarationStatement(d, scopeNode);
       }
 
+      const outBlock = new OutBlock(0);
       const lastBlock: BasicBlock = this.statementSequence(
         functionBody,
         scopeNode,
         functionBlock,
         functionBlock.scopeDepth
       );
-      lastBlock.createEdge(new OutBlock("", 0));
+      lastBlock.createEdge(outBlock);
+
+      new CFGValidator(outBlock).validateFunction(functionBlock);
     }
   }
 
@@ -331,22 +332,20 @@ export default class DataFlowVisitor
       const forLoop = statement.iterationStatement();
 
       if (declaration) {
-        const newBlock = new LinearBlock(declaration.text, depth);
+        const newBlock = new LinearBlock(depth, declaration.text);
         block.createEdge(newBlock);
         block = newBlock;
 
         this.declarationStatement(declaration, node);
       } else if (assign) {
-        const newBlock = new LinearBlock(assign.text, depth);
+        const newBlock = new LinearBlock(depth, assign.text);
         block.createEdge(newBlock);
         block = newBlock;
 
         this.assignStatement(assign, node);
       } else if (ifElse) {
-        // method mutates block.
         block = this.ifElseStatement(ifElse, node, block, depth);
       } else if (forLoop) {
-        // method mutates block.
         block = this.loopStatement(node, forLoop, block, depth);
       }
     });
@@ -354,19 +353,22 @@ export default class DataFlowVisitor
     return block;
   }
 
+  /**
+   * Mutate input block.
+   */
   private ifElseStatement(
     ifElse: SelectionStatementContext,
     node: Node<CodeBlock>,
     block: BasicBlock,
     depth: number
   ) {
-    const outBlock = new StubBlock("next Block", depth);
+    const outBlock = new StubBlock(depth);
     const selectionSequence = ifElseStatement(ifElse);
 
     for (const s of selectionSequence) {
       const childNode = this.createNode(node);
 
-      const newBlock = new IfBlock(s.condition.text, depth, s.condition);
+      const newBlock = new IfBlock(depth, s.condition.text);
       newBlock.createEdge(outBlock);
       block.createEdge(newBlock);
 
@@ -376,6 +378,9 @@ export default class DataFlowVisitor
     return outBlock;
   }
 
+  /**
+   * Mutate input block.
+   */
   private loopStatement(
     node: Node<CodeBlock>,
     forLoop: IterationStatementContext,
@@ -387,12 +392,8 @@ export default class DataFlowVisitor
     const statement = loopStatement(forLoop);
     const declaration = forLoop.forInitStatement()?.simpleDeclaration();
 
-    const outBlock = new StubBlock("next Block", depth);
-    const newBlock = new LoopBlock(
-      forLoop?.condition()?.text ?? "",
-      depth,
-      forLoop?.condition()?.text
-    );
+    const outBlock = new StubBlock(depth);
+    const newBlock = new LoopBlock(depth, forLoop?.condition()?.text ?? "");
     newBlock.createEdge(outBlock);
     block.createEdge(newBlock);
 

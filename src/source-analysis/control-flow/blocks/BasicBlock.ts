@@ -1,10 +1,13 @@
 export default abstract class BasicBlock {
   public parent!: BasicBlock;
-  public readonly text: string;
+  private readonly text: string;
   public blocks: Array<BasicBlock>;
   public readonly scopeDepth: number;
 
-  protected constructor(text: string, scopeDepth: number) {
+  protected constructor(scopeDepth: number);
+  protected constructor(scopeDepth: number, text: string);
+  protected constructor(scopeDepth: number, text?: string);
+  protected constructor(scopeDepth: number, text = "") {
     this.text = text;
     this.blocks = [];
     this.scopeDepth = scopeDepth;

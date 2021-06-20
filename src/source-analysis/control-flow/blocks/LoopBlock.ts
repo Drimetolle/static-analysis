@@ -3,8 +3,11 @@ import BasicBlock from "./BasicBlock";
 export default class LoopBlock extends BasicBlock {
   private readonly condition: any;
 
-  constructor(text: string, scopeDepth: number, condition: any) {
-    super(text, scopeDepth);
+  constructor(scopeDepth: number, condition: any);
+  constructor(scopeDepth: number, condition: any, text: string);
+  constructor(scopeDepth: number, condition: any, text?: string);
+  constructor(scopeDepth: number, condition: any, text?: string) {
+    super(scopeDepth, text);
     this.condition = condition;
   }
 }
