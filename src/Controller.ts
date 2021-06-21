@@ -2,18 +2,14 @@ import { singleton, container } from "tsyringe";
 import FileManager from "./file-system/FileManager";
 import Lexer from "./parsers/Lexer";
 import Parser from "./parsers/Parser";
-import DataFlowVisitor from "./visitors/DataFlowVisitor";
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
-import ScopeTree from "./source-analysis/data-flow/ScopeTree";
 import MethodsVisitor from "./visitors/MethodsVisitor";
 import AppConfig from "./AppConfig";
-import StartBlock from "./source-analysis/control-flow/blocks/StartBlock";
 import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 import Linter from "./linter/Linter";
-import JsonFormatter from "./utils/json-formatters/JsonFormatter";
 import DataFlowVisitorFactory from "./visitors/DataFlowVisitorFactory";
 
 @singleton()

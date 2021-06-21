@@ -24,7 +24,6 @@ import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
-import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
 import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
@@ -42,24 +41,28 @@ import OutBlock from "../source-analysis/control-flow/blocks/OutBlock";
 import StartBlock from "../source-analysis/control-flow/blocks/StartBlock";
 import ConditionVisitor from "./ConditionVisitor";
 import { isEmpty } from "ramda";
+import DeclarationVisitor, {
+  DeclarationVarAndNode,
+} from "./DeclarationVisitor";
 
-export interface DeclarationVarAndNode {
-  declaration: DeclarationVar;
-  node: ParserRuleContext;
-}
-
-export default class DataFlowVisitor
+export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
   private readonly scopeTree: ScopeTree;
   private readonly cfg: BasicBlock;
   private readonly name: string;
   private readonly conditionVisitor: ConditionVisitor;
+  private readonly declarationVisitor: DeclarationVisitor;
 
-  constructor(fileName: string, conditionVisitor: ConditionVisitor) {
+  constructor(
+    fileName: string,
+    conditionVisitor: ConditionVisitor,
+    declarationVisitor: DeclarationVisitor
+  ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
     this.cfg = new StartBlock(0);
     this.conditionVisitor = conditionVisitor;
+    this.declarationVisitor = declarationVisitor;
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -102,7 +105,7 @@ export default class DataFlowVisitor
         .typeSpecifier()
         ?.classSpecifier()
     ) {
-      return simpleDeclaration(ctx);
+      return this.declarationVisitor.simpleDeclaration(ctx);
     } else {
       return [];
     }
@@ -222,7 +225,11 @@ export default class DataFlowVisitor
     const init = ctx.initializerClause()?.assignmentExpression();
 
     if (decSeq && dec && init) {
-      const varDeclaration = createDeclaration(dec, init, decSeq);
+      const varDeclaration = this.declarationVisitor.createDeclaration(
+        dec,
+        init,
+        decSeq
+      );
       this.setScope(toNode, varDeclaration, dec);
     }
   }
@@ -308,20 +315,8 @@ export default class DataFlowVisitor
     node: ScopeNode,
     block: BasicBlock,
     depth: number
-  ): any;
-  private statementSequence(
-    ctx: any,
-    node: ScopeNode,
-    block: BasicBlock,
-    depth: number
   ): any {
-    const statements = new Array<StatementContext>();
-
-    if (ctx instanceof StatementSeqContext) {
-      statements.push(...this.visitStatementSeq(ctx));
-    } else if (ctx instanceof Array) {
-      statements.push(...ctx);
-    }
+    const statements = Array.from(ctx);
 
     statements.forEach((statement) => {
       const declaration = statement.declarationStatement();
@@ -414,7 +409,7 @@ export default class DataFlowVisitor
       this.declarationStatement(declaration, childNode);
     }
 
-    if (isEmpty(statement)) {
+    if (!isEmpty(statement)) {
       this.statementSequence(statement, childNode, newBlock, ++depth);
     }
 

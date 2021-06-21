@@ -1,6 +1,7 @@
 import { Lifecycle, scoped } from "tsyringe";
 import {
   ConditionContext,
+  ConstantExpressionContext,
   IterationStatementContext,
   SelectionStatementContext,
   StatementContext,
@@ -10,6 +11,16 @@ import BlockVisitor from "./BlockVisitor";
 export interface ConditionAndStatementContext {
   statementSequence: Array<StatementContext>;
   condition: ConditionContext;
+}
+
+export interface ExpressionAndStatementContext {
+  statementSequence: Array<StatementContext>;
+  expression: ConstantExpressionContext;
+}
+
+export interface CaseStatement {
+  cases: Array<ExpressionAndStatementContext>;
+  defaultCase: undefined | Array<StatementContext>;
 }
 
 @scoped(Lifecycle.ContainerScoped)
@@ -52,22 +63,25 @@ export default class ConditionVisitor {
     return this.blockVisitor.getBlockOfStatementsFromStatement(ctx.statement());
   }
 
-  extractStatementsFromCase(
-    ctx: SelectionStatementContext
-  ): Array<ConditionAndStatementContext> {
-    const result = new Array<ConditionAndStatementContext>();
+  extractStatementsFromCase(ctx: SelectionStatementContext): CaseStatement {
+    const result = new Array<ExpressionAndStatementContext>();
     const switchStatements =
       ctx.statement(0).compoundStatement()?.statementSeq()?.statement() ?? [];
+    let defaultCase: undefined | Array<StatementContext>;
 
     for (const s of switchStatements) {
       const caseExpression = s.labeledStatement()?.constantExpression();
-      const seq = s
-        .labeledStatement()
-        ?.statement()
-        .compoundStatement()
-        ?.statementSeq();
+      const seq = this.blockVisitor.getBlockOfStatementsFromStatement(
+        s!.labeledStatement()!.statement()
+      );
+
+      if (caseExpression) {
+        result.push({ statementSequence: seq, expression: caseExpression });
+      } else {
+        defaultCase = seq;
+      }
     }
 
-    return result;
+    return { cases: result, defaultCase };
   }
 }
