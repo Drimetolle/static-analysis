@@ -14,13 +14,16 @@ import StartBlock from "./source-analysis/control-flow/blocks/StartBlock";
 import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 import Linter from "./linter/Linter";
 import JsonFormatter from "./utils/json-formatters/JsonFormatter";
+import DataFlowVisitorFactory from "./visitors/DataFlowVisitorFactory";
 
 @singleton()
 export default class Controller {
   private readonly config: AppConfig;
+  private readonly dataFlowFactory: DataFlowVisitorFactory;
 
-  constructor(config: AppConfig) {
+  constructor(config: AppConfig, dataFlowFactory: DataFlowVisitorFactory) {
     this.config = config;
+    this.dataFlowFactory = dataFlowFactory;
   }
 
   async run(): Promise<void> {
@@ -43,18 +46,17 @@ export default class Controller {
 
     const tree = parser.translationUnit();
 
-    const visitor = new DataFlowVisitor(
+    const visitors = this.dataFlowFactory.createVisitorsForFiles([
       contentL?.path ?? "",
-      new ScopeTree(),
-      new StartBlock(0)
-    );
+    ]);
+
     const methodsVisitor = new MethodsVisitor(
       contentL?.path ?? "",
       this.config.includePath
     );
 
     const walkers = container.resolve(WalkersHelper);
-    const scope = await walkers.analyze(visitor, tree);
+    const scope = await walkers.analyze(visitors[0], tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
     // console.log(JsonFormatter.ScopeToJson(scope));
     // methods.getMethodSignature(contentL?.path ?? "", "func");

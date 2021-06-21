@@ -24,7 +24,6 @@ import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
-import { ifElseStatement, loopStatement } from "./VisitControlFlowStatement";
 import { createDeclaration, simpleDeclaration } from "./VisitVariableStatement";
 import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
@@ -40,6 +39,9 @@ import StubBlock from "../source-analysis/control-flow/blocks/StubBlock";
 import CFGValidator from "../source-analysis/control-flow/CFGValidator";
 import { Node } from "../utils/Tree";
 import OutBlock from "../source-analysis/control-flow/blocks/OutBlock";
+import StartBlock from "../source-analysis/control-flow/blocks/StartBlock";
+import ConditionVisitor from "./ConditionVisitor";
+import { isEmpty } from "ramda";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -51,11 +53,13 @@ export default class DataFlowVisitor
   private readonly scopeTree: ScopeTree;
   private readonly cfg: BasicBlock;
   private readonly name: string;
+  private readonly conditionVisitor: ConditionVisitor;
 
-  constructor(fileName: string, scopeTree: ScopeTree, cfg: BasicBlock) {
-    this.scopeTree = scopeTree;
+  constructor(fileName: string, conditionVisitor: ConditionVisitor) {
+    this.scopeTree = new ScopeTree();
     this.name = fileName;
-    this.cfg = cfg;
+    this.cfg = new StartBlock(0);
+    this.conditionVisitor = conditionVisitor;
   }
 
   visit(tree: TranslationUnitContext): ScopeTree {
@@ -306,12 +310,6 @@ export default class DataFlowVisitor
     depth: number
   ): any;
   private statementSequence(
-    ctx: StatementSeqContext,
-    node: ScopeNode,
-    block: BasicBlock,
-    depth: number
-  ): any;
-  private statementSequence(
     ctx: any,
     node: ScopeNode,
     block: BasicBlock,
@@ -363,19 +361,34 @@ export default class DataFlowVisitor
     depth: number
   ) {
     const outBlock = new StubBlock(depth);
-    const selectionSequence = ifElseStatement(ifElse);
 
-    for (const s of selectionSequence) {
-      const childNode = this.createNode(node);
+    if (ifElse.If()) {
+      const selectionSequence = this.conditionVisitor.extractStatementsFromIfElse(
+        ifElse
+      );
 
-      const newBlock = new IfBlock(depth, s.condition.text);
-      newBlock.createEdge(outBlock);
-      block.createEdge(newBlock);
+      for (const s of selectionSequence) {
+        const childNode = this.createNode(node);
+        const newBlock = new IfBlock(depth, s.condition.text, s.condition.text);
+        newBlock.createEdge(outBlock);
+        block.createEdge(newBlock);
 
-      this.conditionStatement(s.condition, childNode);
-      this.statementSequence(s.statement, childNode, newBlock, ++depth);
+        this.conditionStatement(s.condition, childNode);
+        this.statementSequence(
+          s.statementSequence,
+          childNode,
+          newBlock,
+          ++depth
+        );
+      }
+      return outBlock;
+    } else {
+      const selectionSequence = this.conditionVisitor.extractStatementsFromCase(
+        ifElse
+      );
+
+      return block;
     }
-    return outBlock;
   }
 
   /**
@@ -389,7 +402,7 @@ export default class DataFlowVisitor
   ) {
     const childNode = this.createNode(node);
 
-    const statement = loopStatement(forLoop);
+    const statement = this.conditionVisitor.extractStatementsFromLoop(forLoop);
     const declaration = forLoop.forInitStatement()?.simpleDeclaration();
 
     const outBlock = new StubBlock(depth);
@@ -401,7 +414,7 @@ export default class DataFlowVisitor
       this.declarationStatement(declaration, childNode);
     }
 
-    if (statement) {
+    if (isEmpty(statement)) {
       this.statementSequence(statement, childNode, newBlock, ++depth);
     }
 
