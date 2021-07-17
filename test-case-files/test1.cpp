@@ -35,15 +35,31 @@ int main() {
 //       auto ifSolo2 = 1;
 //    }
 
-    while(true) {
+//    while(true) {
 //        auto while1 = 1;
 //
-         for(int a = 0; a < 100; a++) {
-                auto whileInner2 = 1;
-            }
+//         for(int a = 0; a < 100; a++) {
+//                auto whileInner2 = 1;
+//            }
 //
-         auto while2 = 1;
-    }
+//         auto while2 = 1;
+//    }
+
+switch ( expression )
+{
+    case constant_expression:
+        {
+            auto autoV123 = 1;
+            auto autoV1234 = 1;
+            break;
+        }
+
+    case constant_expression2:
+        auto autoV123 = 1;
+
+    default:
+        auto autoV123 = 1;
+}
 
 //    auto autoV123 = 1;
 }

@@ -20,7 +20,7 @@ export interface ExpressionAndStatementContext {
 
 export interface CaseStatement {
   cases: Array<ExpressionAndStatementContext>;
-  defaultCase: undefined | Array<StatementContext>;
+  defaultCase: Array<StatementContext>;
 }
 
 @scoped(Lifecycle.ContainerScoped)
@@ -63,6 +63,7 @@ export default class ConditionVisitor {
     return this.blockVisitor.getBlockOfStatementsFromStatement(ctx.statement());
   }
 
+  // TODO Добавить обработку таких выражений: case 1: case 2: ...
   extractStatementsFromCase(ctx: SelectionStatementContext): CaseStatement {
     const result = new Array<ExpressionAndStatementContext>();
     const switchStatements =
@@ -82,6 +83,6 @@ export default class ConditionVisitor {
       }
     }
 
-    return { cases: result, defaultCase };
+    return { cases: result, defaultCase: defaultCase ?? [] };
   }
 }

@@ -138,7 +138,7 @@ export default class DataFlowWalker
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
-  private setScope(
+  private static setScope(
     root: ScopeNode,
     ctx: DeclarationVar,
     node: ParserRuleContext
@@ -214,7 +214,7 @@ export default class DataFlowWalker
       const result = this.visitSimpleDeclaration(simpleDeclaration);
 
       for (const { declaration, node } of result) {
-        this.setScope(toNode, declaration, node);
+        DataFlowWalker.setScope(toNode, declaration, node);
       }
     }
   }
@@ -230,7 +230,7 @@ export default class DataFlowWalker
         init,
         decSeq
       );
-      this.setScope(toNode, varDeclaration, dec);
+      DataFlowWalker.setScope(toNode, varDeclaration, dec);
     }
   }
 
@@ -240,7 +240,7 @@ export default class DataFlowWalker
   ): void {
     const result = this.visitParameterDeclaration(ctx);
     if (result) {
-      this.setScope(toNode, result, ctx);
+      DataFlowWalker.setScope(toNode, result, ctx);
     }
   }
 
@@ -263,7 +263,7 @@ export default class DataFlowWalker
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
 
       for (const { declaration, node } of tmp) {
-        this.setScope(this.scopeTree?.getRoot, declaration, node);
+        DataFlowWalker.setScope(this.scopeTree?.getRoot, declaration, node);
       }
     }
   }
@@ -350,16 +350,16 @@ export default class DataFlowWalker
    * Mutate input block.
    */
   private ifElseStatement(
-    ifElse: SelectionStatementContext,
+    conditionStatment: SelectionStatementContext,
     node: Node<CodeBlock>,
     block: BasicBlock,
     depth: number
   ) {
     const outBlock = new StubBlock(depth);
 
-    if (ifElse.If()) {
+    if (conditionStatment.If()) {
       const selectionSequence = this.conditionVisitor.extractStatementsFromIfElse(
-        ifElse
+        conditionStatment
       );
 
       for (const s of selectionSequence) {
@@ -379,10 +379,39 @@ export default class DataFlowWalker
       return outBlock;
     } else {
       const selectionSequence = this.conditionVisitor.extractStatementsFromCase(
-        ifElse
+        conditionStatment
       );
 
-      return block;
+      // TODO Поддержка default
+      // const defaultCase = new LinearBlock(depth, "default");
+      let previousCase: BasicBlock | undefined;
+
+      for (const statement of selectionSequence.cases) {
+        const childNode = this.createNode(node);
+        const newBlock = new IfBlock(
+          depth,
+          statement.expression.text,
+          statement.expression.text
+        );
+        newBlock.createEdge(outBlock);
+        // newBlock.createEdge(defaultCase);
+        block.createEdge(newBlock);
+
+        if (previousCase) {
+          previousCase.createEdge(newBlock);
+        }
+
+        previousCase = newBlock;
+
+        this.statementSequence(
+          statement.statementSequence,
+          childNode,
+          newBlock,
+          ++depth
+        );
+      }
+
+      return outBlock;
     }
   }
 

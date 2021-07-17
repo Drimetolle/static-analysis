@@ -4,6 +4,7 @@ import IfBlock from "./blocks/IfBlock";
 import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
 import FunctionBlock from "./blocks/FunctionBlock";
+import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
@@ -20,6 +21,7 @@ export default class CFGValidator {
     this.setOutBlock(block);
     //TODO need set selfRef for loop block
 
+    console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 
@@ -41,7 +43,7 @@ export default class CFGValidator {
   }
 
   private setOutBlock(block: BasicBlock): void {
-    block.blocks.forEach((b, i) => {
+    block.blocks.forEach((b) => {
       if (b.isLeaf() && !(b instanceof OutBlock)) {
         b.createEdge(
           CFGValidator.getNextBlockForLastBlockInScope(b) ?? this.outBlock
