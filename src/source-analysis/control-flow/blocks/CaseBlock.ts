@@ -1,6 +1,6 @@
 import BasicBlock from "./BasicBlock";
 
-export default class SwitchBlock extends BasicBlock {
+export default class CaseBlock extends BasicBlock {
   private readonly condition: Array<any> | any;
 
   constructor(scopeDepth: number, condition: any);

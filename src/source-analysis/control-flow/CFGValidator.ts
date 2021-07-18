@@ -5,7 +5,7 @@ import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
 import FunctionBlock from "./blocks/FunctionBlock";
 import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
-import SwitchBlock from "./blocks/SwitchBlock";
+import CaseBlock from "./blocks/CaseBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
@@ -81,7 +81,7 @@ export default class CFGValidator {
     return (
       block instanceof IfBlock ||
       block instanceof LoopBlock ||
-      block instanceof SwitchBlock
+      block instanceof CaseBlock
     );
   }
 

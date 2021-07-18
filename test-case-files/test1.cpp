@@ -47,16 +47,12 @@ int main() {
 
 switch ( expression )
 {
-    case constant_expression:
-        {
-            auto autoV123 = 1;
-            auto autoV1234 = 1;
-            break;
-        }
-
-    case constant_expression2:
+    case constant_expression1: case constant_expression2: case constant_expression3:
+    {
         auto autoV123 = 1;
-
+    }
+    case constant_expression_other:
+        auto autoV123 = 1;
     default:
         auto autoV123 = 1;
 }

@@ -16,12 +16,14 @@ export interface ConditionAndStatementContext {
 
 export interface ExpressionAndStatementContext {
   statementSequence: Array<StatementContext>;
-  expression: ConstantExpressionContext | Array<ConstantExpressionContext>;
+  expression:
+    | undefined
+    | ConstantExpressionContext
+    | Array<ConstantExpressionContext>;
 }
 
 export interface CaseStatement {
   cases: Array<ExpressionAndStatementContext>;
-  defaultCase: Array<StatementContext>;
 }
 
 @scoped(Lifecycle.ContainerScoped)
@@ -70,7 +72,6 @@ export default class ConditionVisitor {
     const result = new Array<ExpressionAndStatementContext>();
     const switchStatements =
       ctx.statement(0).compoundStatement()?.statementSeq()?.statement() ?? [];
-    let defaultCase: undefined | Array<StatementContext>;
 
     for (const switchStatement of switchStatements) {
       const caseExpression = switchStatement
@@ -99,11 +100,14 @@ export default class ConditionVisitor {
           });
         }
       } else {
-        defaultCase = seq;
+        result.push({
+          expression: undefined,
+          statementSequence: seq,
+        });
       }
     }
 
-    return { cases: result, defaultCase: defaultCase ?? [] };
+    return { cases: result };
   }
 
   private static extractCaseStatements(

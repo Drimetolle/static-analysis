@@ -44,7 +44,8 @@ import { isEmpty } from "ramda";
 import DeclarationVisitor, {
   DeclarationVarAndNode,
 } from "./DeclarationVisitor";
-import SwitchBlock from "../source-analysis/control-flow/blocks/SwitchBlock";
+import CaseBlock from "../source-analysis/control-flow/blocks/CaseBlock";
+import DefaultCaseBlock from "../source-analysis/control-flow/blocks/DefaultCaseBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -383,23 +384,30 @@ export default class DataFlowWalker
         conditionStatment
       );
 
-      // TODO Поддержка default
-      // const defaultCase = new LinearBlock(depth, "default");
       let previousCase: BasicBlock | undefined;
 
       for (const statement of selectionSequence.cases) {
         const childNode = this.createNode(node);
-        const newBlock = new SwitchBlock(
-          depth,
-          Array.isArray(statement.expression)
-            ? statement.expression.map((s) => s.text)
-            : statement.expression.text,
-          Array.isArray(statement.expression)
-            ? statement.expression.map((s) => s.text).join("|")
-            : statement.expression.text
-        );
-        newBlock.createEdge(outBlock);
-        // newBlock.createEdge(defaultCase);
+        let newBlock: BasicBlock = new CaseBlock(depth, "", "");
+
+        if (statement.expression == null) {
+          newBlock = new DefaultCaseBlock(depth, "default");
+        } else if (Array.isArray(statement.expression)) {
+          newBlock = new CaseBlock(
+            depth,
+            statement.expression.map((s) => s.text),
+            statement.expression.map((s) => s.text).join("|")
+          );
+          newBlock.createEdge(outBlock);
+        } else {
+          newBlock = new CaseBlock(
+            depth,
+            statement.expression.text,
+            statement.expression.text
+          );
+          newBlock.createEdge(outBlock);
+        }
+
         block.createEdge(newBlock);
 
         if (previousCase) {
