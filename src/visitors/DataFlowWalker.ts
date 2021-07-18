@@ -417,7 +417,7 @@ export default class DataFlowWalker
           statement.statementSequence,
           childNode,
           newBlock,
-          ++depth
+          depth
         );
       }
 

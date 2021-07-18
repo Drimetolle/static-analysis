@@ -26,6 +26,11 @@ export interface CaseStatement {
   cases: Array<ExpressionAndStatementContext>;
 }
 
+interface CaseAndBlock {
+  cases: Array<ConstantExpressionContext>;
+  block: Array<StatementContext>;
+}
+
 @scoped(Lifecycle.ContainerScoped)
 export default class ConditionVisitor {
   private readonly blockVisitor: BlockVisitor;
@@ -78,7 +83,7 @@ export default class ConditionVisitor {
         .labeledStatement()
         ?.constantExpression();
 
-      const caseExpressions = ConditionVisitor.extractCaseStatements(
+      const caseBlock = ConditionVisitor.extractCaseAndBlockStatements(
         switchStatement
       );
 
@@ -87,19 +92,20 @@ export default class ConditionVisitor {
       );
 
       if (caseExpression) {
-        if (isEmpty(caseExpressions)) {
+        if (isEmpty(caseBlock.cases)) {
           result.push({
             statementSequence: seq,
             expression: caseExpression,
           });
         } else {
-          caseExpressions.unshift(caseExpression);
+          caseBlock.cases.unshift(caseExpression);
           result.push({
-            statementSequence: seq,
-            expression: caseExpressions,
+            statementSequence: caseBlock.block,
+            expression: caseBlock.cases,
           });
         }
       } else {
+        // For default case
         result.push({
           expression: undefined,
           statementSequence: seq,
@@ -110,9 +116,9 @@ export default class ConditionVisitor {
     return { cases: result };
   }
 
-  private static extractCaseStatements(
+  private static extractCaseAndBlockStatements(
     statement: StatementContext
-  ): Array<ConstantExpressionContext> {
+  ): CaseAndBlock {
     const cases = new Array<ConstantExpressionContext>();
     let caseStatement = statement.labeledStatement()?.statement();
 
@@ -124,9 +130,18 @@ export default class ConditionVisitor {
       if (constantExpression) {
         cases.push(constantExpression);
       }
-      caseStatement = caseStatement.labeledStatement()?.statement();
+      const newCaseStatement = caseStatement.labeledStatement()?.statement();
+
+      if (newCaseStatement == null) {
+        break;
+      }
+      caseStatement = newCaseStatement;
     }
 
-    return cases;
+    return {
+      cases: cases,
+      block:
+        caseStatement?.compoundStatement()?.statementSeq()?.statement() ?? [],
+    };
   }
 }
