@@ -44,6 +44,7 @@ import { isEmpty } from "ramda";
 import DeclarationVisitor, {
   DeclarationVarAndNode,
 } from "./DeclarationVisitor";
+import SwitchBlock from "../source-analysis/control-flow/blocks/SwitchBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -388,10 +389,14 @@ export default class DataFlowWalker
 
       for (const statement of selectionSequence.cases) {
         const childNode = this.createNode(node);
-        const newBlock = new IfBlock(
+        const newBlock = new SwitchBlock(
           depth,
-          statement.expression.text,
-          statement.expression.text
+          Array.isArray(statement.expression)
+            ? statement.expression.map((s) => s.text)
+            : statement.expression.text,
+          Array.isArray(statement.expression)
+            ? statement.expression.map((s) => s.text).join("|")
+            : statement.expression.text
         );
         newBlock.createEdge(outBlock);
         // newBlock.createEdge(defaultCase);

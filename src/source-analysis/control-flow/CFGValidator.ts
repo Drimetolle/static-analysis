@@ -5,6 +5,7 @@ import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
 import FunctionBlock from "./blocks/FunctionBlock";
 import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
+import SwitchBlock from "./blocks/SwitchBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
@@ -77,7 +78,11 @@ export default class CFGValidator {
   }
 
   private static isFlowBlock(block: BasicBlock) {
-    return block instanceof IfBlock || block instanceof LoopBlock;
+    return (
+      block instanceof IfBlock ||
+      block instanceof LoopBlock ||
+      block instanceof SwitchBlock
+    );
   }
 
   private static findIndexStub(block: BasicBlock): number {

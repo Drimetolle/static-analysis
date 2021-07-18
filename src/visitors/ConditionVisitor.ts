@@ -7,6 +7,7 @@ import {
   StatementContext,
 } from "../grammar/CPP14Parser";
 import BlockVisitor from "./BlockVisitor";
+import { isEmpty } from "ramda";
 
 export interface ConditionAndStatementContext {
   statementSequence: Array<StatementContext>;
@@ -15,7 +16,7 @@ export interface ConditionAndStatementContext {
 
 export interface ExpressionAndStatementContext {
   statementSequence: Array<StatementContext>;
-  expression: ConstantExpressionContext;
+  expression: ConstantExpressionContext | Array<ConstantExpressionContext>;
 }
 
 export interface CaseStatement {
@@ -63,7 +64,6 @@ export default class ConditionVisitor {
     return this.blockVisitor.getBlockOfStatementsFromStatement(ctx.statement());
   }
 
-  // TODO Добавить обработку таких выражений: case 1: case 2: ...
   public extractStatementsFromCase(
     ctx: SelectionStatementContext
   ): CaseStatement {
@@ -86,12 +86,16 @@ export default class ConditionVisitor {
       );
 
       if (caseExpression) {
-        caseExpressions.unshift(caseExpression);
-
-        for (const constantExpression of caseExpressions) {
+        if (isEmpty(caseExpressions)) {
           result.push({
             statementSequence: seq,
-            expression: constantExpression,
+            expression: caseExpression,
+          });
+        } else {
+          caseExpressions.unshift(caseExpression);
+          result.push({
+            statementSequence: seq,
+            expression: caseExpressions,
           });
         }
       } else {
