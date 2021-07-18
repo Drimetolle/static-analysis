@@ -39,13 +39,16 @@ import CFGValidator from "../source-analysis/control-flow/CFGValidator";
 import { Node } from "../utils/Tree";
 import OutBlock from "../source-analysis/control-flow/blocks/OutBlock";
 import StartBlock from "../source-analysis/control-flow/blocks/StartBlock";
-import ConditionVisitor from "./ConditionVisitor";
+import ConditionVisitor, {
+  ExpressionAndStatementContext,
+} from "./ConditionVisitor";
 import { isEmpty } from "ramda";
 import DeclarationVisitor, {
   DeclarationVarAndNode,
 } from "./DeclarationVisitor";
 import CaseBlock from "../source-analysis/control-flow/blocks/CaseBlock";
 import DefaultCaseBlock from "../source-analysis/control-flow/blocks/DefaultCaseBlock";
+import SwitchBlock from "../source-analysis/control-flow/blocks/SwitchBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -221,7 +224,7 @@ export default class DataFlowWalker
     }
   }
 
-  private conditionStatement(ctx: ConditionContext, toNode: ScopeNode) {
+  private ifElseStatementVisitor(ctx: ConditionContext, toNode: ScopeNode) {
     const decSeq = ctx.declSpecifierSeq();
     const dec = ctx.declarator();
     const init = ctx.initializerClause()?.assignmentExpression();
@@ -339,9 +342,9 @@ export default class DataFlowWalker
 
         this.assignStatement(assign, node);
       } else if (ifElse) {
-        block = this.ifElseStatement(ifElse, node, block, depth);
+        block = this.conditionStatementVisitor(ifElse, node, block, depth);
       } else if (forLoop) {
-        block = this.loopStatement(node, forLoop, block, depth);
+        block = this.loopStatementVisitor(node, forLoop, block, depth);
       }
     });
 
@@ -351,17 +354,17 @@ export default class DataFlowWalker
   /**
    * Mutate input block.
    */
-  private ifElseStatement(
-    conditionStatment: SelectionStatementContext,
+  private conditionStatementVisitor(
+    conditionStatement: SelectionStatementContext,
     node: Node<CodeBlock>,
     block: BasicBlock,
     depth: number
   ) {
     const outBlock = new StubBlock(depth);
 
-    if (conditionStatment.If()) {
+    if (conditionStatement.If()) {
       const selectionSequence = this.conditionVisitor.extractStatementsFromIfElse(
-        conditionStatment
+        conditionStatement
       );
 
       for (const s of selectionSequence) {
@@ -370,7 +373,7 @@ export default class DataFlowWalker
         newBlock.createEdge(outBlock);
         block.createEdge(newBlock);
 
-        this.conditionStatement(s.condition, childNode);
+        this.ifElseStatementVisitor(s.condition, childNode);
         this.statementSequence(
           s.statementSequence,
           childNode,
@@ -380,33 +383,27 @@ export default class DataFlowWalker
       }
       return outBlock;
     } else {
+      const switchBlock = new SwitchBlock(
+        depth,
+        conditionStatement.condition().text,
+        conditionStatement.condition().text
+      );
+      block.createEdge(switchBlock);
+      block = switchBlock;
+
       const selectionSequence = this.conditionVisitor.extractStatementsFromCase(
-        conditionStatment
+        conditionStatement
       );
 
       let previousCase: BasicBlock | undefined;
 
       for (const statement of selectionSequence.cases) {
         const childNode = this.createNode(node);
-        let newBlock: BasicBlock = new CaseBlock(depth, "", "");
-
-        if (statement.expression == null) {
-          newBlock = new DefaultCaseBlock(depth, "default");
-        } else if (Array.isArray(statement.expression)) {
-          newBlock = new CaseBlock(
-            depth,
-            statement.expression.map((s) => s.text),
-            statement.expression.map((s) => s.text).join("|")
-          );
-          newBlock.createEdge(outBlock);
-        } else {
-          newBlock = new CaseBlock(
-            depth,
-            statement.expression.text,
-            statement.expression.text
-          );
-          newBlock.createEdge(outBlock);
-        }
+        let newBlock = DataFlowWalker.createCaseBlock(
+          depth,
+          statement,
+          outBlock
+        );
 
         block.createEdge(newBlock);
 
@@ -428,10 +425,38 @@ export default class DataFlowWalker
     }
   }
 
+  private static createCaseBlock(
+    depth: number,
+    statement: ExpressionAndStatementContext,
+    outBlock: StubBlock
+  ) {
+    let newBlock: BasicBlock;
+
+    if (statement.expression == null) {
+      newBlock = new DefaultCaseBlock(depth, "default");
+    } else if (Array.isArray(statement.expression)) {
+      newBlock = new CaseBlock(
+        depth,
+        statement.expression.map((s) => s.text),
+        statement.expression.map((s) => s.text).join("|")
+      );
+      newBlock.createEdge(outBlock);
+    } else {
+      newBlock = new CaseBlock(
+        depth,
+        statement.expression.text,
+        statement.expression.text
+      );
+      newBlock.createEdge(outBlock);
+    }
+
+    return newBlock;
+  }
+
   /**
    * Mutate input block.
    */
-  private loopStatement(
+  private loopStatementVisitor(
     node: Node<CodeBlock>,
     forLoop: IterationStatementContext,
     block: BasicBlock,
