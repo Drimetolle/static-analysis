@@ -31,7 +31,7 @@ export default class ConditionVisitor {
     this.blockVisitor = blockVisitor;
   }
 
-  extractStatementsFromIfElse(
+  public extractStatementsFromIfElse(
     ctx: SelectionStatementContext
   ): Array<ConditionAndStatementContext> {
     const result = new Array<ConditionAndStatementContext>();
@@ -57,32 +57,68 @@ export default class ConditionVisitor {
     return result;
   }
 
-  extractStatementsFromLoop(
+  public extractStatementsFromLoop(
     ctx: IterationStatementContext
   ): Array<StatementContext> {
     return this.blockVisitor.getBlockOfStatementsFromStatement(ctx.statement());
   }
 
   // TODO Добавить обработку таких выражений: case 1: case 2: ...
-  extractStatementsFromCase(ctx: SelectionStatementContext): CaseStatement {
+  public extractStatementsFromCase(
+    ctx: SelectionStatementContext
+  ): CaseStatement {
     const result = new Array<ExpressionAndStatementContext>();
     const switchStatements =
       ctx.statement(0).compoundStatement()?.statementSeq()?.statement() ?? [];
     let defaultCase: undefined | Array<StatementContext>;
 
-    for (const s of switchStatements) {
-      const caseExpression = s.labeledStatement()?.constantExpression();
+    for (const switchStatement of switchStatements) {
+      const caseExpression = switchStatement
+        .labeledStatement()
+        ?.constantExpression();
+
+      const caseExpressions = ConditionVisitor.extractCaseStatements(
+        switchStatement
+      );
+
       const seq = this.blockVisitor.getBlockOfStatementsFromStatement(
-        s!.labeledStatement()!.statement()
+        switchStatement!.labeledStatement()!.statement()
       );
 
       if (caseExpression) {
-        result.push({ statementSequence: seq, expression: caseExpression });
+        caseExpressions.unshift(caseExpression);
+
+        for (const constantExpression of caseExpressions) {
+          result.push({
+            statementSequence: seq,
+            expression: constantExpression,
+          });
+        }
       } else {
         defaultCase = seq;
       }
     }
 
     return { cases: result, defaultCase: defaultCase ?? [] };
+  }
+
+  private static extractCaseStatements(
+    statement: StatementContext
+  ): Array<ConstantExpressionContext> {
+    const cases = new Array<ConstantExpressionContext>();
+    let caseStatement = statement.labeledStatement()?.statement();
+
+    while (caseStatement) {
+      const constantExpression = caseStatement
+        .labeledStatement()
+        ?.constantExpression();
+
+      if (constantExpression) {
+        cases.push(constantExpression);
+      }
+      caseStatement = caseStatement.labeledStatement()?.statement();
+    }
+
+    return cases;
   }
 }
