@@ -439,6 +439,17 @@ export default class DataFlowWalker
     block: BasicBlock,
     depth: number
   ) {
+    const isReturn = jumpStatement.Return();
+    const isBreak = jumpStatement.Break();
+    const isContinue = jumpStatement.Continue();
+    const isGoto = jumpStatement.Goto();
+
+    if (isReturn) {
+    } else if (isBreak) {
+    } else if (isContinue) {
+    } else if (isGoto) {
+    }
+
     return block;
   }
 

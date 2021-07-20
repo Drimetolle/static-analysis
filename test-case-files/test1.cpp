@@ -50,6 +50,9 @@ switch ( expression )
     case constant_expression1: case constant_expression2: case constant_expression3:
     {
         auto autoV123 = 1;
+        break;
+        return;
+        continue;
     }
     case constant_expression_other:
         auto autoV123 = 1;
