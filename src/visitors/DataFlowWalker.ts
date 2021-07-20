@@ -397,6 +397,7 @@ export default class DataFlowWalker
 
       let previousCase: BasicBlock | undefined;
 
+      depth++;
       for (const statement of selectionSequence.cases) {
         const childNode = this.createNode(node);
         let newBlock = DataFlowWalker.createCaseBlock(
