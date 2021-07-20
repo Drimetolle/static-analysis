@@ -22,7 +22,7 @@ export default class CFGValidator {
     this.setOutBlock(block);
     //TODO need set selfRef for loop block
 
-    console.log(JsonFormatter.CFGToJson(block));
+    // console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 

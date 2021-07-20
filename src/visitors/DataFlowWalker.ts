@@ -12,6 +12,7 @@ import {
   ExpressionStatementContext,
   FunctionDefinitionContext,
   IterationStatementContext,
+  JumpStatementContext,
   ParameterDeclarationContext,
   SelectionStatementContext,
   SimpleDeclarationContext,
@@ -328,6 +329,7 @@ export default class DataFlowWalker
       const assign = statement.expressionStatement();
       const ifElse = statement.selectionStatement();
       const forLoop = statement.iterationStatement();
+      const jumpStatement = statement.jumpStatement();
 
       if (declaration) {
         const newBlock = new LinearBlock(depth, declaration.text);
@@ -345,6 +347,8 @@ export default class DataFlowWalker
         block = this.conditionStatementVisitor(ifElse, node, block, depth);
       } else if (forLoop) {
         block = this.loopStatementVisitor(node, forLoop, block, depth);
+      } else if (jumpStatement) {
+        block = this.jumpStatementVisitor(jumpStatement, node, block, depth);
       }
     });
 
@@ -424,6 +428,18 @@ export default class DataFlowWalker
 
       return outBlock;
     }
+  }
+
+  /**
+   * Mutate input block.
+   */
+  private jumpStatementVisitor(
+    jumpStatement: JumpStatementContext,
+    node: Node<CodeBlock>,
+    block: BasicBlock,
+    depth: number
+  ) {
+    return block;
   }
 
   private static createCaseBlock(
