@@ -47,9 +47,12 @@ import { isEmpty } from "ramda";
 import DeclarationVisitor, {
   DeclarationVarAndNode,
 } from "./DeclarationVisitor";
-import CaseBlock from "../source-analysis/control-flow/blocks/CaseBlock";
-import DefaultCaseBlock from "../source-analysis/control-flow/blocks/DefaultCaseBlock";
-import SwitchBlock from "../source-analysis/control-flow/blocks/SwitchBlock";
+import CaseBlock from "../source-analysis/control-flow/blocks/switch/CaseBlock";
+import DefaultCaseBlock from "../source-analysis/control-flow/blocks/switch/DefaultCaseBlock";
+import SwitchBlock from "../source-analysis/control-flow/blocks/switch/SwitchBlock";
+import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
+import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
+import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -325,6 +328,8 @@ export default class DataFlowWalker
     const statements = Array.from(ctx);
 
     statements.forEach((statement) => {
+      // TODO compoundStatement is {...} need
+      // console.log(statement.tryBlock()?.compoundStatement()?.text);
       const declaration = statement.declarationStatement();
       const assign = statement.expressionStatement();
       const ifElse = statement.selectionStatement();
@@ -348,7 +353,11 @@ export default class DataFlowWalker
       } else if (forLoop) {
         block = this.loopStatementVisitor(node, forLoop, block, depth);
       } else if (jumpStatement) {
-        block = this.jumpStatementVisitor(jumpStatement, node, block, depth);
+        block = DataFlowWalker.jumpStatementVisitor(
+          jumpStatement,
+          block,
+          depth
+        );
       }
     });
 
@@ -405,7 +414,7 @@ export default class DataFlowWalker
       for (const statement of selectionSequence.cases) {
         const childNode = this.createNode(node);
         let newBlock = DataFlowWalker.createCaseBlock(
-          depth,
+          depth - 1,
           statement,
           outBlock
         );
@@ -433,9 +442,8 @@ export default class DataFlowWalker
   /**
    * Mutate input block.
    */
-  private jumpStatementVisitor(
+  private static jumpStatementVisitor(
     jumpStatement: JumpStatementContext,
-    node: Node<CodeBlock>,
     block: BasicBlock,
     depth: number
   ) {
@@ -445,8 +453,11 @@ export default class DataFlowWalker
     const isGoto = jumpStatement.Goto();
 
     if (isReturn) {
+      block.createEdge(new ReturnBlock(depth));
     } else if (isBreak) {
+      block.createEdge(new BreakBlock(depth));
     } else if (isContinue) {
+      block.createEdge(new ContinueBlock(depth));
     } else if (isGoto) {
     }
 
@@ -468,15 +479,14 @@ export default class DataFlowWalker
         statement.expression.map((s) => s.text),
         statement.expression.map((s) => s.text).join("|")
       );
-      newBlock.createEdge(outBlock);
     } else {
       newBlock = new CaseBlock(
         depth,
         statement.expression.text,
         statement.expression.text
       );
-      newBlock.createEdge(outBlock);
     }
+    newBlock.createEdge(outBlock);
 
     return newBlock;
   }

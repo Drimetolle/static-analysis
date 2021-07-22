@@ -49,18 +49,27 @@ switch ( expression )
 {
     case constant_expression1: case constant_expression2: case constant_expression3:
     {
-        auto autoV123 = 1;
+//        auto autoV123 = 1;
         break;
-        return;
+    }
+    case constant_expression5:
+        {
+    //        auto autoV123 = 1;
+            break;
+        }
+    case constant_expression_other:
+    {
+//         auto autoV123 = 1;
+         return;
+    }
+    default:
+    {
+//        auto autoV123 = 1;
         continue;
     }
-    case constant_expression_other:
-        auto autoV123 = 1;
-    default:
-        auto autoV123 = 1;
 }
 
-//    auto autoV123 = 1;
+    endBlock();
 }
 
 //auto globalVar2 = 1;

@@ -5,7 +5,8 @@ import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
 import FunctionBlock from "./blocks/FunctionBlock";
 import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
-import CaseBlock from "./blocks/CaseBlock";
+import ReturnBlock from "./blocks/ReturnBlock";
+import AbstractCaseBlock from "./blocks/switch/AbstractCaseBlock";
 
 export default class CFGValidator {
   private readonly outBlock: OutBlock;
@@ -21,8 +22,9 @@ export default class CFGValidator {
     this.removeStubBlocks(block);
     this.setOutBlock(block);
     //TODO need set selfRef for loop block
+    this.changeFlowWhitReturnOperator(block);
 
-    // console.log(JsonFormatter.CFGToJson(block));
+    console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 
@@ -55,6 +57,17 @@ export default class CFGValidator {
     });
   }
 
+  private changeFlowWhitReturnOperator(startBlock: BasicBlock): void {
+    for (const block of startBlock.blocks) {
+      if (block instanceof ReturnBlock) {
+        block.parent.blocks = [block];
+        block.blocks = [this.outBlock];
+      }
+
+      this.changeFlowWhitReturnOperator(block);
+    }
+  }
+
   private static getNextBlockForLastBlockInScope(
     block: BasicBlock
   ): BasicBlock | null {
@@ -81,7 +94,7 @@ export default class CFGValidator {
     return (
       block instanceof IfBlock ||
       block instanceof LoopBlock ||
-      block instanceof CaseBlock
+      block instanceof AbstractCaseBlock
     );
   }
 
