@@ -26,7 +26,7 @@ int main() {
 //    } else {
 //        auto else1 = 1;
 //    }
-//
+
 //    if(ao < 1) {
 //        auto ifSolo1 = 1;
 //    }
@@ -45,29 +45,39 @@ int main() {
 //         auto while2 = 1;
 //    }
 
-switch ( expression )
+//switch ( expression )
+//{
+//    case constant_expression1: case constant_expression2: case constant_expression3:
+//    {
+////        auto autoV123 = 1;
+//        break;
+//    }
+//    case constant_expression5:
+//        {
+//    //        auto autoV123 = 1;
+//            break;
+//        }
+//    case constant_expression_other:
+//    {
+////         auto autoV123 = 1;
+//         break;
+//    }
+//    default:
+//    {
+////        auto autoV123 = 1;
+//        break;
+//    }
+//}
+
 {
-    case constant_expression1: case constant_expression2: case constant_expression3:
-    {
-//        auto autoV123 = 1;
-        break;
-    }
-    case constant_expression5:
-        {
-    //        auto autoV123 = 1;
-            break;
-        }
-    case constant_expression_other:
-    {
-//         auto autoV123 = 1;
-         return;
-    }
-    default:
-    {
-//        auto autoV123 = 1;
-        continue;
-    }
+    auto autoV123 = 1;
 }
+
+//    try {
+//        auto autoV123 = 1;
+//    }
+//    catch(t) {
+//    }
 
     endBlock();
 }

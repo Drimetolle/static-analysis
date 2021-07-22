@@ -326,7 +326,7 @@ export default class DataFlowWalker
     depth: number
   ): any {
     const statements = Array.from(ctx);
-
+    ///
     statements.forEach((statement) => {
       // TODO compoundStatement is {...} need
       // console.log(statement.tryBlock()?.compoundStatement()?.text);
@@ -335,6 +335,7 @@ export default class DataFlowWalker
       const ifElse = statement.selectionStatement();
       const forLoop = statement.iterationStatement();
       const jumpStatement = statement.jumpStatement();
+      const compoundStatement = statement.compoundStatement();
 
       if (declaration) {
         const newBlock = new LinearBlock(depth, declaration.text);
@@ -358,6 +359,11 @@ export default class DataFlowWalker
           block,
           depth
         );
+      } else if (compoundStatement) {
+        const innerStatements =
+          statement.compoundStatement()?.statementSeq()?.statement() ?? [];
+        this.statementSequence(innerStatements, node, block, ++depth);
+        depth--;
       }
     });
 
