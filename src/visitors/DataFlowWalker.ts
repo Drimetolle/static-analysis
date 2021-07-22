@@ -5,6 +5,7 @@ import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import {
   AssignmentExpressionContext,
   BlockDeclarationContext,
+  CompoundStatementContext,
   ConditionContext,
   DeclarationContext,
   DeclarationseqContext,
@@ -53,6 +54,8 @@ import SwitchBlock from "../source-analysis/control-flow/blocks/switch/SwitchBlo
 import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
+import TryBlock from "../source-analysis/control-flow/blocks/exception/TryBlock";
+import CatchBlock from "../source-analysis/control-flow/blocks/exception/CatchBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -328,14 +331,13 @@ export default class DataFlowWalker
     const statements = Array.from(ctx);
     ///
     statements.forEach((statement) => {
-      // TODO compoundStatement is {...} need
-      // console.log(statement.tryBlock()?.compoundStatement()?.text);
       const declaration = statement.declarationStatement();
       const assign = statement.expressionStatement();
       const ifElse = statement.selectionStatement();
       const forLoop = statement.iterationStatement();
       const jumpStatement = statement.jumpStatement();
       const compoundStatement = statement.compoundStatement();
+      const tryBlock = statement.tryBlock();
 
       if (declaration) {
         const newBlock = new LinearBlock(depth, declaration.text);
@@ -360,14 +362,49 @@ export default class DataFlowWalker
           depth
         );
       } else if (compoundStatement) {
-        const innerStatements =
-          statement.compoundStatement()?.statementSeq()?.statement() ?? [];
-        this.statementSequence(innerStatements, node, block, ++depth);
-        depth--;
+        this.compoundStatementVisitor(compoundStatement, node, block, depth);
+      } else if (tryBlock) {
+        const newBlock = new TryBlock(depth, "Try");
+        block.createEdge(newBlock);
+        block = newBlock;
+
+        this.compoundStatementVisitor(
+          tryBlock.compoundStatement(),
+          node,
+          block,
+          depth
+        );
+
+        for (const handler of tryBlock.handlerSeq().handler()) {
+          const newBlock = new CatchBlock(
+            depth,
+            handler.exceptionDeclaration().text
+          );
+          block.createEdge(newBlock);
+          block = newBlock;
+
+          this.compoundStatementVisitor(
+            handler.compoundStatement(),
+            node,
+            block,
+            depth
+          );
+        }
       }
     });
 
     return block;
+  }
+
+  private compoundStatementVisitor(
+    compoundStatement: CompoundStatementContext,
+    node: Node<CodeBlock>,
+    block: BasicBlock,
+    depth: number
+  ) {
+    const innerStatements = compoundStatement.statementSeq()?.statement() ?? [];
+    this.statementSequence(innerStatements, node, block, ++depth);
+    depth--;
   }
 
   /**

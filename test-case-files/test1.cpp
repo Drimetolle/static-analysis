@@ -69,15 +69,18 @@ int main() {
 //    }
 //}
 
-{
-    auto autoV123 = 1;
-}
+//{
+//    auto autoV123 = 1;
+//}
 
-//    try {
-//        auto autoV123 = 1;
-//    }
-//    catch(t) {
-//    }
+    try {
+            if(ao < 1) {
+                auto ifSolo1 = 1;
+            }
+    }
+    catch(t) {
+        catchExpression();
+    }
 
     endBlock();
 }
