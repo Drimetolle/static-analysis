@@ -74,13 +74,21 @@ int main() {
 //}
 
     try {
-            if(ao < 1) {
-                auto ifSolo1 = 1;
-            }
+        tryExpression();
+//            if(ao < 1) {
+//                auto ifSolo1 = 1;
+//            }
+
+        lastExpression();
     }
     catch(t) {
         catchExpression();
     }
+
+//    {
+//        compound();
+//        compound2();
+//    }
 
     endBlock();
 }

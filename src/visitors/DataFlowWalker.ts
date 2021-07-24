@@ -54,8 +54,6 @@ import SwitchBlock from "../source-analysis/control-flow/blocks/switch/SwitchBlo
 import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
-import TryBlock from "../source-analysis/control-flow/blocks/exception/TryBlock";
-import CatchBlock from "../source-analysis/control-flow/blocks/exception/CatchBlock";
 
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
@@ -327,12 +325,12 @@ export default class DataFlowWalker
     node: ScopeNode,
     block: BasicBlock,
     depth: number
-  ): any {
+  ): BasicBlock {
     const statements = Array.from(ctx);
-    ///
+
     statements.forEach((statement) => {
       const declaration = statement.declarationStatement();
-      const assign = statement.expressionStatement();
+      const expressionStatement = statement.expressionStatement();
       const ifElse = statement.selectionStatement();
       const forLoop = statement.iterationStatement();
       const jumpStatement = statement.jumpStatement();
@@ -345,12 +343,12 @@ export default class DataFlowWalker
         block = newBlock;
 
         this.declarationStatement(declaration, node);
-      } else if (assign) {
-        const newBlock = new LinearBlock(depth, assign.text);
+      } else if (expressionStatement) {
+        const newBlock = new LinearBlock(depth, expressionStatement.text);
         block.createEdge(newBlock);
         block = newBlock;
 
-        this.assignStatement(assign, node);
+        this.assignStatement(expressionStatement, node);
       } else if (ifElse) {
         block = this.conditionStatementVisitor(ifElse, node, block, depth);
       } else if (forLoop) {
@@ -362,34 +360,39 @@ export default class DataFlowWalker
           depth
         );
       } else if (compoundStatement) {
-        this.compoundStatementVisitor(compoundStatement, node, block, depth);
+        block = this.compoundStatementVisitor(
+          compoundStatement,
+          node,
+          block,
+          depth
+        );
       } else if (tryBlock) {
-        const newBlock = new TryBlock(depth, "Try");
-        block.createEdge(newBlock);
-        block = newBlock;
-
-        this.compoundStatementVisitor(
+        // const newBlock = new TryBlock(depth, "Try");
+        // block.createEdge(newBlock);
+        // block = newBlock;
+        block = this.compoundStatementVisitor(
           tryBlock.compoundStatement(),
           node,
           block,
           depth
         );
 
-        for (const handler of tryBlock.handlerSeq().handler()) {
-          const newBlock = new CatchBlock(
-            depth,
-            handler.exceptionDeclaration().text
-          );
-          block.createEdge(newBlock);
-          block = newBlock;
-
-          this.compoundStatementVisitor(
-            handler.compoundStatement(),
-            node,
-            block,
-            depth
-          );
-        }
+        // TODO Need catch
+        // for (const handler of tryBlock.handlerSeq().handler()) {
+        //   const newBlock = new CatchBlock(
+        //     depth,
+        //     handler.exceptionDeclaration().text
+        //   );
+        //   block.createEdge(newBlock);
+        //   block = newBlock;
+        //
+        //   this.compoundStatementVisitor(
+        //     handler.compoundStatement(),
+        //     node,
+        //     block,
+        //     depth
+        //   );
+        // }
       }
     });
 
@@ -401,10 +404,12 @@ export default class DataFlowWalker
     node: Node<CodeBlock>,
     block: BasicBlock,
     depth: number
-  ) {
+  ): BasicBlock {
     const innerStatements = compoundStatement.statementSeq()?.statement() ?? [];
-    this.statementSequence(innerStatements, node, block, ++depth);
+    block = this.statementSequence(innerStatements, node, block, ++depth);
     depth--;
+
+    return block;
   }
 
   /**
