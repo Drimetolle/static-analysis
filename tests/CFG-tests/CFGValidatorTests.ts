@@ -4,6 +4,8 @@ import OutBlock from "../../src/source-analysis/control-flow/blocks/OutBlock";
 import ifExpected from "./test-cases/ifWithBraces.json";
 import simpleBlockExpected from "./test-cases/ifWithoutBraces.json";
 import ifElseExpected from "./test-cases/ifElseStatment.json";
+import switchStatementExpected from "./test-cases/switchStatment.json";
+import switchWithoutDefaultCaseStatementExpected from "./test-cases/switchStatmentWithoutDefaultCase.json";
 import compoundStatementExpected from "./test-cases/compoundStatment.json";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";
 import ConditionVisitor from "../../src/visitors/ConditionVisitor";
@@ -91,29 +93,49 @@ describe("cfg generator tests for block statement", () => {
   });
 });
 
-describe("cfg generator tests for block statement", () => {
-  test("simple block", async () => {
+describe("cfg generator tests for switch statement", () => {
+  test("switch with default", async () => {
     const code = `
       void main() {
-        int a = 1;
-        a = 5;
-        a();
-      }
-    `;
-
-    await createTestCase(code, simpleBlockExpected);
-  });
-
-  test("compound statement", async () => {
-    const code = `
-      void main() {
-        {
-            ex();
+        switch(s) {
+            case 1: {a();}
+            case 2: case 3: {b();}
+            default: {c();}
         }
         endBlock();
       }
     `;
 
-    await createTestCase(code, compoundStatementExpected);
+    await createTestCase(code, switchStatementExpected);
+  });
+
+  test("switch without braces", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1: a();
+            case 2: case 3: b();
+            default: c();
+        }
+        endBlock();
+      }
+    `;
+
+    await createTestCase(code, switchStatementExpected);
+  });
+
+  test("switch without braces", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1: a();
+            case 2: case 3: b();
+            default: c();
+        }
+        endBlock();
+      }
+    `;
+
+    await createTestCase(code, switchWithoutDefaultCaseStatementExpected);
   });
 });

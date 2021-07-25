@@ -90,6 +90,10 @@ int main() {
 //        compound2();
 //    }
 
+switch(s) {
+    case 1: {a();}
+}
+endBlock();
 }
 
 //auto globalVar2 = 1;
