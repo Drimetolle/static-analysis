@@ -55,8 +55,13 @@ import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 
+interface ScopeAndCFG {
+  scope: ScopeTree;
+  cfg: StartBlock;
+}
+
 export default class DataFlowWalker
-  implements CPP14ParserVisitor<any>, Walker<ScopeTree> {
+  implements CPP14ParserVisitor<any>, Walker<ScopeAndCFG> {
   private readonly scopeTree: ScopeTree;
   private readonly cfg: BasicBlock;
   private readonly name: string;
@@ -75,13 +80,13 @@ export default class DataFlowWalker
     this.declarationVisitor = declarationVisitor;
   }
 
-  visit(tree: TranslationUnitContext): ScopeTree {
+  visit(tree: TranslationUnitContext): ScopeAndCFG {
     const sequence = tree.declarationseq();
     if (sequence) {
       this.visitDeclarationseq(sequence);
     }
 
-    return this.scopeTree;
+    return { scope: this.scopeTree, cfg: this.cfg };
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
@@ -602,7 +607,7 @@ export default class DataFlowWalker
     throw new Error("Invalid Scope");
   }
 
-  async start(tree: TranslationUnitContext): Promise<ScopeTree> {
+  async start(tree: TranslationUnitContext): Promise<ScopeAndCFG> {
     return this.visit(tree);
   }
 }

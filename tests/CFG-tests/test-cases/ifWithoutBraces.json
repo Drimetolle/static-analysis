@@ -1,0 +1,34 @@
+{
+  "text": "",
+  "name": "FunctionBlock",
+  "depth": 0,
+  "blocks": [
+    {
+      "text": "inta=1;",
+      "name": "LinearBlock",
+      "depth": 0,
+      "blocks": [
+        {
+          "text": "a=5;",
+          "name": "LinearBlock",
+          "depth": 0,
+          "blocks": [
+            {
+              "text": "a();",
+              "name": "LinearBlock",
+              "depth": 0,
+              "blocks": [
+                {
+                  "text": "",
+                  "name": "OutBlock",
+                  "depth": 0,
+                  "blocks": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

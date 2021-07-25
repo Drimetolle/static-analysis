@@ -73,24 +73,25 @@ int main() {
 //    auto autoV123 = 1;
 //}
 
-    try {
-        tryExpression();
-//            if(ao < 1) {
-//                auto ifSolo1 = 1;
-//            }
-
-        lastExpression();
-    }
-    catch(t) {
-        catchExpression();
-    }
+//    try {
+//        tryExpression();
+////            if(ao < 1) {
+////                auto ifSolo1 = 1;
+////            }
+//
+//        lastExpression();
+//    }
+//    catch(t) {
+//        catchExpression();
+//    }
 
 //    {
 //        compound();
 //        compound2();
 //    }
 
-    endBlock();
 }
 
 //auto globalVar2 = 1;
+
+

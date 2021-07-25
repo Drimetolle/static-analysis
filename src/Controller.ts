@@ -58,7 +58,7 @@ export default class Controller {
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     //
     context.create(
-      new LinterContext(contentL?.path ?? "", tree, scope, methods)
+      new LinterContext(contentL?.path ?? "", tree, scope.scope, methods)
     );
 
     // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));

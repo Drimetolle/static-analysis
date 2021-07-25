@@ -86,7 +86,7 @@ export default class ConditionVisitor {
       const caseBlock = ConditionVisitor.extractCaseAndBlockStatements(
         switchStatement
       );
-
+      console.log(switchStatement?.labeledStatement()?.text, "\n ");
       const seq = this.blockVisitor.getBlockOfStatementsFromStatement(
         switchStatement!.labeledStatement()!.statement()
       );
@@ -113,7 +113,7 @@ export default class ConditionVisitor {
       }
     }
 
-    return { cases: result };
+    return { cases: [] };
   }
 
   private static extractCaseAndBlockStatements(
