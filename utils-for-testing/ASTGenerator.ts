@@ -1,7 +1,7 @@
-import Lexer from "../../src/parsers/Lexer";
+import Lexer from "../src/parsers/Lexer";
 import { CharStreams, CommonTokenStream } from "antlr4ts";
-import Parser from "../../src/parsers/Parser";
-import { TranslationUnitContext } from "../../src/grammar/CPP14Parser";
+import Parser from "../src/parsers/Parser";
+import { TranslationUnitContext } from "../src/grammar/CPP14Parser";
 
 export default class ASTGenerator {
   public static fromString(input: string): TranslationUnitContext {

@@ -103,5 +103,5 @@
 void main() {
         if (true1) {a;}
               else if (true2) {b;}
-              else {c;}
+//              else {c;}
       }

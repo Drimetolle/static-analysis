@@ -45,21 +45,44 @@ export default class ConditionVisitor {
     const result = new Array<ConditionAndStatementContext>();
     const statements = ctx.statement() ?? [];
 
-    for (const s of statements) {
-      const elseStatement = s.selectionStatement();
+    // Only for single if and else
+    if (
+      ctx.statement().length >= 2 &&
+      ctx.statement(1).selectionStatement() == null
+    ) {
+      result.push({
+        statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
+          statements[0]
+        ),
+        condition: ctx.condition(),
+      });
+
+      result.push({
+        condition: null,
+        statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
+          statements[1]
+        ),
+      });
+
+      return result;
+    }
+
+    // For other case
+    for (const statement of statements) {
+      const elseStatement = statement.selectionStatement();
 
       if (elseStatement) {
         result.push(...this.extractElseIf(elseStatement));
       } else {
         result.push({
           statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
-            s
+            statement
           ),
           condition: ctx.condition(),
         });
       }
 
-      // For else
+      // For else when exist else if
       if (elseStatement) {
         const elseBlock = ConditionVisitor.getElseStatement(elseStatement);
 

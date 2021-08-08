@@ -24,7 +24,7 @@ export default class CFGValidator {
     //TODO need set selfRef for loop block
     this.changeFlowWhitReturnOperator(block);
 
-    // console.log(JsonFormatter.CFGToJson(block));
+    console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 
