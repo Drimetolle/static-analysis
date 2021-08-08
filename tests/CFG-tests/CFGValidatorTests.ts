@@ -6,6 +6,7 @@ import ifElseExpected from "./test-cases/ifElseStatement.json";
 import simpleBlockExpected from "./test-cases/linearBlock.json";
 import IfIfElseStatement from "./test-cases/IfIfElseStatement.json";
 import IfElseStatementExpected from "./test-cases/elseIfStatement.json";
+import IfElseStatementMultipleExpected from "./test-cases/elseIfStatementMultiple.json";
 import multipleIfElseStatementExpected from "./test-cases/multipleIfElseStatement.json";
 import compoundStatementExpected from "./test-cases/compoundStatement.json";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";
@@ -65,6 +66,18 @@ describe("cfg generator tests for if statement", () => {
     `;
 
     await createTestCase(code, IfElseStatementExpected);
+  });
+
+  test("if, else if statement multiple", async () => {
+    const code = `
+      void main() {
+        if (true1) {a;}
+        else if (true2) {b;}
+        else if (true3) {c;}
+      }
+    `;
+
+    await createTestCase(code, IfElseStatementMultipleExpected);
   });
 
   test("if, else if, else statement", async () => {
