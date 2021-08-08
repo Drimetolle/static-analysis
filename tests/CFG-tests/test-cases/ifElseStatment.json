@@ -32,7 +32,7 @@
     {
       "text": "true2",
       "name": "IfBlock",
-      "depth": 1,
+      "depth": 0,
       "blocks": [
         {
           "text": "",
@@ -58,7 +58,7 @@
     {
       "text": "true2",
       "name": "IfBlock",
-      "depth": 2,
+      "depth": 0,
       "blocks": [
         {
           "text": "",

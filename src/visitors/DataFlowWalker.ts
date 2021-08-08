@@ -234,7 +234,14 @@ export default class DataFlowWalker
     }
   }
 
-  private ifElseStatementVisitor(ctx: ConditionContext, toNode: ScopeNode) {
+  private ifElseStatementVisitor(
+    ctx: ConditionContext | null,
+    toNode: ScopeNode
+  ) {
+    if (!ctx) {
+      return;
+    }
+
     const decSeq = ctx.declSpecifierSeq();
     const dec = ctx.declarator();
     const init = ctx.initializerClause()?.assignmentExpression();
@@ -435,7 +442,11 @@ export default class DataFlowWalker
 
       for (const s of selectionSequence) {
         const childNode = this.createNode(node);
-        const newBlock = new IfBlock(depth, s.condition.text, s.condition.text);
+        const newBlock = new IfBlock(
+          depth,
+          s.condition?.text,
+          s.condition?.text
+        );
         newBlock.createEdge(outBlock);
         block.createEdge(newBlock);
 
@@ -446,6 +457,7 @@ export default class DataFlowWalker
           newBlock,
           ++depth
         );
+        depth--;
       }
       return outBlock;
     } else {

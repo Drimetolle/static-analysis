@@ -11,7 +11,7 @@ import { isEmpty } from "ramda";
 
 export interface ConditionAndStatementContext {
   statementSequence: Array<StatementContext>;
-  condition: ConditionContext;
+  condition: ConditionContext | null;
 }
 
 export interface ExpressionAndStatementContext {
@@ -46,23 +46,68 @@ export default class ConditionVisitor {
     const statements = ctx.statement() ?? [];
 
     for (const s of statements) {
-      const seq = s.compoundStatement()?.statementSeq();
       const elseStatement = s.selectionStatement();
 
-      if (seq) {
+      if (elseStatement) {
+        result.push(...this.extractElseIf(elseStatement));
+      } else {
         result.push({
           statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
             s
           ),
           condition: ctx.condition(),
         });
-      } else if (elseStatement) {
-        const tmp = this.extractStatementsFromIfElse(elseStatement);
-        result.push(...tmp);
+      }
+
+      // For else
+      if (elseStatement) {
+        const elseBlock = ConditionVisitor.getElseStatement(elseStatement);
+
+        result.push({
+          condition: null,
+          statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
+            elseBlock
+          ),
+        });
       }
     }
 
     return result;
+  }
+
+  private extractElseIf(conditionStatement: SelectionStatementContext) {
+    const result = new Array<ConditionAndStatementContext>();
+    if (conditionStatement.statement().length == 2) {
+      const elseIfStatement = this.extractStatementsFromIfElse(
+        conditionStatement
+      );
+      result.push({
+        statementSequence: elseIfStatement[0].statementSequence,
+        condition: elseIfStatement[0].condition,
+      });
+
+      const nextElseIf = conditionStatement.statement(1).selectionStatement();
+      if (nextElseIf) {
+        result.push(...this.extractElseIf(nextElseIf));
+      }
+    }
+
+    return result;
+  }
+
+  private static getElseStatement(
+    conditionStatement: SelectionStatementContext
+  ): StatementContext {
+    if (conditionStatement.statement().length <= 1) {
+      return conditionStatement.statement(0);
+    }
+
+    const cond = conditionStatement.statement(1).selectionStatement();
+    if (!cond) {
+      return conditionStatement.statement(1);
+    }
+
+    return ConditionVisitor.getElseStatement(cond);
   }
 
   public extractStatementsFromLoop(
