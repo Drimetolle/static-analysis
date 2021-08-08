@@ -101,9 +101,9 @@
 //auto globalVar2 = 1;
 
 void main() {
-        if (true1) {a;}
-              else if (true2) {b;}
-               else if (true3) {c;}
-//               else if (true4) {c;}
-//              else {c;}
-      }
+        switch(s) {
+            case 1:
+            return;
+        }
+        end();
+   }

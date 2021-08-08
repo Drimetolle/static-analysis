@@ -15,6 +15,12 @@ import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
 import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
 import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import simpleReturn from "./test-cases/return/simpleReturn.json";
+import ifReturn from "./test-cases/return/ifReturn.json";
+import loopReturn from "./test-cases/return/loopReturn.json";
+import switchReturn from "./test-cases/return/switchReturn.json";
+import switchStatementExpected from "./test-cases/switchStatment.json";
+import switchWithoutDefaultCaseStatementExpected from "./test-cases/switchStatmentWithoutDefaultCase.json";
 
 async function createTestCase(code: string, expected: object) {
   const { cfg } = await new DataFlowWalker(
@@ -167,49 +173,103 @@ describe("cfg generator tests for block statement", () => {
   });
 });
 
-// describe("cfg generator tests for switch statement", () => {
-//   test("switch with default", async () => {
-//     const code = `
-//       void main() {
-//         switch(s) {
-//             case 1: {a();}
-//             case 2: case 3: {b();}
-//             default: {c();}
-//         }
-//         endBlock();
-//       }
-//     `;
-//
-//     await createTestCase(code, switchStatementExpected);
-//   });
-//
-//   test("switch without braces", async () => {
-//     const code = `
-//       void main() {
-//         switch(s) {
-//             case 1: a();
-//             case 2: case 3: b();
-//             default: c();
-//         }
-//         endBlock();
-//       }
-//     `;
-//
-//     await createTestCase(code, switchStatementExpected);
-//   });
-//
-//   test("switch without braces", async () => {
-//     const code = `
-//       void main() {
-//         switch(s) {
-//             case 1: a();
-//             case 2: case 3: b();
-//             default: c();
-//         }
-//         endBlock();
-//       }
-//     `;
-//
-//     await createTestCase(code, switchWithoutDefaultCaseStatementExpected);
-//   });
-// });
+describe("cfg generator tests for return statement", () => {
+  test("simple return", async () => {
+    const code = `
+      void main() {
+        beforeReturn();
+        return;
+        afterReturn();
+      }
+    `;
+
+    await createTestCase(code, simpleReturn);
+  });
+
+  test("return in if statement", async () => {
+    const code = `
+      void main() {
+        if(true) {
+          return;
+        }
+        end();
+      }
+    `;
+
+    await createTestCase(code, ifReturn);
+  });
+
+  test("return in loop statement", async () => {
+    const code = `
+      void main() {
+        while(true) {
+          return;
+        }
+        end();
+      }
+    `;
+
+    await createTestCase(code, loopReturn);
+  });
+
+  test("return in switch statement", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1:
+            return;
+        }
+        end();
+      }
+    `;
+
+    await createTestCase(code, switchReturn);
+  });
+});
+
+describe("cfg generator tests for switch statement", () => {
+  test("switch with default", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1: {a();}
+            case 2: case 3: {b();}
+            default: {c();}
+        }
+        endBlock();
+      }
+    `;
+
+    await createTestCase(code, switchStatementExpected);
+  });
+
+  test("switch without braces", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1: a();
+            case 2: case 3: b();
+            default: c();
+        }
+        endBlock();
+      }
+    `;
+
+    await createTestCase(code, switchStatementExpected);
+  });
+
+  test("switch without braces", async () => {
+    const code = `
+      void main() {
+        switch(s) {
+            case 1: a();
+            case 2: case 3: b();
+            default: c();
+        }
+        endBlock();
+      }
+    `;
+
+    await createTestCase(code, switchWithoutDefaultCaseStatementExpected);
+  });
+});
