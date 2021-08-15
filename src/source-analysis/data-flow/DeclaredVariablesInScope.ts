@@ -31,34 +31,30 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     declaration: string,
     expression: Expression,
     id: PositionInFile,
-    start: number,
     node: ParserRuleContext
   ): void {
-    this.setVariable(declaration, expression, id, start, node);
+    this.setVariable(declaration, expression, id, node);
   }
 
   assign(
     declaration: string,
     expression: Expression,
     id: PositionInFile,
-    start: number,
     node: ParserRuleContext
   ): void {
-    this.assignVariable(declaration, expression, id, start, node);
+    this.assignVariable(declaration, expression, id, node);
   }
 
   private setVariable(
     variable: string,
     expression: Expression,
     id: PositionInFile,
-    start: number,
     node: ParserRuleContext
   ) {
     const declaration = DeclaredVariablesInScope.createDeclaration(
       variable,
       expression,
       id,
-      start,
       VariableState.defined,
       node
     );
@@ -76,7 +72,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     variable: string,
     expression: Expression,
     id: PositionInFile,
-    start: number,
     node: ParserRuleContext
   ) {
     if (this._variables.has(variable)) {
@@ -84,7 +79,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
         variable,
         expression,
         id,
-        start,
         VariableState.defined,
         node
       );
@@ -94,7 +88,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
         variable,
         expression,
         id,
-        start,
         VariableState.undefined,
         node
       );
@@ -106,14 +99,12 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     variable: string,
     expression: Expression,
     id: PositionInFile,
-    start: number,
     type: VariableState,
     node: ParserRuleContext
   ): VariableDeclaration {
     return new VariableDeclaration(
       id,
       expression,
-      start,
       new Variable(variable, type),
       node
     );

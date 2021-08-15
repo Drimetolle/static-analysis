@@ -169,7 +169,6 @@ export default class DataFlowWalker
       ctx.variable,
       expression,
       new PositionInFile(node.start.line, node.start.charPositionInLine),
-      node.start.startIndex,
       node
     );
   }
@@ -189,7 +188,6 @@ export default class DataFlowWalker
         variableName,
         new Expression(init),
         new PositionInFile(ctx.start.line, ctx.start.charPositionInLine),
-        node.start.startIndex,
         node
       );
 
@@ -353,6 +351,7 @@ export default class DataFlowWalker
         const newBlock = new LinearBlock(depth, declaration.text);
         block.createEdge(newBlock);
         block = newBlock;
+        newBlock.scope = node;
 
         this.declarationStatement(declaration, node);
       } else if (expressionStatement) {
@@ -372,9 +371,10 @@ export default class DataFlowWalker
           depth
         );
       } else if (compoundStatement) {
+        const childNode = this.createNode(node);
         block = this.compoundStatementVisitor(
           compoundStatement,
-          node,
+          childNode,
           block,
           depth
         );

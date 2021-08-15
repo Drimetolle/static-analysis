@@ -1,4 +1,7 @@
+import { ScopeNode } from "../../data-flow/ScopeTree";
+
 export default abstract class BasicBlock {
+  public scope?: ScopeNode;
   public parent!: BasicBlock;
   private readonly text: string;
   public blocks: Array<BasicBlock>;

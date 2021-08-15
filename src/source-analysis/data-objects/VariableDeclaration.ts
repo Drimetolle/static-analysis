@@ -12,21 +12,26 @@ export enum VariableState {
 export default class VariableDeclaration implements IHavePosition {
   readonly position: PositionInFile;
   expression: Expression;
-  blockId: number;
   readonly variable: Variable;
   readonly node: ParserRuleContext;
 
   constructor(
     position: PositionInFile,
     expression: Expression,
-    blockId: number,
     variable: Variable,
     node: ParserRuleContext
   ) {
     this.position = position;
     this.expression = expression;
-    this.blockId = blockId;
     this.node = node;
     this.variable = variable;
+  }
+
+  public toJSON(): unknown {
+    return {
+      position: this.position,
+      expression: this.expression.text,
+      variable: this.variable,
+    };
   }
 }

@@ -4,7 +4,7 @@ import IfBlock from "./blocks/IfBlock";
 import OutBlock from "./blocks/OutBlock";
 import LoopBlock from "./blocks/LoopBlock";
 import FunctionBlock from "./blocks/FunctionBlock";
-import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
+
 import ReturnBlock from "./blocks/ReturnBlock";
 import AbstractCaseBlock from "./blocks/switch/AbstractCaseBlock";
 
@@ -24,7 +24,6 @@ export default class CFGValidator {
     //TODO need set selfRef for loop block
     this.changeFlowWhitReturnOperator(block);
 
-    // console.log(JsonFormatter.CFGToJson(block));
     return block;
   }
 

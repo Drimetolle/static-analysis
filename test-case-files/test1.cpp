@@ -101,9 +101,8 @@
 //auto globalVar2 = 1;
 
 void main() {
-        switch(s) {
-            case 1:
-            return;
-        }
-        end();
-   }
+    auto a = 1;
+    {
+        auto b = 1;
+    }
+}
