@@ -9,7 +9,7 @@ export default class ScopeTree extends Tree<CodeBlock> {
   }
 
   constructor() {
-    super(new CodeBlock(0));
+    super(new CodeBlock());
   }
 
   toArray(): Array<ScopeNode> {

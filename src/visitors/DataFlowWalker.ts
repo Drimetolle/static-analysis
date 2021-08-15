@@ -599,16 +599,7 @@ export default class DataFlowWalker
   }
 
   private createNode(toNode: ScopeNode) {
-    let post = 0;
-    const tmp = toNode.parent?.data.post;
-
-    if (tmp == 0) {
-      post = tmp + 1;
-    } else if (tmp) {
-      post = tmp + 1;
-    }
-
-    const declare = new CodeBlock(post);
+    const declare = new CodeBlock();
 
     const result = this.scopeTree?.add(declare, toNode);
 

@@ -11,6 +11,7 @@ import AppConfig from "./AppConfig";
 import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 import Linter from "./linter/Linter";
 import DataFlowVisitorFactory from "./visitors/DataFlowVisitorFactory";
+import JsonFormatter from "./utils/json-formatters/JsonFormatter";
 
 @singleton()
 export default class Controller {
@@ -52,13 +53,13 @@ export default class Controller {
     );
 
     const walkers = container.resolve(WalkersHelper);
-    const scope = await walkers.analyze(visitors[0], tree);
+    const { scope } = await walkers.analyze(visitors[0], tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
-    // console.log(JsonFormatter.ScopeToJson(scope));
+    console.log(JsonFormatter.ScopeToJson(scope));
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     //
     context.create(
-      new LinterContext(contentL?.path ?? "", tree, scope.scope, methods)
+      new LinterContext(contentL?.path ?? "", tree, scope, methods)
     );
 
     // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
