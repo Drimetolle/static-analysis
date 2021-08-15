@@ -2,6 +2,7 @@ import { Lifecycle, scoped } from "tsyringe";
 import {
   AssignmentExpressionContext,
   DeclaratorContext,
+  DeclSpecifierContext,
   DeclSpecifierSeqContext,
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
@@ -26,6 +27,15 @@ export default class DeclarationVisitor {
     return new DeclarationVar(dec.text, type, init);
   }
 
+  createSimpleDeclaration(
+    dec: DeclSpecifierContext,
+    decSeq: DeclSpecifierSeqContext
+  ): DeclarationVar {
+    const type = parseType(decSeq);
+
+    return new DeclarationVar(dec.text, type);
+  }
+
   simpleDeclaration(
     ctx: SimpleDeclarationContext
   ): Array<DeclarationVarAndNode> {
@@ -34,20 +44,33 @@ export default class DeclarationVisitor {
         .initDeclaratorList()
         ?.initDeclarator()
         .map((v) => v) ?? [];
+    const simpleDeclaration = ctx.declSpecifierSeq();
 
-    return nodeVars.map((node, i) => {
-      return {
-        declaration: this.createDeclaration(
-          node.declarator(),
-          node
-            .initializer()
-            ?.braceOrEqualInitializer()
-            ?.initializerClause()
-            ?.assignmentExpression(),
-          ctx.declSpecifierSeq()
+    if (nodeVars.length > 0) {
+      return nodeVars.map((node, i) => {
+        return {
+          declaration: this.createDeclaration(
+            node.declarator(),
+            node
+              .initializer()
+              ?.braceOrEqualInitializer()
+              ?.initializerClause()
+              ?.assignmentExpression(),
+            ctx.declSpecifierSeq()
+          ),
+          node: nodeVars[i],
+        };
+      });
+    } else if (simpleDeclaration) {
+      return new Array<DeclarationVarAndNode>({
+        declaration: this.createSimpleDeclaration(
+          simpleDeclaration?.declSpecifier(1),
+          simpleDeclaration
         ),
-        node: nodeVars[i],
-      };
-    });
+        node: simpleDeclaration,
+      });
+    }
+
+    return [];
   }
 }

@@ -61,7 +61,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 13), "a", "");
+    const variables = createDeclaration(new PositionInFile(3, 8), "a", "");
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
