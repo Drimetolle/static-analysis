@@ -217,6 +217,25 @@ describe("declaration and assigment tests in simple blocks", () => {
 
     await createTestCase(code, scope);
   });
+
+  test("declaration and assigment", async () => {
+    const code = `
+      void main() {
+        {
+          auto a;
+          a = 1;
+        }
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createDeclaration(new PositionInFile(5, 10));
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    scope.add(new CodeBlock(variables), newNode!);
+    // TODO
+    scope.add(new CodeBlock(variables), newNode!);
+
+    await createTestCase(code, scope);
+  });
 });
 
 describe("declaration and assigment tests in if statement", () => {
@@ -283,6 +302,7 @@ describe("declaration and assigment tests in loop statement", () => {
   });
 
   test("assigment in for statement", async () => {
+    // TODO
     const code = `
       void main() {
         for(i = 1; i < 1; i++) {
