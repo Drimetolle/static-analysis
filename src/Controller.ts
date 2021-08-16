@@ -56,9 +56,9 @@ export default class Controller {
     const { scope, cfg } = await walkers.analyze(visitors[0], tree);
     const methods = await walkers.analyze(methodsVisitor, tree);
     // console.log(scope.isDefined(cfg.blocks[0].blocks[0].blocks[0].scope!, "b"));
-    // console.log(
-    //   JsonFormatter.ScopeToJson(cfg.blocks[0].blocks[0].scope as any)
-    // );
+    console.log(
+      JsonFormatter.ScopeToJson(cfg.blocks[0].blocks[0].scope as any)
+    );
     // console.log(JsonFormatter.CFGToJson(cfg.blocks[0]));
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     ////

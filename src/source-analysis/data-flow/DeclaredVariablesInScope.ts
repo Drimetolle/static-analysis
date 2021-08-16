@@ -6,6 +6,7 @@ import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDef
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "../data-objects/Expression";
 import Variable from "./Variable";
+import { insert } from "ramda";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
@@ -13,18 +14,20 @@ export interface DeclaredVariables {
 }
 
 export default class DeclaredVariablesInScope implements DeclaredVariables {
-  private readonly _variables: Map<string, VariableDeclaration>;
+  private readonly _variables: Map<string, Array<VariableDeclaration>>;
 
   get variables(): Array<VariableDeclaration> {
-    return Array.from(this._variables.values());
+    // return Array.from(this._variables.values());
+    return [];
   }
 
   constructor() {
-    this._variables = new Map<string, VariableDeclaration>();
+    this._variables = new Map<string, Array<VariableDeclaration>>();
   }
 
   getVariable(id: string): VariableDeclaration | null {
-    return this._variables.get(id) ?? null;
+    // return this._variables.get(id) ?? null;
+    return null;
   }
 
   declare(
@@ -60,12 +63,16 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     );
 
     if (this._variables.has(variable)) {
-      const position = this._variables.get(variable)?.position.toString();
+      const position = this._variables
+        .get(variable)
+        ?.find((v) => v.variable.name == variable)
+        ?.position.toString();
       throw new VariableAlreadyDefinedException(
         `Variable: ${variable} already declared in position: ${position}.`
       );
     }
-    this._variables.set(variable, declaration);
+
+    this.addVariable(variable, declaration);
   }
 
   private assignVariable(
@@ -82,7 +89,8 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
         VariableState.defined,
         node
       );
-      this._variables.set(variable, declaration);
+
+      this.addVariable(variable, declaration);
     } else {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
@@ -91,8 +99,18 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
         VariableState.undefined,
         node
       );
-      this._variables.set(variable, declaration);
+
+      this.addVariable(variable, declaration);
     }
+  }
+
+  private addVariable(variable: string, declaration: VariableDeclaration) {
+    this._variables.set(
+      variable,
+      this._variables.get(variable) != null
+        ? insert(-1, declaration, this._variables.get(variable)!)
+        : [declaration]
+    );
   }
 
   private static createDeclaration(
