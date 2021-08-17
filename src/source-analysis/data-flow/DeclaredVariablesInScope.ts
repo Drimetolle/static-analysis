@@ -6,7 +6,7 @@ import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDef
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "../data-objects/Expression";
 import Variable from "./Variable";
-import { insert } from "ramda";
+import { insert, last } from "ramda";
 
 export interface DeclaredVariables {
   variables: Array<VariableDeclaration>;
@@ -17,8 +17,9 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   private readonly _variables: Map<string, Array<VariableDeclaration>>;
 
   get variables(): Array<VariableDeclaration> {
-    // return Array.from(this._variables.values());
-    return [];
+    return Array.from(this._variables.values())
+      .map((vars) => last(vars))
+      .filter((vars) => vars != undefined) as Array<VariableDeclaration>;
   }
 
   constructor() {
@@ -26,8 +27,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   }
 
   getVariable(id: string): VariableDeclaration | null {
-    // return this._variables.get(id) ?? null;
-    return null;
+    return last(this._variables.get(id) ?? []) ?? null;
   }
 
   declare(

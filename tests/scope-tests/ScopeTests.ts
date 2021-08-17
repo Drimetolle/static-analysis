@@ -10,6 +10,7 @@ import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
 import PositionInFile from "../../src/source-analysis/data-objects/PositionInFile";
 import Expression from "../../src/source-analysis/data-objects/Expression";
+import { VariableState } from "../../src/source-analysis/data-objects/VariableDeclaration";
 
 async function createTestCase(code: string, expected: ScopeTree) {
   const { scope } = await new DataFlowWalker(
@@ -18,8 +19,8 @@ async function createTestCase(code: string, expected: ScopeTree) {
     new DeclarationVisitor()
   ).start(ASTGenerator.fromString(code));
 
-  expect(JsonFormatter.ScopeToJson(expected)).toBe(
-    JsonFormatter.ScopeToJson(scope)
+  expect(JsonFormatter.ScopeToJson(scope)).toBe(
+    JsonFormatter.ScopeToJson(expected)
   );
 }
 
@@ -158,6 +159,41 @@ describe("declaration and assigment tests in simple blocks", () => {
     await createTestCase(code, scope);
   });
 
+  test("assigment in lexical scope", async () => {
+    const code = `
+      void main() {
+        {
+          a = 1;
+        }
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createAssigment(new PositionInFile(4, 10));
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    scope.add(new CodeBlock(variables), newNode!);
+
+    await createTestCase(code, scope);
+  });
+
+  test("declaration top scope, assigment in lexical scope", async () => {
+    const code = `
+      void main() {
+        auto a;
+        {
+          a = 1;
+        }
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createDeclaration(new PositionInFile(3, 8), "a", "");
+    const variablesInner = createAssigment(new PositionInFile(5, 10));
+    variablesInner.getVariable("a")!.variable.state = VariableState.defined;
+    const newNode = scope.add(new CodeBlock(variables), scope.getRoot);
+    scope.add(new CodeBlock(variablesInner), newNode!);
+
+    await createTestCase(code, scope);
+  });
+
   test("simple assigment", async () => {
     const code = `
       void main() {
@@ -228,10 +264,14 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(5, 10));
+    const variables = createDeclaration(new PositionInFile(4, 10), "a", "");
+    variables.assign(
+      "a",
+      { text: "1" } as Expression,
+      new PositionInFile(5, 10),
+      null as any
+    );
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
-    scope.add(new CodeBlock(variables), newNode!);
-    // TODO
     scope.add(new CodeBlock(variables), newNode!);
 
     await createTestCase(code, scope);
@@ -263,6 +303,8 @@ describe("declaration and assigment tests in if statement", () => {
       }
     `;
     const scope = new ScopeTree();
+    const variables = createAssigment(new PositionInFile(4, 15));
+    scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
   });
