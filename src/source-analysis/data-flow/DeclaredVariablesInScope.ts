@@ -17,9 +17,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   private readonly _variables: Map<string, Array<VariableDeclaration>>;
 
   get variables(): Array<VariableDeclaration> {
-    return Array.from(this._variables.values())
-      .map((vars) => last(vars))
-      .filter((vars) => vars != undefined) as Array<VariableDeclaration>;
+    return Array.from(this._variables.values()).flatMap((vars) => vars);
   }
 
   constructor() {
