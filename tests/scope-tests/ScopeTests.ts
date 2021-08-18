@@ -327,15 +327,35 @@ describe("declaration and assigment tests in if statement", () => {
 });
 
 describe("declaration and assigment tests in loop statement", () => {
+  async function baseTestCase(code: string, position: PositionInFile) {
+    const scope = new ScopeTree();
+    const variables = createDeclaration(position, "i", "1");
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    const scope2 = scope.add(new CodeBlock(variables), newNode!);
+    scope.add(new CodeBlock(), scope2!);
+
+    await createTestCase(code, scope);
+  }
+
   test("declaration in for statement", async () => {
     const code = `
       void main() {
-        for(auto i = 1; i < 1; i++) {
+        for(auto i = 1;;) {
+        }
+      }
+    `;
+    await baseTestCase(code, new PositionInFile(3, 17));
+  });
+
+  test("assigment in for statement", async () => {
+    const code = `
+      void main() {
+        for(i = 1;;) {
         }
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 17), "i");
+    const variables = createAssigment(new PositionInFile(3, 12), "i", "1");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -343,20 +363,14 @@ describe("declaration and assigment tests in loop statement", () => {
     await createTestCase(code, scope);
   });
 
-  test("assigment in for statement", async () => {
+  test("declaration in for statement without loop expression", async () => {
     const code = `
       void main() {
-        for(i = 1; i < 1; i++) {
+        for(auto i = 1; i < 1;) {
         }
       }
     `;
-    const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(3, 17), "i", "1");
-    const newNode = scope.add(new CodeBlock(), scope.getRoot);
-    const scope2 = scope.add(new CodeBlock(variables), newNode!);
-    scope.add(new CodeBlock(), scope2!);
-
-    await createTestCase(code, scope);
+    await baseTestCase(code, new PositionInFile(3, 17));
   });
 
   test("declaration in range for statement", async () => {
@@ -415,3 +429,5 @@ describe("declaration and assigment tests in loop statement", () => {
     await createTestCase(code, scope);
   });
 });
+
+describe("declaration and assigment tests in loop statement", () => {});

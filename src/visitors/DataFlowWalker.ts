@@ -10,6 +10,7 @@ import {
   DeclarationContext,
   DeclarationseqContext,
   DeclarationStatementContext,
+  ExpressionContext,
   ExpressionStatementContext,
   FunctionDefinitionContext,
   IterationStatementContext,
@@ -264,13 +265,26 @@ export default class DataFlowWalker
     }
   }
 
+  private assignStatement(ctx: ExpressionContext, toNode: ScopeNode): void;
   private assignStatement(
     ctx: ExpressionStatementContext,
     toNode: ScopeNode
-  ): void {
-    const expressions = ctx.expression()?.assignmentExpression() ?? [];
+  ): void;
+  private assignStatement(ctx: ParserRuleContext, toNode: ScopeNode): void {
+    if (ctx instanceof ExpressionContext) {
+      this.createScopesForAssigment(ctx.assignmentExpression(), toNode);
+    } else if (ctx instanceof ExpressionStatementContext) {
+      const expressions = ctx.expression()?.assignmentExpression() ?? [];
 
-    for (const assign of expressions) {
+      this.createScopesForAssigment(expressions, toNode);
+    }
+  }
+
+  private createScopesForAssigment(
+    assigmentExpressions: Array<AssignmentExpressionContext>,
+    toNode: ScopeNode
+  ) {
+    for (const assign of assigmentExpressions) {
       if (assign) {
         this.setAssignScope(toNode, assign, assign);
       }
@@ -569,6 +583,11 @@ export default class DataFlowWalker
 
     const statement = this.conditionVisitor.extractStatementsFromLoop(forLoop);
     const declaration = forLoop.forInitStatement()?.simpleDeclaration();
+    const assigmentExpression = forLoop
+      .forInitStatement()
+      ?.expressionStatement();
+    const conditionExpression = forLoop.condition();
+    const loopExpression = forLoop.expression();
 
     const outBlock = new StubBlock(depth);
     const newBlock = new LoopBlock(depth, forLoop?.condition()?.text ?? "");
@@ -577,6 +596,20 @@ export default class DataFlowWalker
 
     if (declaration) {
       this.declarationStatement(declaration, childNode);
+    } else if (assigmentExpression) {
+      this.assignStatement(assigmentExpression, childNode);
+    }
+
+    if (conditionExpression) {
+      const expression = conditionExpression.expression();
+
+      if (expression) {
+        this.assignStatement(expression, childNode);
+      }
+    }
+
+    if (loopExpression) {
+      this.assignStatement(loopExpression, childNode);
     }
 
     if (!isEmpty(statement)) {
