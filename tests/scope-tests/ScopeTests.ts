@@ -254,7 +254,7 @@ describe("declaration and assigment tests in simple blocks", () => {
     await createTestCase(code, scope);
   });
 
-  test("declaration and assigment", async () => {
+  test("declaration and assigment in lexical scope", async () => {
     const code = `
       void main() {
         {
@@ -344,7 +344,6 @@ describe("declaration and assigment tests in loop statement", () => {
   });
 
   test("assigment in for statement", async () => {
-    // TODO
     const code = `
       void main() {
         for(i = 1; i < 1; i++) {
@@ -352,8 +351,65 @@ describe("declaration and assigment tests in loop statement", () => {
       }
     `;
     const scope = new ScopeTree();
+    const variables = createAssigment(new PositionInFile(3, 17), "i", "1");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
-    const scope2 = scope.add(new CodeBlock(), newNode!);
+    const scope2 = scope.add(new CodeBlock(variables), newNode!);
+    scope.add(new CodeBlock(), scope2!);
+
+    await createTestCase(code, scope);
+  });
+
+  test("declaration in range for statement", async () => {
+    const code = `
+      void main() {
+        for(auto a : b) {
+        }
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createDeclaration(new PositionInFile(3, 17), "a", "b");
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    const scope2 = scope.add(new CodeBlock(variables), newNode!);
+    scope.add(new CodeBlock(), scope2!);
+
+    await createTestCase(code, scope);
+  });
+
+  test("assigment in while statement", async () => {
+    const code = `
+      void main() {
+        while((a = 2) == 1) {
+        }
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createAssigment(new PositionInFile(3, 17), "a", "2");
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    const scope2 = scope.add(new CodeBlock(variables), newNode!);
+    scope.add(new CodeBlock(), scope2!);
+
+    await createTestCase(code, scope);
+  });
+
+  test("assigment in do while statement", async () => {
+    const code = `
+      void main() {
+        do {
+          auto b;
+        }
+        while((a = 2) == 1);
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = createDeclaration(new PositionInFile(3, 17), "b");
+    variables.assign(
+      "a",
+      { text: "2" } as Expression,
+      new PositionInFile(1, 1),
+      null as any
+    );
+    const newNode = scope.add(new CodeBlock(), scope.getRoot);
+    const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
 
     await createTestCase(code, scope);
