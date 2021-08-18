@@ -430,4 +430,21 @@ describe("declaration and assigment tests in loop statement", () => {
   });
 });
 
-describe("declaration and assigment tests in loop statement", () => {});
+describe("assigment in expression", () => {
+  async function singleAssigment(code: string, position: PositionInFile) {
+    const scope = new ScopeTree();
+    const variables = createAssigment(position);
+    scope.add(new CodeBlock(variables), scope.getRoot);
+    await createTestCase(code, scope);
+  }
+
+  test("assigment in do while statement", async () => {
+    const code = `
+      void main() {
+        (a = 1);
+      }
+    `;
+
+    await singleAssigment(code, new PositionInFile(1, 1));
+  });
+});
