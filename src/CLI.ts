@@ -6,9 +6,6 @@ import WalkersHelper from "./linter/walkers/WalkersHelper";
 import Controller from "./Controller";
 import UndeclaredVariable from "./rules/UndeclaredVariable";
 import IssuesQueue from "./linter/issue/IssuesQueue";
-import Formatter from "./cli-engine/Formatter";
-import Lexer from "./parsers/Lexer";
-import Parser from "./parsers/Parser";
 import CheckScope from "./rules/CheckScope";
 
 // container registration

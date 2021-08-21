@@ -31,13 +31,11 @@ export enum TypeSpecifier {
   UNSIGNED_CHAR = "unsignedchar",
   CHAR = "char",
   WCHAR_T = "wchart",
-  CHAR8_T = "char8t",
-  CHAR16_T = "char16t",
-  CHAR32_T = "char32t",
   FLOAT = "float",
   DOUBLE = "double",
   LONG_DOUBLE = "longdouble",
   VOID = "void",
+  BOOL = "bool",
 }
 
 export enum KeyWords {
