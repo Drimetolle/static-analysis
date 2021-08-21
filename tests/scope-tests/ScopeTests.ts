@@ -24,33 +24,15 @@ async function createTestCase(code: string, expected: ScopeTree) {
   );
 }
 
-function createDeclaration(
-  position: PositionInFile,
-  name = "a",
-  expression = "1"
-) {
+function createDeclaration(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
-  variables.declare(
-    name,
-    { text: expression } as Expression,
-    position,
-    null as any
-  );
+  variables.declare(name, { text: expression } as Expression, null as any);
   return variables;
 }
 
-function createAssigment(
-  position: PositionInFile,
-  name = "a",
-  expression = "1"
-) {
+function createAssigment(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
-  variables.assign(
-    name,
-    { text: expression } as Expression,
-    position,
-    null as any
-  );
+  variables.assign(name, { text: expression } as Expression, null as any);
   return variables;
 }
 
@@ -62,7 +44,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 8), "a", "");
+    const variables = createDeclaration("a", "");
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -76,24 +58,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare(
-      "a",
-      new Expression(),
-      new PositionInFile(3, 13),
-      null as any
-    );
-    variables.declare(
-      "b",
-      new Expression(),
-      new PositionInFile(3, 16),
-      null as any
-    );
-    variables.declare(
-      "c",
-      new Expression(),
-      new PositionInFile(3, 19),
-      null as any
-    );
+    variables.declare("a", new Expression(), null as any);
+    variables.declare("b", new Expression(), null as any);
+    variables.declare("c", new Expression(), null as any);
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -106,7 +73,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 13));
+    const variables = createDeclaration();
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -120,24 +87,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare(
-      "a",
-      { text: "1" } as Expression,
-      new PositionInFile(3, 13),
-      null as any
-    );
-    variables.declare(
-      "b",
-      { text: "2" } as Expression,
-      new PositionInFile(3, 20),
-      null as any
-    );
-    variables.declare(
-      "c",
-      new Expression(),
-      new PositionInFile(3, 27),
-      null as any
-    );
+    variables.declare("a", { text: "1" } as Expression, null as any);
+    variables.declare("b", { text: "2" } as Expression, null as any);
+    variables.declare("c", new Expression(), null as any);
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -152,7 +104,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(4, 15));
+    const variables = createDeclaration();
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     scope.add(new CodeBlock(variables), newNode!);
 
@@ -168,7 +120,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(4, 10));
+    const variables = createAssigment();
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     scope.add(new CodeBlock(variables), newNode!);
 
@@ -185,8 +137,8 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 8), "a", "");
-    const variablesInner = createAssigment(new PositionInFile(5, 10));
+    const variables = createDeclaration("a", "");
+    const variablesInner = createAssigment();
     variablesInner.getVariable("a")!.variable.state = VariableState.defined;
     const newNode = scope.add(new CodeBlock(variables), scope.getRoot);
     scope.add(new CodeBlock(variablesInner), newNode!);
@@ -201,7 +153,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(3, 8));
+    const variables = createAssigment();
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -215,24 +167,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.assign(
-      "a",
-      { text: "1" } as Expression,
-      new PositionInFile(3, 8),
-      null as any
-    );
-    variables.assign(
-      "b",
-      { text: "2" } as Expression,
-      new PositionInFile(3, 15),
-      null as any
-    );
-    variables.assign(
-      "c",
-      { text: "3" } as Expression,
-      new PositionInFile(3, 22),
-      null as any
-    );
+    variables.assign("a", { text: "1" } as Expression, null as any);
+    variables.assign("b", { text: "2" } as Expression, null as any);
+    variables.assign("c", { text: "3" } as Expression, null as any);
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -247,7 +184,7 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(4, 10));
+    const variables = createAssigment();
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     scope.add(new CodeBlock(variables), newNode!);
 
@@ -264,11 +201,11 @@ describe("declaration and assigment tests in simple blocks", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(4, 10), "a", "");
+    const variables = createDeclaration("a", "");
     variables.assign(
       "a",
       { text: "1" } as Expression,
-      new PositionInFile(5, 10),
+
       null as any
     );
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
@@ -288,7 +225,7 @@ describe("declaration and assigment tests in if statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(4, 15));
+    const variables = createDeclaration();
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     scope.add(new CodeBlock(variables), newNode!);
 
@@ -303,7 +240,7 @@ describe("declaration and assigment tests in if statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(4, 15));
+    const variables = createAssigment();
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -318,7 +255,7 @@ describe("declaration and assigment tests in if statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(4, 10));
+    const variables = createAssigment();
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     scope.add(new CodeBlock(variables), newNode!);
 
@@ -327,9 +264,9 @@ describe("declaration and assigment tests in if statement", () => {
 });
 
 describe("declaration and assigment tests in loop statement", () => {
-  async function baseTestCase(code: string, position: PositionInFile) {
+  async function baseTestCase(code: string) {
     const scope = new ScopeTree();
-    const variables = createDeclaration(position, "i", "1");
+    const variables = createDeclaration("i", "1");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -344,7 +281,7 @@ describe("declaration and assigment tests in loop statement", () => {
         }
       }
     `;
-    await baseTestCase(code, new PositionInFile(3, 17));
+    await baseTestCase(code);
   });
 
   test("assigment in for statement", async () => {
@@ -355,7 +292,7 @@ describe("declaration and assigment tests in loop statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(3, 12), "i", "1");
+    const variables = createAssigment("i", "1");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -370,7 +307,7 @@ describe("declaration and assigment tests in loop statement", () => {
         }
       }
     `;
-    await baseTestCase(code, new PositionInFile(3, 17));
+    await baseTestCase(code);
   });
 
   test("declaration in range for statement", async () => {
@@ -381,7 +318,7 @@ describe("declaration and assigment tests in loop statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 17), "a", "b");
+    const variables = createDeclaration("a", "b");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -397,7 +334,7 @@ describe("declaration and assigment tests in loop statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createAssigment(new PositionInFile(3, 17), "a", "2");
+    const variables = createAssigment("a", "2");
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -415,13 +352,8 @@ describe("declaration and assigment tests in loop statement", () => {
       }
     `;
     const scope = new ScopeTree();
-    const variables = createDeclaration(new PositionInFile(3, 17), "b");
-    variables.assign(
-      "a",
-      { text: "2" } as Expression,
-      new PositionInFile(1, 1),
-      null as any
-    );
+    const variables = createDeclaration("b");
+    variables.assign("a", { text: "2" } as Expression, null as any);
     const newNode = scope.add(new CodeBlock(), scope.getRoot);
     const scope2 = scope.add(new CodeBlock(variables), newNode!);
     scope.add(new CodeBlock(), scope2!);
@@ -431,9 +363,9 @@ describe("declaration and assigment tests in loop statement", () => {
 });
 
 describe("assigment in expression", () => {
-  async function singleAssigment(code: string, position: PositionInFile) {
+  async function singleAssigment(code: string) {
     const scope = new ScopeTree();
-    const variables = createAssigment(position);
+    const variables = createAssigment();
     scope.add(new CodeBlock(variables), scope.getRoot);
     await createTestCase(code, scope);
   }
@@ -445,6 +377,6 @@ describe("assigment in expression", () => {
       }
     `;
 
-    await singleAssigment(code, new PositionInFile(1, 1));
+    await singleAssigment(code);
   });
 });
