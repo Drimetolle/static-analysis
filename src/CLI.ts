@@ -22,9 +22,8 @@ container.register<WalkersHelper>(WalkersHelper, {
   useValue: new WalkersHelper(),
 });
 
-container
-  .resolve(IssuesQueue)
-  .subscribe((i) => console.log(Formatter.formatMessage(i)));
+container.resolve(IssuesQueue);
+// .subscribe((i) => console.log(Formatter.formatMessage(i)));
 
 const controller = container.resolve(Controller);
 controller.run();

@@ -54,6 +54,7 @@ import SwitchBlock from "../source-analysis/control-flow/blocks/switch/SwitchBlo
 import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
+import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -67,17 +68,20 @@ export default class DataFlowWalker
   private readonly name: string;
   private readonly conditionVisitor: ConditionVisitor;
   private readonly declarationVisitor: DeclarationVisitor;
+  private readonly expressionConverter: ANTLRExpressionConverter;
 
   constructor(
     fileName: string,
     conditionVisitor: ConditionVisitor,
-    declarationVisitor: DeclarationVisitor
+    declarationVisitor: DeclarationVisitor,
+    expressionConverter: ANTLRExpressionConverter
   ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
     this.cfg = new StartBlock(0);
     this.conditionVisitor = conditionVisitor;
     this.declarationVisitor = declarationVisitor;
+    this.expressionConverter = expressionConverter;
   }
 
   visit(tree: TranslationUnitContext): ScopeAndCFG {
@@ -373,6 +377,11 @@ export default class DataFlowWalker
         block = newBlock;
 
         this.assignStatement(expressionStatement, node);
+
+        const singleExpressionTest = expressionStatement.expression();
+        if (singleExpressionTest) {
+          this.expressionConverter.convertExpression(singleExpressionTest);
+        }
       } else if (ifElse) {
         block = this.conditionStatementVisitor(ifElse, node, block, depth);
       } else if (forLoop) {

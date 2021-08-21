@@ -101,9 +101,8 @@
 //auto globalVar2 = 1;
 
 void main() {
-       int a;
-               a = 1;
-      }
+    a + b;
+}
 
 //void main() {
 //    for(kkk;;i=1,j=2) {
