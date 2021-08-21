@@ -24,7 +24,6 @@ import {
 } from "../grammar/CPP14Parser";
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
-import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { parseType } from "../utils/TypeInference";
@@ -169,7 +168,6 @@ export default class DataFlowWalker
     root.data.declaredVariables.declare(
       ctx.variable,
       expression,
-      new PositionInFile(node.start.line, node.start.charPositionInLine),
       node,
       ctx.type
     );
@@ -189,7 +187,6 @@ export default class DataFlowWalker
       root.data.declaredVariables.assign(
         variableName,
         new Expression(init),
-        new PositionInFile(ctx.start.line, ctx.start.charPositionInLine),
         node
       );
 

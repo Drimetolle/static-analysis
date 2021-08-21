@@ -1,7 +1,6 @@
 import VariableDeclaration, {
   VariableState,
 } from "../data-objects/VariableDeclaration";
-import PositionInFile from "../data-objects/PositionInFile";
 import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "../data-objects/Expression";
@@ -32,46 +31,38 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   declare(
     declaration: string,
     expression: Expression,
-    id: PositionInFile,
     node: ParserRuleContext,
     type: TypeSpecifier = TypeSpecifier.AUTO
   ): void {
-    this.setVariable(declaration, expression, id, node, type);
+    this.setVariable(declaration, expression, node, type);
   }
 
   assign(
     declaration: string,
     expression: Expression,
-    id: PositionInFile,
     node: ParserRuleContext,
     type: TypeSpecifier = TypeSpecifier.AUTO
   ): void {
-    this.assignVariable(declaration, expression, id, node, type);
+    this.assignVariable(declaration, expression, node, type);
   }
 
   private setVariable(
     variable: string,
     expression: Expression,
-    id: PositionInFile,
     node: ParserRuleContext,
     type: TypeSpecifier
   ) {
     const declaration = DeclaredVariablesInScope.createDeclaration(
       variable,
       expression,
-      id,
       VariableState.defined,
       node,
       type
     );
 
     if (this._variables.has(variable)) {
-      const position = this._variables
-        .get(variable)
-        ?.find((v) => v.variable.name == variable)
-        ?.position.toString();
       throw new VariableAlreadyDefinedException(
-        `Variable: ${variable} already declared in position: ${position}.`
+        `Variable: ${variable} already declared in position: ${node.start.line}:${node.start.charPositionInLine}.`
       );
     }
 
@@ -81,7 +72,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   private assignVariable(
     variable: string,
     expression: Expression,
-    id: PositionInFile,
     node: ParserRuleContext,
     type: TypeSpecifier
   ) {
@@ -89,7 +79,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
         expression,
-        id,
         VariableState.defined,
         node,
         type
@@ -100,7 +89,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
         expression,
-        id,
         VariableState.undefined,
         node,
         type
@@ -122,13 +110,11 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   private static createDeclaration(
     variable: string,
     expression: Expression,
-    id: PositionInFile,
     state: VariableState,
     node: ParserRuleContext,
     type: TypeSpecifier
   ): VariableDeclaration {
     return new VariableDeclaration(
-      id,
       expression,
       new Variable(variable, state),
       node,
