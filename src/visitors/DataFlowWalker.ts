@@ -201,6 +201,7 @@ export default class DataFlowWalker
 
       if (variable) {
         variable.variable.state = VariableState.defined;
+        variable.type = isDefined.type;
       }
     }
   }

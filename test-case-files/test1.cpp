@@ -101,10 +101,8 @@
 //auto globalVar2 = 1;
 
 void main() {
-//        auto a;
-                {
-                  a = 1;
-                }
+       int a;
+               a = 1;
       }
 
 //void main() {

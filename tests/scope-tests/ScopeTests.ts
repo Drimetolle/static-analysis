@@ -8,9 +8,9 @@ import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
 import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
 import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
-import PositionInFile from "../../src/source-analysis/data-objects/PositionInFile";
 import Expression from "../../src/source-analysis/data-objects/Expression";
 import { VariableState } from "../../src/source-analysis/data-objects/VariableDeclaration";
+import { TypeSpecifier } from "../../src/source-analysis/data-objects/LanguageKeyWords";
 
 async function createTestCase(code: string, expected: ScopeTree) {
   const { scope } = await new DataFlowWalker(
@@ -45,6 +45,32 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = createDeclaration("a", "");
+    scope.add(new CodeBlock(variables), scope.getRoot);
+
+    await createTestCase(code, scope);
+  });
+
+  test("simple declaration and assign with int type", async () => {
+    const code = `
+      void main() {
+        int a;
+        a = 1;
+      }
+    `;
+    const scope = new ScopeTree();
+    const variables = new DeclaredVariablesInScope();
+    variables.declare(
+      "a",
+      { text: "" } as Expression,
+      null as any,
+      TypeSpecifier.INT
+    );
+    variables.assign(
+      "a",
+      { text: "1" } as Expression,
+      null as any,
+      TypeSpecifier.INT
+    );
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);

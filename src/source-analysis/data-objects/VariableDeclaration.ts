@@ -12,7 +12,7 @@ export default class VariableDeclaration {
   public readonly expression: Expression;
   public readonly variable: Variable;
   public readonly node: ParserRuleContext;
-  public readonly type: TypeSpecifier;
+  public type: TypeSpecifier;
 
   constructor(
     expression: Expression,

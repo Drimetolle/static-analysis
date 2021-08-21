@@ -81,7 +81,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
         expression,
         VariableState.defined,
         node,
-        type
+        this._variables.get(variable)![0].type ?? type
       );
 
       this.addVariable(variable, declaration);
