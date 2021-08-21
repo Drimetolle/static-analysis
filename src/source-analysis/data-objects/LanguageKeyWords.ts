@@ -41,6 +41,7 @@ export enum TypeSpecifier {
 }
 
 export enum KeyWords {
+  AUTO = "auto",
   Null = "null",
   CHAR = "char",
   CHAR16 = "char16",

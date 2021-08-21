@@ -170,7 +170,8 @@ export default class DataFlowWalker
       ctx.variable,
       expression,
       new PositionInFile(node.start.line, node.start.charPositionInLine),
-      node
+      node,
+      ctx.type
     );
   }
 

@@ -61,7 +61,7 @@ export default class Controller {
     // );
     // console.log(JsonFormatter.CFGToJson(cfg.blocks[0]));
 
-    console.log(JsonFormatter.ScopeToJson(scope));
+    // console.log(JsonFormatter.ScopeToJson(scope));
 
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     ////
