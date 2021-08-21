@@ -3,6 +3,7 @@
  * */
 
 export enum TypeSpecifier {
+  AUTO = "auto",
   SHORT = "short",
   SHORT_INT = "shortint",
   SIGNED_SHORT = "signedshort",

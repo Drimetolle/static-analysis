@@ -101,10 +101,16 @@
 //auto globalVar2 = 1;
 
 void main() {
-    auto a;
-    a = 1;
+        int a = 2;
+      }
 
-    {
-        b = 5;
-    }
-}
+//void main() {
+//    for(kkk;;i=1,j=2) {
+//    }
+////    for(int i;;) {
+////    }
+////    for(i, j = 2; i < 5; i++) {
+////    }
+////    for(int i : j) {
+////    }
+//}

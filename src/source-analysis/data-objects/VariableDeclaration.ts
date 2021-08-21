@@ -3,6 +3,7 @@ import { IHavePosition } from "./DiagnosticsInterfaceses";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "./Expression";
 import Variable from "../data-flow/Variable";
+import { TypeSpecifier } from "./LanguageKeyWords";
 
 export enum VariableState {
   defined = "defined",
@@ -10,21 +11,24 @@ export enum VariableState {
 }
 
 export default class VariableDeclaration implements IHavePosition {
-  readonly position: PositionInFile;
-  expression: Expression;
-  readonly variable: Variable;
-  readonly node: ParserRuleContext;
+  public readonly position: PositionInFile;
+  public readonly expression: Expression;
+  public readonly variable: Variable;
+  public readonly node: ParserRuleContext;
+  public readonly type: TypeSpecifier;
 
   constructor(
     position: PositionInFile,
     expression: Expression,
     variable: Variable,
-    node: ParserRuleContext
+    node: ParserRuleContext,
+    type: TypeSpecifier
   ) {
     this.position = position;
     this.expression = expression;
     this.node = node;
     this.variable = variable;
+    this.type = type;
   }
 
   public toJSON(): unknown {
@@ -32,6 +36,7 @@ export default class VariableDeclaration implements IHavePosition {
       position: this.position,
       expression: this.expression.text,
       variable: this.variable,
+      type: this.type,
     };
   }
 }
