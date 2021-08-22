@@ -10,4 +10,8 @@ export default class NumberTypeInterval {
   inInterval(value: number): boolean {
     return this.minValue <= value && this.maxValue >= value;
   }
+
+  get possibleValue(): [number, number] {
+    return [this.minValue, this.maxValue];
+  }
 }
