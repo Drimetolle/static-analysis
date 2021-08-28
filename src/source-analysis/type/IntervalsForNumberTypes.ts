@@ -17,8 +17,9 @@ const longLongInterval = new NumberTypeInterval(
 );
 const uLongLongInterval = new NumberTypeInterval(0, 18_446_744_073_709_551_615);
 const doubleInterval = new NumberTypeInterval(-1.7e308, 1.7e308);
+const infinityInterval = new NumberTypeInterval(-Infinity, Infinity);
 
-export const numberLimits = {
+export const numberLimits: { [k in TypeSpecifier]: NumberTypeInterval } = {
   [TypeSpecifier.CHAR]: new NumberTypeInterval(-128, 127),
   [TypeSpecifier.SIGNED_CHAR]: new NumberTypeInterval(-128, 127),
   [TypeSpecifier.UNSIGNED_CHAR]: new NumberTypeInterval(0, 255),
@@ -46,8 +47,10 @@ export const numberLimits = {
   [TypeSpecifier.UNSIGNED_LONG_LONG]: uLongLongInterval,
   [TypeSpecifier.UNSIGNED_LONG_LONG_INT]: uLongLongInterval,
   [TypeSpecifier.WCHAR_T]: new NumberTypeInterval(0, 65_535),
-  [TypeSpecifier.BOOL]: new NumberTypeInterval(-Infinity, Infinity),
+  [TypeSpecifier.BOOL]: infinityInterval,
   [TypeSpecifier.FLOAT]: new NumberTypeInterval(-3.402823e38, 3.402823e38),
   [TypeSpecifier.DOUBLE]: doubleInterval,
   [TypeSpecifier.LONG_DOUBLE]: doubleInterval,
+  [TypeSpecifier.VOID]: infinityInterval,
+  [TypeSpecifier.AUTO]: infinityInterval,
 };

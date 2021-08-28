@@ -9,9 +9,27 @@ import IssuesQueue from "./linter/issue/IssuesQueue";
 import CheckScope from "./rules/CheckScope";
 import IntervalCalculator from "./source-analysis/interval-analysis/IntervalCalculator";
 import { apply, equals, max, min } from "ramda";
+import AdditionalOnInterval from "./source-analysis/interval-analysis/functions/AdditionalOnInterval";
+import IntervalWorkListAlgorithm from "./source-analysis/interval-analysis/IntervalWorkListAlgorithm";
+import MutationBlock from "./source-analysis/interval-analysis/MutationBlock";
+import VariableInterval from "./source-analysis/interval-analysis/VariableInterval";
+import { TypeSpecifier } from "./source-analysis/data-objects/LanguageKeyWords";
+import InitInterval from "./source-analysis/interval-analysis/functions/InitInterval";
+
 const calc = new IntervalCalculator();
 
 function allPrevJoin(a: Array<[number, number]>) {}
+
+const secondVar = new VariableInterval(TypeSpecifier.INT, []);
+const calculator = new IntervalWorkListAlgorithm([
+  new MutationBlock(
+    new VariableInterval(TypeSpecifier.INT, [secondVar]),
+    new InitInterval([100, 100])
+  ),
+  new MutationBlock(secondVar, new AdditionalOnInterval([0, 1])),
+]);
+
+console.log(calculator.calculate());
 
 /*
 int x;
@@ -119,7 +137,7 @@ function worklist2() {
         Infinity,
       ]);
 
-      return [tmp[1], tmp[1]];
+      return calc.join([tmp[1], tmp[1]], [150, 150]);
     },
   ];
 
@@ -131,7 +149,7 @@ function worklist2() {
     [-Infinity, Infinity],
   ];
   while (wl.length != 0) {
-    const j = wl.shift()!;
+    const j = wl.pop()!;
     const N = F[j](X);
 
     if (!equals(N, X[j])) {
@@ -151,15 +169,15 @@ function worklist2() {
       // }
 
       if (j == 1) {
-        wl.push(2);
+        wl.unshift(2);
       }
 
       if (j == 1) {
-        wl.push(3);
+        wl.unshift(3);
       }
 
       if (j == 2) {
-        wl.push(1);
+        wl.unshift(1);
       }
       // add all the indexes that directly depend on j to WL
       // (X[k] depends on X[j] if F[k] contains X[j])
@@ -167,11 +185,91 @@ function worklist2() {
     iter++;
   }
 
-  console.log(Y);
   return X;
 }
 
-console.log(worklist2());
+function worklist3(X: Array<[number, number]>) {
+  const wl = [0, 1, 2, 3];
+  const F: Array<(a: Array<[number, number]>) => [number, number]> = [
+    // 0: Assign
+    (a) => [0, 0],
+    (a) => {
+      return a.reduce((prev, curr) => calc.join(prev, curr), [
+        -Infinity,
+        Infinity,
+      ]);
+    },
+    (a) => {
+      const tmp = a.reduce((prev, curr) => calc.join(prev, curr), [
+        -Infinity,
+        Infinity,
+      ]);
+      // console.log(X, tmp);
+      return [tmp[0] + 1, tmp[1] + 1];
+      return [7, 7];
+    },
+    (a) => {
+      const tmp = a.reduce((prev, curr) => calc.join(prev, curr), [
+        -Infinity,
+        Infinity,
+      ]);
+
+      return [tmp[1], tmp[1]];
+    },
+  ];
+
+  let iter = 0;
+
+  while (wl.length != 0) {
+    const j = wl.pop()!;
+    const N = F[j](X);
+
+    if (!equals(N, X[j])) {
+      const w = calc.narrowing(X[j], N);
+      X[j] = w;
+
+      //
+      // if (j == 1 && N[1] < 10) {
+      //   wl.push(2);
+      // }
+      //
+      // if (j == 1 && !(N[1] < 10)) {
+      //   wl.push(3);
+      // }
+
+      if (j == 1) {
+        wl.unshift(2);
+      }
+
+      if (j == 1) {
+        wl.unshift(3);
+      }
+
+      if (j == 2) {
+        wl.unshift(1);
+      }
+      // add all the indexes that directly depend on j to WL
+      // (X[k] depends on X[j] if F[k] contains X[j])
+    }
+    iter++;
+  }
+
+  return X;
+}
+
+const widening = worklist2();
+const testFunc = (a: any) => {
+  const tmp = a.reduce((prev: any, curr: any) => calc.join(prev, curr), [
+    -Infinity,
+    Infinity,
+  ]);
+  // console.log(X, tmp);
+  return [tmp[0] + 1, tmp[1] + 1];
+  return [7, 7];
+};
+
+// console.log(widening);
+// console.log(worklist3(widening));
 
 // console.log(calc.join([1, 10], [-Infinity, Infinity]));
 

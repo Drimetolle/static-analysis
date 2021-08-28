@@ -62,30 +62,6 @@ export default class IntervalCalculator {
   //   );
   // }
 
-  private static abstractOperator2<T>(
-    interval1: [T, T],
-    interval2: [T, T],
-    operation: (a: T, b: T) => T
-  ): [T, T] {
-    const xMin = apply<T[], T, T>(min, interval1);
-    const yMin = apply<T[], T, T>(min, interval2);
-    const xMax = apply<T[], T, T>(max, interval1);
-    const yMax = apply<T[], T, T>(max, interval2);
-
-    return [operation(xMin, yMin), operation(xMax, yMax)];
-  }
-
-  private static abstractOperator<T>(
-    interval1: [T, T],
-    interval2: [T, T],
-    operation: (a: Array<T>, b: Array<T>) => Array<T>
-  ): [T, T] {
-    return [
-      apply<T[], T, T>(min, operation(interval1, interval2)),
-      apply<T[], T, T>(max, operation(interval1, interval2)),
-    ];
-  }
-
   public widening(
     interval1: [number, number],
     interval2: [number, number],
