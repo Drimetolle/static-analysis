@@ -1,5 +1,5 @@
 import MutationBlock from "./MutationBlock";
-import { equals, max, min, range, reduce } from "ramda";
+import { difference, equals, max, min, range, reduce } from "ramda";
 
 export default class IntervalWorkListAlgorithm {
   private readonly blocks: Array<MutationBlock>;
@@ -9,7 +9,7 @@ export default class IntervalWorkListAlgorithm {
   }
 
   public calculate() {
-    const workList = range(0, this.blocks.length);
+    const workList = [0];
     const vars = this.blocks.map((block) => block.variable);
     const functions = this.blocks.map((block) => block.mutationFunction);
 
@@ -31,11 +31,15 @@ export default class IntervalWorkListAlgorithm {
           result
         );
 
+        const newWorkList = [];
+
         for (let j = 0; j < vars.length; j++) {
           if (currentVar.dependsOn.indexOf(vars[j]) >= 0) {
-            workList.push(j);
+            newWorkList.push(j);
           }
         }
+        const notVisited = difference(newWorkList, workList);
+        workList.unshift(...notVisited);
       }
     }
 

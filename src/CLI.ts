@@ -15,12 +15,19 @@ import MutationBlock from "./source-analysis/interval-analysis/MutationBlock";
 import VariableInterval from "./source-analysis/interval-analysis/VariableInterval";
 import { TypeSpecifier } from "./source-analysis/data-objects/LanguageKeyWords";
 import InitInterval from "./source-analysis/interval-analysis/functions/InitInterval";
-import SubtractionOnInterval from "./source-analysis/interval-analysis/functions/SubtractionOnInterval";
+import PassInterval from "./source-analysis/interval-analysis/functions/PassInterval";
 
 const calc = new IntervalCalculator();
 
 function allPrevJoin(a: Array<[number, number]>) {}
 
+/*
+ * x = 0
+ * while(x <= 150) {
+ *   x++;
+ * }
+ * x = x + 10
+ * */
 const outVar = new VariableInterval(TypeSpecifier.INT, []);
 const initVar = new VariableInterval(TypeSpecifier.INT, []);
 const forStatement = new VariableInterval(TypeSpecifier.INT, []);
@@ -32,80 +39,38 @@ initVar.addDependency(forStatement);
 forStatement.addDependency(incrementVar);
 
 const calculator = new IntervalWorkListAlgorithm([
-  new MutationBlock(initVar, new InitInterval([5, 5])),
+  new MutationBlock(initVar, new InitInterval([0, 0])),
   new MutationBlock(forStatement, new InitInterval([150, 150])),
   new MutationBlock(incrementVar, new AdditionalOnInterval([0, 1])),
-  new MutationBlock(outVar, new SubtractionOnInterval([0, 10])),
+  new MutationBlock(outVar, new AdditionalOnInterval([0, 10])),
 ]);
 
 console.log(calculator.calculate().map((v) => v.interval));
 
-/*
-int x;
-for (x = 1; x <= 10; x++);
-assert (x < 15);
- */
-// function worklist() {
-//   const X: Array<[number, number]> = [
-//     [-Infinity, Infinity],
-//     [-Infinity, Infinity],
-//     [-Infinity, Infinity],
-//     [-Infinity, Infinity],
-//   ];
-//   const wl = [0, 1, 2, 3];
-//   const F: Array<(a: Array<[number, number]>) => [number, number]> = [
-//     // 0: Assign
-//     (a) => [1, 1],
-//     (a) =>
-//       a.reduce((prev, curr) => calc.join(prev, curr), [-Infinity, Infinity]),
-//     (a) => {
-//       const tmp = a.reduce((prev, curr) => calc.join(prev, curr), [
-//         -Infinity,
-//         Infinity,
-//       ]);
-//       // console.log(X, tmp);
-//       return [tmp[0] + 1, tmp[1] + 1];
-//     },
-//     (a) => {
-//       const tmp = a.reduce((prev, curr) => calc.join(prev, curr), [
-//         -Infinity,
-//         Infinity,
-//       ]);
-//       console.log(tmp);
+// 1: x = 0
+// 2: if x == y goto 5
+// 3: x = x + 1
+// 4: goto 2
+// 5: y = 0
+// const var1 = new VariableInterval(TypeSpecifier.INT, []);
+// const var2 = new VariableInterval(TypeSpecifier.INT, []);
+// var1.addDependency(var2);
+// const var3 = new VariableInterval(TypeSpecifier.INT, []);
+// const var4 = new VariableInterval(TypeSpecifier.INT, [var2]);
+// var3.addDependency(var4);
+// const var5 = new VariableInterval(TypeSpecifier.INT, []);
+// var2.addDependency(var3);
+// var2.addDependency(var5);
 //
-//       return tmp;
-//     },
-//   ];
+// const calculator = new IntervalWorkListAlgorithm([
+//   new MutationBlock(var1, new InitInterval([0, 0])),
+//   new MutationBlock(var2, new PassInterval([0, 0])),
+//   new MutationBlock(var3, new AdditionalOnInterval([0, 1])),
+//   new MutationBlock(var4, new PassInterval([0, 0])),
+//   new MutationBlock(var5, new PassInterval([0, 0])),
+// ]);
 //
-//   let iter = 0;
-//
-//   while (wl.length != 0) {
-//     const j = wl.shift()!;
-//     const N = F[j](X);
-//
-//     if (!equals(N, X[j])) {
-//       X[j] = N;
-//       if (j == 1 && N[1] <= 10) {
-//         wl.push(2);
-//       }
-//
-//       if (j == 1 && N[1] > 10) {
-//         wl.push(3);
-//       }
-//
-//       if (j == 2) {
-//         wl.push(1);
-//       }
-//       // add all the indexes that directly depend on j to WL
-//       // (X[k] depends on X[j] if F[k] contains X[j])
-//     }
-//     iter++;
-//   }
-//   console.log(iter);
-//   return X;
-// }
-
-// console.log(worklist());
+// console.log(calculator.calculate().map((v) => v.interval));
 
 /*
 0 int x = 0;
