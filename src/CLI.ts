@@ -15,21 +15,30 @@ import MutationBlock from "./source-analysis/interval-analysis/MutationBlock";
 import VariableInterval from "./source-analysis/interval-analysis/VariableInterval";
 import { TypeSpecifier } from "./source-analysis/data-objects/LanguageKeyWords";
 import InitInterval from "./source-analysis/interval-analysis/functions/InitInterval";
+import SubtractionOnInterval from "./source-analysis/interval-analysis/functions/SubtractionOnInterval";
 
 const calc = new IntervalCalculator();
 
 function allPrevJoin(a: Array<[number, number]>) {}
 
-const secondVar = new VariableInterval(TypeSpecifier.INT, []);
+const outVar = new VariableInterval(TypeSpecifier.INT, []);
+const initVar = new VariableInterval(TypeSpecifier.INT, []);
+const forStatement = new VariableInterval(TypeSpecifier.INT, []);
+const incrementVar = new VariableInterval(TypeSpecifier.INT, [
+  forStatement,
+  outVar,
+]);
+initVar.addDependency(forStatement);
+forStatement.addDependency(incrementVar);
+
 const calculator = new IntervalWorkListAlgorithm([
-  new MutationBlock(
-    new VariableInterval(TypeSpecifier.INT, [secondVar]),
-    new InitInterval([100, 100])
-  ),
-  new MutationBlock(secondVar, new AdditionalOnInterval([0, 1])),
+  new MutationBlock(initVar, new InitInterval([5, 5])),
+  new MutationBlock(forStatement, new InitInterval([150, 150])),
+  new MutationBlock(incrementVar, new AdditionalOnInterval([0, 1])),
+  new MutationBlock(outVar, new SubtractionOnInterval([0, 10])),
 ]);
 
-console.log(calculator.calculate());
+console.log(calculator.calculate().map((v) => v.interval));
 
 /*
 int x;

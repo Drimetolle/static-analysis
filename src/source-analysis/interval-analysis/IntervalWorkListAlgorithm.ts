@@ -16,13 +16,20 @@ export default class IntervalWorkListAlgorithm {
     while (workList.length > 0) {
       const i = workList.shift()!;
       const currentVar = vars[i];
-      const dependedVars = vars.slice(0, i).map((v) => v.interval);
+      const dependedVars = vars.map((v) => v.interval);
       const result = functions[i].eval(
-        reduce(this.join, [-Infinity, Infinity], dependedVars)
+        reduce(
+          IntervalWorkListAlgorithm.join,
+          [-Infinity, Infinity],
+          dependedVars
+        )
       );
 
       if (!equals(result, currentVar.interval)) {
-        currentVar.interval = this.widening(currentVar.interval, result);
+        currentVar.interval = IntervalWorkListAlgorithm.widening(
+          currentVar.interval,
+          result
+        );
 
         for (let j = 0; j < vars.length; j++) {
           if (currentVar.dependsOn.indexOf(vars[j]) >= 0) {
@@ -35,7 +42,7 @@ export default class IntervalWorkListAlgorithm {
     return vars;
   }
 
-  private widening(
+  private static widening(
     interval1: [number, number],
     interval2: [number, number],
     lowestInterval: [number, number] = [-Infinity, Infinity]
@@ -52,7 +59,7 @@ export default class IntervalWorkListAlgorithm {
     return [c < a ? -Infinity : a, b < d ? Infinity : b];
   }
 
-  private join(
+  private static join(
     [a, b]: [number, number],
     [c, d]: [number, number],
     lowestInterval: [number, number] = [-Infinity, Infinity]

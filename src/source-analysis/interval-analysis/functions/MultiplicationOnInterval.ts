@@ -1,7 +1,7 @@
 import AbstractEval from "./AbstractEval";
 
-export default class InitInterval extends AbstractEval {
+export default class MultiplicationOnInterval extends AbstractEval {
   protected operation(first: number, second: number): number {
-    return second;
+    return first * second;
   }
 }

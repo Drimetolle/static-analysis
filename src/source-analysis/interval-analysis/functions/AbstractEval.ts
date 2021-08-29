@@ -1,8 +1,11 @@
-import { Eval } from "../MutationBlock";
 import { apply, max, min } from "ramda";
 
+export interface Eval {
+  eval(first: [number, number]): [number, number];
+}
+
 export default abstract class AbstractEval implements Eval {
-  private readonly second;
+  protected readonly second;
 
   constructor(second: [number, number]) {
     this.second = second;

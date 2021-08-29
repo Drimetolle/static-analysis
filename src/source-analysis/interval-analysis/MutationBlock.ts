@@ -1,8 +1,5 @@
 import VariableInterval from "./VariableInterval";
-
-export interface Eval {
-  eval(first: [number, number]): [number, number];
-}
+import { Eval } from "./functions/AbstractEval";
 
 export default class MutationBlock {
   public readonly variable: VariableInterval;
