@@ -14,6 +14,7 @@ export default class IntervalWorkListAlgorithm {
     const functions = this.blocks.map((block) => block.mutationFunction);
 
     while (workList.length > 0) {
+      console.log(workList.map((i) => i + 1));
       const i = workList.shift()!;
       const currentVar = vars[i];
       const dependedVars = vars.map((v) => v.interval);

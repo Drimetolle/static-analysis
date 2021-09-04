@@ -13,6 +13,10 @@ import MutationBlock from "./source-analysis/interval-analysis/MutationBlock";
 import VariableInterval from "./source-analysis/interval-analysis/VariableInterval";
 import { TypeSpecifier } from "./source-analysis/data-objects/LanguageKeyWords";
 import InitInterval from "./source-analysis/interval-analysis/functions/InitInterval";
+import PassInterval from "./source-analysis/interval-analysis/functions/PassInterval";
+import SubtractionOnInterval from "./source-analysis/interval-analysis/functions/SubtractionOnInterval";
+import MultiplicationOnInterval from "./source-analysis/interval-analysis/functions/MultiplicationOnInterval";
+import DivisionOnInterval from "./source-analysis/interval-analysis/functions/DivisionOnInterval";
 
 /*
  * x = 0
@@ -33,9 +37,9 @@ forStatement.addDependency(incrementVar);
 
 const calculator = new IntervalWorkListAlgorithm([
   new MutationBlock(initVar, new InitInterval([0, 0])),
-  new MutationBlock(forStatement, new InitInterval([150, 150])),
-  new MutationBlock(incrementVar, new AdditionalOnInterval([0, 1])),
-  new MutationBlock(outVar, new AdditionalOnInterval([0, 10])),
+  new MutationBlock(forStatement, new InitInterval(150)),
+  new MutationBlock(incrementVar, new AdditionalOnInterval(1)),
+  new MutationBlock(outVar, new AdditionalOnInterval(10)),
 ]);
 
 console.log(calculator.calculate().map((v) => v.interval));
@@ -56,11 +60,11 @@ console.log(calculator.calculate().map((v) => v.interval));
 // var2.addDependency(var5);
 //
 // const calculator = new IntervalWorkListAlgorithm([
-//   new MutationBlock(var1, new InitInterval([0, 0])),
-//   new MutationBlock(var2, new PassInterval([0, 0])),
-//   new MutationBlock(var3, new AdditionalOnInterval([0, 1])),
-//   new MutationBlock(var4, new PassInterval([0, 0])),
-//   new MutationBlock(var5, new PassInterval([0, 0])),
+//   new MutationBlock(var1, new InitInterval(1)),
+//   new MutationBlock(var2, new PassInterval(1)),
+//   new MutationBlock(var3, new AdditionalOnInterval(1)),
+//   new MutationBlock(var4, new PassInterval(1)),
+//   new MutationBlock(var5, new PassInterval(1)),
 // ]);
 //
 // console.log(calculator.calculate().map((v) => v.interval));

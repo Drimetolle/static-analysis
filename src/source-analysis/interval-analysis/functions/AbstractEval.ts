@@ -5,10 +5,10 @@ export interface Eval {
 }
 
 export default abstract class AbstractEval implements Eval {
-  protected readonly second;
+  protected readonly second: [number, number];
 
-  constructor(second: [number, number]) {
-    this.second = second;
+  constructor(second: number) {
+    this.second = this.createInterval(second);
   }
 
   public eval(first: [number, number]): [number, number] {
@@ -16,6 +16,7 @@ export default abstract class AbstractEval implements Eval {
   }
 
   protected abstract operation(first: number, second: number): number;
+  protected abstract createInterval(second: number): [number, number];
 
   private static abstractOperator<T>(
     interval1: [T, T],

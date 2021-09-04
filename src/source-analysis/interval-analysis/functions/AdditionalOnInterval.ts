@@ -2,6 +2,10 @@ import AbstractEval from "./AbstractEval";
 
 export default class AdditionalOnInterval extends AbstractEval {
   protected operation(first: number, second: number): number {
-    return first + second;
+    return Math.ceil(first + second);
+  }
+
+  protected createInterval(second: number): [number, number] {
+    return [second, second];
   }
 }
