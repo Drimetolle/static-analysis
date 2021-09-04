@@ -64,7 +64,7 @@ export default class IntervalWorkListAlgorithm {
     return [c < a ? -Infinity : a, b < d ? Infinity : b];
   }
 
-  private static join(
+  public static join(
     [a, b]: [number, number],
     [c, d]: [number, number],
     lowestInterval: [number, number] = [-Infinity, Infinity]
@@ -76,5 +76,24 @@ export default class IntervalWorkListAlgorithm {
       return [a, b];
     }
     return [min(a, c), max(b, d)];
+  }
+
+  public static meet(
+    [a, b]: [number, number],
+    [c, d]: [number, number],
+    lowestInterval: [number, number] = [-Infinity, Infinity]
+  ): [number, number] {
+    if (equals([a, b], lowestInterval) || equals([c, d], lowestInterval)) {
+      return lowestInterval;
+    }
+
+    const minBound = min(b, d);
+    const maxBound = max(a, c);
+
+    if (maxBound > minBound) {
+      return lowestInterval;
+    }
+
+    return [maxBound, minBound];
   }
 }
