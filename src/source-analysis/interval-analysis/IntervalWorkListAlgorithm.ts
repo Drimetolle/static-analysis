@@ -1,5 +1,6 @@
 import MutationBlock from "./MutationBlock";
 import { difference, equals, max, min, range, reduce } from "ramda";
+import ConstraintInterval from "./functions/ConstraintInterval";
 
 export default class IntervalWorkListAlgorithm {
   private readonly blocks: Array<MutationBlock>;
@@ -14,7 +15,6 @@ export default class IntervalWorkListAlgorithm {
     const functions = this.blocks.map((block) => block.mutationFunction);
 
     while (workList.length > 0) {
-      console.log(workList.map((i) => i + 1));
       const i = workList.shift()!;
       const currentVar = vars[i];
       const dependedVars = vars.map((v) => v.interval);
@@ -27,10 +27,14 @@ export default class IntervalWorkListAlgorithm {
       );
 
       if (!equals(result, currentVar.interval)) {
-        currentVar.interval = IntervalWorkListAlgorithm.widening(
-          currentVar.interval,
-          result
-        );
+        if (functions[i] instanceof ConstraintInterval) {
+          currentVar.interval = result;
+        } else {
+          currentVar.interval = IntervalWorkListAlgorithm.widening(
+            currentVar.interval,
+            result
+          );
+        }
 
         const newWorkList = [];
 

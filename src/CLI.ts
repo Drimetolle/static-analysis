@@ -17,10 +17,11 @@ import PassInterval from "./source-analysis/interval-analysis/functions/PassInte
 import SubtractionOnInterval from "./source-analysis/interval-analysis/functions/SubtractionOnInterval";
 import MultiplicationOnInterval from "./source-analysis/interval-analysis/functions/MultiplicationOnInterval";
 import DivisionOnInterval from "./source-analysis/interval-analysis/functions/DivisionOnInterval";
+import ConstraintInterval from "./source-analysis/interval-analysis/functions/ConstraintInterval";
 
 /*
- * x = 0
- * while(x <= 150) {
+ * x = 1;
+ * while(x <= 100) {
  *   x++;
  * }
  * x = x + 10
@@ -36,13 +37,16 @@ initVar.addDependency(forStatement);
 forStatement.addDependency(incrementVar);
 
 const calculator = new IntervalWorkListAlgorithm([
-  new MutationBlock(initVar, new InitInterval([0, 0])),
-  new MutationBlock(forStatement, new InitInterval(150)),
+  new MutationBlock(initVar, new InitInterval(1)),
+  new MutationBlock(forStatement, new ConstraintInterval([-Infinity, 100])),
   new MutationBlock(incrementVar, new AdditionalOnInterval(1)),
-  new MutationBlock(outVar, new AdditionalOnInterval(10)),
+  new MutationBlock(outVar, new ConstraintInterval([101, Infinity])),
 ]);
 
 console.log(calculator.calculate().map((v) => v.interval));
+// x > 100
+// console.log(IntervalWorkListAlgorithm.join([1, 1], [1, 1]));
+// console.log(IntervalWorkListAlgorithm.meet([1, Infinity], [-Infinity, 100]));
 
 // 1: x = 0
 // 2: if x == y goto 5
