@@ -8,22 +8,8 @@ export default class RuleResolverHelper {
     this.map = new Map<number, Severity>();
 
     for (const key in config.rules) {
-      let s: Severity;
       const keyN = Number.parseInt(key);
-
-      switch (config.rules[keyN]) {
-        case 0:
-          s = Severity.Skip;
-          break;
-        case 1:
-          s = Severity.Warning;
-          break;
-        case 2:
-          s = Severity.Error;
-          break;
-      }
-
-      this.map.set(keyN, s);
+      this.map.set(keyN, config.rules[keyN]);
     }
   }
 

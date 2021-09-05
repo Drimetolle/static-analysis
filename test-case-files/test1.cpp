@@ -101,8 +101,13 @@
 //auto globalVar2 = 1;
 
 void main() {
+    auto xasLo = 20;
     auto x = 20;
-    x = x + 1;
+    auto X = 20;
+    auto X_X = 20;
+    {
+    auto x_X = 20;
+    }
 }
 
 //void main() {

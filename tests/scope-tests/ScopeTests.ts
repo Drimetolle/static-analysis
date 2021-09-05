@@ -16,7 +16,8 @@ async function createTestCase(code: string, expected: ScopeTree) {
   const { scope } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
-    new DeclarationVisitor()
+    new DeclarationVisitor(),
+    null as any
   ).start(ASTGenerator.fromString(code));
 
   expect(JsonFormatter.ScopeToJson(scope)).toBe(

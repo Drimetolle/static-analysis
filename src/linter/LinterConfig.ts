@@ -1,8 +1,6 @@
-type Severity = 0 | 1 | 2;
+import { Severity } from "./issue/Severity";
 
-interface Rule {
-  [id: number]: Severity;
-}
+type Rule = { [id in number]: Severity };
 
 export default interface LinterConfig {
   readonly rules: Rule;

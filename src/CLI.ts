@@ -18,6 +18,9 @@ import SubtractionOnInterval from "./source-analysis/interval-analysis/functions
 import MultiplicationOnInterval from "./source-analysis/interval-analysis/functions/MultiplicationOnInterval";
 import DivisionOnInterval from "./source-analysis/interval-analysis/functions/DivisionOnInterval";
 import ConstraintInterval from "./source-analysis/interval-analysis/functions/ConstraintInterval";
+import Formatter from "./cli-engine/Formatter";
+import { Severity } from "./linter/issue/Severity";
+import VariableNames from "./rules/linter/VariableNames";
 
 /*
  * x = 1;
@@ -72,7 +75,9 @@ import ConstraintInterval from "./source-analysis/interval-analysis/functions/Co
 
 // container registration
 container.register<Linter>(Linter, {
-  useValue: new Linter([UndeclaredVariable, CheckScope], { rules: { 1: 2 } }),
+  useValue: new Linter([UndeclaredVariable, CheckScope, VariableNames], {
+    rules: { 1: Severity.Error, 3: Severity.Typo },
+  }),
 });
 container.register<FileManager>(FileManager, {
   useValue: new FileManager(),
@@ -81,8 +86,9 @@ container.register<WalkersHelper>(WalkersHelper, {
   useValue: new WalkersHelper(),
 });
 
-container.resolve(IssuesQueue);
-// .subscribe((i) => console.log(Formatter.formatMessage(i)));
+container
+  .resolve(IssuesQueue)
+  .subscribe((i) => console.log(Formatter.formatMessage(i)));
 
 const controller = container.resolve(Controller);
 controller.run();
