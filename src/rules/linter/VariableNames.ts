@@ -18,7 +18,7 @@ export default class VariableNames extends Rule {
         if (!this.isSnakeCase(variable.variable.name)) {
           reports.push(
             new Report(
-              `Identifier ${variable.variable.name} is not in snake case.`,
+              `Identifier '${variable.variable.name}' is not in snake case.`,
               variable.node
             )
           );

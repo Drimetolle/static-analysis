@@ -21,6 +21,7 @@ import ConstraintInterval from "./source-analysis/interval-analysis/functions/Co
 import Formatter from "./cli-engine/Formatter";
 import { Severity } from "./linter/issue/Severity";
 import VariableNames from "./rules/linter/VariableNames";
+import TypeNames from "./rules/linter/TypeListener";
 
 /*
  * x = 1;
@@ -75,9 +76,12 @@ import VariableNames from "./rules/linter/VariableNames";
 
 // container registration
 container.register<Linter>(Linter, {
-  useValue: new Linter([UndeclaredVariable, CheckScope, VariableNames], {
-    rules: { 1: Severity.Error, 3: Severity.Typo },
-  }),
+  useValue: new Linter(
+    [UndeclaredVariable, CheckScope, VariableNames, TypeNames],
+    {
+      rules: { 1: Severity.Error, 3: Severity.Typo, 4: Severity.Typo },
+    }
+  ),
 });
 container.register<FileManager>(FileManager, {
   useValue: new FileManager(),
