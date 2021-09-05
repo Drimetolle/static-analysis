@@ -2,18 +2,17 @@ import LinterConfig from "../linter/LinterConfig";
 import { Severity } from "../linter/issue/Severity";
 
 export default class RuleResolverHelper {
-  private readonly map: Map<number, Severity>;
+  private readonly map: Map<string, Severity>;
 
   constructor(config: LinterConfig) {
-    this.map = new Map<number, Severity>();
+    this.map = new Map<string, Severity>();
 
     for (const key in config.rules) {
-      const keyN = Number.parseInt(key);
-      this.map.set(keyN, config.rules[keyN]);
+      this.map.set(key, config.rules[key]);
     }
   }
 
-  getRuleSeverity(id: number): Severity {
+  getRuleSeverity(id: string): Severity {
     return this.map.get(id) ?? Severity.Warning;
   }
 }

@@ -40,7 +40,7 @@ export default class Linter {
                 issue.node.start.charPositionInLine + 1
               ),
               context.fileName,
-              this.ruleResolver.getRuleSeverity(r.id),
+              this.ruleResolver.getRuleSeverity(r.constructor.name),
               issue.node.text
             )
           );
