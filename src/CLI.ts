@@ -26,27 +26,24 @@ import ConstraintInterval from "./source-analysis/interval-analysis/functions/Co
  * }
  * x = x + 10
  * */
-const outVar = new VariableInterval(TypeSpecifier.INT, []);
-const initVar = new VariableInterval(TypeSpecifier.INT, []);
-const forStatement = new VariableInterval(TypeSpecifier.INT, []);
-const incrementVar = new VariableInterval(TypeSpecifier.INT, [
-  forStatement,
-  outVar,
-]);
-initVar.addDependency(forStatement);
-forStatement.addDependency(incrementVar);
-
-const calculator = new IntervalWorkListAlgorithm([
-  new MutationBlock(initVar, new InitInterval(1)),
-  new MutationBlock(forStatement, new ConstraintInterval([-Infinity, 100])),
-  new MutationBlock(incrementVar, new AdditionalOnInterval(1)),
-  new MutationBlock(outVar, new ConstraintInterval([101, Infinity])),
-]);
-
-console.log(calculator.calculate().map((v) => v.interval));
-// x > 100
-// console.log(IntervalWorkListAlgorithm.join([1, 1], [1, 1]));
-// console.log(IntervalWorkListAlgorithm.meet([1, Infinity], [-Infinity, 100]));
+// const outVar = new VariableInterval(TypeSpecifier.INT, []);
+// const initVar = new VariableInterval(TypeSpecifier.INT, []);
+// const forStatement = new VariableInterval(TypeSpecifier.INT, []);
+// const incrementVar = new VariableInterval(TypeSpecifier.INT, [
+//   forStatement,
+//   outVar,
+// ]);
+// initVar.addDependency(forStatement);
+// forStatement.addDependency(incrementVar);
+//
+// const calculator = new IntervalWorkListAlgorithm([
+//   new MutationBlock(initVar, new InitInterval(1)),
+//   new MutationBlock(forStatement, new ConstraintInterval([-Infinity, 100])),
+//   new MutationBlock(incrementVar, new AdditionalOnInterval(1)),
+//   new MutationBlock(outVar, new ConstraintInterval([101, Infinity])),
+// ]);
+//
+// console.log(calculator.calculate().map((v) => v.interval));
 
 // 1: x = 0
 // 2: if x == y goto 5
@@ -64,11 +61,11 @@ console.log(calculator.calculate().map((v) => v.interval));
 // var2.addDependency(var5);
 //
 // const calculator = new IntervalWorkListAlgorithm([
-//   new MutationBlock(var1, new InitInterval(1)),
-//   new MutationBlock(var2, new PassInterval(1)),
+//   new MutationBlock(var1, new InitInterval(0)),
+//   new MutationBlock(var2, new PassInterval(0)),
 //   new MutationBlock(var3, new AdditionalOnInterval(1)),
-//   new MutationBlock(var4, new PassInterval(1)),
-//   new MutationBlock(var5, new PassInterval(1)),
+//   new MutationBlock(var4, new PassInterval(0)),
+//   new MutationBlock(var5, new PassInterval(0)),
 // ]);
 //
 // console.log(calculator.calculate().map((v) => v.interval));

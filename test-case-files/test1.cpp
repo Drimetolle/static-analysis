@@ -101,7 +101,8 @@
 //auto globalVar2 = 1;
 
 void main() {
-    a + b;
+    auto x = 20;
+    x = x + 1;
 }
 
 //void main() {

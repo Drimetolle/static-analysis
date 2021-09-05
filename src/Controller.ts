@@ -12,6 +12,7 @@ import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 import Linter from "./linter/Linter";
 import DataFlowVisitorFactory from "./visitors/DataFlowVisitorFactory";
 import JsonFormatter from "./utils/json-formatters/JsonFormatter";
+import IntervalsGenerator from "./source-analysis/interval-analysis/IntervalsGenerator";
 
 @singleton()
 export default class Controller {
@@ -64,7 +65,6 @@ export default class Controller {
     // console.log(JsonFormatter.ScopeToJson(scope));
 
     // methods.getMethodSignature(contentL?.path ?? "", "func");
-    ////
     context.create(
       new LinterContext(contentL?.path ?? "", tree, scope, null as any)
     );
