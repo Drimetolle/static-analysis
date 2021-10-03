@@ -3,6 +3,7 @@ import LinterContext from "../linter/LinterContext";
 import Report from "../linter/issue/Report";
 import BasicBlock from "../source-analysis/control-flow/blocks/BasicBlock";
 import FunctionBlock from "../source-analysis/control-flow/blocks/FunctionBlock";
+import { extractFunctionSignature } from "../utils/ast-extractors/FunctionUtils";
 
 export default class CognitiveComplexity extends Rule {
   constructor() {
@@ -40,7 +41,10 @@ export default class CognitiveComplexity extends Rule {
 
       if (complexity >= 1) {
         reports.push(
-          new Report("Method cognitive complexity is to high", {} as any)
+          new Report(
+            `Method cognitive complexity is to high (${complexity.toFixed(2)})`,
+            extractFunctionSignature(cfgChild)
+          )
         );
       }
     }
