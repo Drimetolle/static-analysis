@@ -1,25 +1,20 @@
 {
-  "text": "",
   "name": "FunctionBlock",
   "depth": 0,
   "blocks": [
     {
-      "text": "s",
       "name": "SwitchBlock",
       "depth": 0,
       "blocks": [
         {
-          "text": "1",
           "name": "CaseBlock",
           "depth": 0,
           "blocks": [
             {
-              "text": "",
               "name": "ReturnBlock",
               "depth": 1,
               "blocks": [
                 {
-                  "text": "",
                   "name": "OutBlock",
                   "depth": 0,
                   "blocks": []

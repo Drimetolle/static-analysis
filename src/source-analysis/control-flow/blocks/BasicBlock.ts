@@ -4,7 +4,7 @@ import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 export default abstract class BasicBlock {
   public scope?: ScopeNode;
   public parent!: BasicBlock;
-  public ast: ParserRuleContext;
+  public readonly ast: ParserRuleContext;
   public blocks: Array<BasicBlock>;
   public readonly scopeDepth: number;
   private readonly text: string;
@@ -34,7 +34,6 @@ export default abstract class BasicBlock {
 
   public toJSON(): unknown {
     return {
-      text: this.text,
       name: this.name,
       depth: this.scopeDepth,
       blocks: this.blocks,

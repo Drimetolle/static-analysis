@@ -1,20 +1,16 @@
 {
-  "text": "",
   "name": "FunctionBlock",
   "depth": 0,
   "blocks": [
     {
-      "text": "beforeReturn();",
       "name": "LinearBlock",
       "depth": 0,
       "blocks": [
         {
-          "text": "",
           "name": "ReturnBlock",
           "depth": 0,
           "blocks": [
             {
-              "text": "",
               "name": "OutBlock",
               "depth": 0,
               "blocks": []

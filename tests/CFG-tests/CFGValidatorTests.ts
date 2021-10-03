@@ -21,15 +21,17 @@ import loopReturn from "./test-cases/return/loopReturn.json";
 import switchReturn from "./test-cases/return/switchReturn.json";
 import switchStatementExpected from "./test-cases/switchStatment.json";
 import switchWithoutDefaultCaseStatementExpected from "./test-cases/switchStatmentWithoutDefaultCase.json";
+import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 
 async function createTestCase(code: string, expected: object) {
   const { cfg } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
-    new DeclarationVisitor()
+    new DeclarationVisitor(),
+    new ANTLRExpressionConverter()
   ).start(ASTGenerator.fromString(code));
 
-  const validator = new CFGValidator(new OutBlock(0));
+  const validator = new CFGValidator(new OutBlock(0, null as any));
   const block = cfg.blocks[0];
 
   expect(JsonFormatter.CFGToJson(validator.validateFunction(block))).toBe(
@@ -256,20 +258,5 @@ describe("cfg generator tests for switch statement", () => {
     `;
 
     await createTestCase(code, switchStatementExpected);
-  });
-
-  test("switch without braces", async () => {
-    const code = `
-      void main() {
-        switch(s) {
-            case 1: a();
-            case 2: case 3: b();
-            default: c();
-        }
-        endBlock();
-      }
-    `;
-
-    await createTestCase(code, switchWithoutDefaultCaseStatementExpected);
   });
 });

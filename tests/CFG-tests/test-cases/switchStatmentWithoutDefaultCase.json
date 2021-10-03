@@ -1,25 +1,20 @@
 {
-  "text": "",
   "name": "FunctionBlock",
   "depth": 0,
   "blocks": [
     {
-      "text": "s",
       "name": "SwitchBlock",
       "depth": 0,
       "blocks": [
         {
-          "text": "1",
           "name": "CaseBlock",
           "depth": 0,
           "blocks": [
             {
-              "text": "endBlock();",
               "name": "LinearBlock",
               "depth": 0,
               "blocks": [
                 {
-                  "text": "",
                   "name": "OutBlock",
                   "depth": 0,
                   "blocks": []
@@ -27,17 +22,14 @@
               ]
             },
             {
-              "text": "a();",
               "name": "LinearBlock",
               "depth": 1,
               "blocks": [
                 {
-                  "text": "endBlock();",
                   "name": "LinearBlock",
                   "depth": 0,
                   "blocks": [
                     {
-                      "text": "",
                       "name": "OutBlock",
                       "depth": 0,
                       "blocks": []
@@ -51,12 +43,10 @@
       ]
     },
     {
-      "text": "endBlock();",
       "name": "LinearBlock",
       "depth": 0,
       "blocks": [
         {
-          "text": "",
           "name": "OutBlock",
           "depth": 0,
           "blocks": []
