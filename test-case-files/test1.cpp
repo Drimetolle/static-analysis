@@ -101,7 +101,67 @@
 //auto globalVar2 = 1;
 
 void main() {
-    
+    auto autoV = 1;
+    auto assign = 2;
+    call();
+    assign = 5;
+    delete assign;
+    if(a> 1) {
+        auto ifFirst1 = 1;
+
+switch ( expression )
+{
+    case constant_expression1: case constant_expression2: case constant_expression3:
+    {
+//        auto autoV123 = 1;
+        break;
+    }
+    case constant_expression5:
+        {
+    //        auto autoV123 = 1;
+            break;
+        }
+    case constant_expression_other:
+    {
+//         auto autoV123 = 1;
+         break;
+    }
+    }
+
+        if(true) {
+            if(a> 1) {
+                    auto ifFirst1 = 1;
+            
+                    if(true) {
+                        auto innerIf = 11;
+                    }
+            
+                    auto ifSecond1 = 1;
+                } else if(a > 2){
+                    auto ife1 = 1;
+                } else {
+                    auto else1 = 1;
+                }
+        }
+if(a> 1) {
+        auto ifFirst1 = 1;
+
+        if(true) {
+            auto innerIf = 11;
+        }
+
+        auto ifSecond1 = 1;
+    } else if(a > 2){
+        auto ife1 = 1;
+    } else {
+        auto else1 = 1;
+    }
+        auto ifSecond1 = 1;
+    } else if(a > 2){
+        auto ife1 = 1;
+    } else {
+        auto else1 = 1;
+    }
 }
 
 //void main() {
