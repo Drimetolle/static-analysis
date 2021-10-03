@@ -64,7 +64,7 @@ interface ScopeAndCFG {
 export default class DataFlowWalker
   implements CPP14ParserVisitor<any>, Walker<ScopeAndCFG> {
   private readonly scopeTree: ScopeTree;
-  private readonly cfg: BasicBlock;
+  private cfg!: BasicBlock;
   private readonly name: string;
   private readonly conditionVisitor: ConditionVisitor;
   private readonly declarationVisitor: DeclarationVisitor;
@@ -78,13 +78,13 @@ export default class DataFlowWalker
   ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
-    this.cfg = new StartBlock(0);
     this.conditionVisitor = conditionVisitor;
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
   }
 
   visit(tree: TranslationUnitContext): ScopeAndCFG {
+    this.cfg = new StartBlock(0, tree);
     const sequence = tree.declarationseq();
     if (sequence) {
       this.visitDeclarationseq(sequence);
@@ -95,7 +95,7 @@ export default class DataFlowWalker
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      const firstRay = new LinearBlock(0);
+      const firstRay = new LinearBlock(0, ctx);
 
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
@@ -104,7 +104,7 @@ export default class DataFlowWalker
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          const block = new FunctionBlock(0);
+          const block = new FunctionBlock(0, functionDef);
           this.cfg.createEdge(block);
           this.topLevelFunctionStatement(functionDef, block);
         }
@@ -334,7 +334,7 @@ export default class DataFlowWalker
         this.parameterDeclarationStatement(d, scopeNode);
       }
 
-      const outBlock = new OutBlock(0);
+      const outBlock = new OutBlock(0, functionDef);
       const lastBlock: BasicBlock = this.statementSequence(
         functionBody,
         scopeNode,
@@ -365,14 +365,14 @@ export default class DataFlowWalker
       const tryBlock = statement.tryBlock();
 
       if (declaration) {
-        const newBlock = new LinearBlock(depth, declaration.text);
+        const newBlock = new LinearBlock(depth, declaration);
         block.createEdge(newBlock);
         block = newBlock;
         newBlock.scope = node;
 
         this.declarationStatement(declaration, node);
       } else if (expressionStatement) {
-        const newBlock = new LinearBlock(depth, expressionStatement.text);
+        const newBlock = new LinearBlock(depth, expressionStatement);
         block.createEdge(newBlock);
         block = newBlock;
 
@@ -455,7 +455,7 @@ export default class DataFlowWalker
     block: BasicBlock,
     depth: number
   ) {
-    const outBlock = new StubBlock(depth);
+    const outBlock = new StubBlock(depth, null as any);
 
     if (conditionStatement.If()) {
       const selectionSequence = this.conditionVisitor.extractStatementsFromIfElse(
@@ -467,7 +467,7 @@ export default class DataFlowWalker
         const newBlock = new IfBlock(
           depth,
           s.condition?.text,
-          s.condition?.text
+          s.condition as ParserRuleContext
         );
         newBlock.createEdge(outBlock);
         block.createEdge(newBlock);
@@ -486,7 +486,7 @@ export default class DataFlowWalker
       const switchBlock = new SwitchBlock(
         depth,
         conditionStatement.condition().text,
-        conditionStatement.condition().text
+        conditionStatement.condition() as ParserRuleContext
       );
       block.createEdge(switchBlock);
       block = switchBlock;
@@ -540,11 +540,11 @@ export default class DataFlowWalker
     const isGoto = jumpStatement.Goto();
 
     if (isReturn) {
-      block.createEdge(new ReturnBlock(depth));
+      block.createEdge(new ReturnBlock(depth, jumpStatement));
     } else if (isBreak) {
-      block.createEdge(new BreakBlock(depth));
+      block.createEdge(new BreakBlock(depth, jumpStatement));
     } else if (isContinue) {
-      block.createEdge(new ContinueBlock(depth));
+      block.createEdge(new ContinueBlock(depth, jumpStatement));
     } else if (isGoto) {
     }
 
@@ -559,18 +559,19 @@ export default class DataFlowWalker
     let newBlock: BasicBlock;
 
     if (statement.expression == null) {
-      newBlock = new DefaultCaseBlock(depth, "default");
+      newBlock = new DefaultCaseBlock(depth, null as any);
     } else if (Array.isArray(statement.expression)) {
       newBlock = new CaseBlock(
         depth,
         statement.expression.map((s) => s.text),
-        statement.expression.map((s) => s.text).join("|")
+        // TODO
+        null as any
       );
     } else {
       newBlock = new CaseBlock(
         depth,
         statement.expression.text,
-        statement.expression.text
+        statement.expression
       );
     }
     newBlock.createEdge(outBlock);
@@ -597,8 +598,12 @@ export default class DataFlowWalker
     const conditionExpression = forLoop.condition();
     const loopExpression = forLoop.expression();
 
-    const outBlock = new StubBlock(depth);
-    const newBlock = new LoopBlock(depth, forLoop?.condition()?.text ?? "");
+    const outBlock = new StubBlock(depth, null as any);
+    const newBlock = new LoopBlock(
+      depth,
+      forLoop?.condition()?.text ?? "",
+      forLoop
+    );
     newBlock.createEdge(outBlock);
     block.createEdge(newBlock);
 

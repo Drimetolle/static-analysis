@@ -1,10 +1,8 @@
 import AbstractCaseBlock from "./AbstractCaseBlock";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export default class DefaultCaseBlock extends AbstractCaseBlock {
-  constructor(scopeDepth: number);
-  constructor(scopeDepth: number, text: string);
-  constructor(scopeDepth: number, text?: string);
-  constructor(scopeDepth: number, text = "") {
-    super(scopeDepth, text);
+  constructor(scopeDepth: number, parserRuleContext: ParserRuleContext) {
+    super(scopeDepth, parserRuleContext);
   }
 }

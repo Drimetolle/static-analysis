@@ -1,10 +1,8 @@
 import BasicBlock from "../BasicBlock";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export default class TryBlock extends BasicBlock {
-  constructor(scopeDepth: number);
-  constructor(scopeDepth: number, text: string);
-  constructor(scopeDepth: number, text?: string);
-  constructor(scopeDepth: number, text?: string) {
-    super(scopeDepth, text);
+  constructor(scopeDepth: number, parserRuleContext: ParserRuleContext) {
+    super(scopeDepth, parserRuleContext);
   }
 }
