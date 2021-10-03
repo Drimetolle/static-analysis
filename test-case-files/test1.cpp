@@ -100,16 +100,8 @@
 
 //auto globalVar2 = 1;
 
-class TypAads {};
-
 void main() {
-    auto xasLo = 20;
-    auto x = 20;
-    auto X = 20;
-    auto X_X = 20;
-    {
-    auto x_X = 20;
-    }
+    
 }
 
 //void main() {
