@@ -4,7 +4,12 @@ import { mapSeverity, Severity } from "../linter/issue/Severity";
 
 export default class Formatter {
   static formatMessage(issue: CodeIssue): string {
-    const line = `\t${issue.line}`;
+    const maxLineWidth = 80;
+    const trimmedLine =
+      (issue.line?.length ?? 0) > maxLineWidth
+        ? `${issue.line?.substring(0, maxLineWidth)}...`
+        : issue.line;
+    const line = `\t${trimmedLine}`;
     const underline = `${line}\n\t${this.coloredSeverity(
       issue.severity,
       new Array(line.length - 1).fill("~").join("")

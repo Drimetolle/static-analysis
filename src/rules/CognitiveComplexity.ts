@@ -37,7 +37,7 @@ export default class CognitiveComplexity extends Rule {
       edgeCounter = 0;
       walk(cfgChild);
       const complexity = edgeCounter / blockCounter;
-      console.log(complexity);
+
       if (complexity >= 1) {
         reports.push(
           new Report("Method cognitive complexity is to high", {} as any)
