@@ -4,6 +4,7 @@ import CheckScope from "./variables/CheckScope";
 import VariableNames from "./linter/VariableNames";
 import CognitiveComplexity from "./CognitiveComplexity";
 import CheckPrivateFieldName from "./variables/CheckPrivateFieldName";
+import InfinityLoopTruePredicate from "./loops/InfinityLoopTruePredicate";
 
 export default [
   UndeclaredVariable,
@@ -12,4 +13,5 @@ export default [
   TypeNames,
   CognitiveComplexity,
   CheckPrivateFieldName,
+  InfinityLoopTruePredicate,
 ];

@@ -101,7 +101,8 @@
 //auto globalVar2 = 1;
 
 void main() {
-
+    while(-12) {}
+    while(12 || 1) {}
 }
 
 //void main() {
