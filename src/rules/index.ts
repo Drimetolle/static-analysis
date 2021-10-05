@@ -1,8 +1,9 @@
 import TypeNames from "./linter/TypeNames";
-import UndeclaredVariable from "./UndeclaredVariable";
-import CheckScope from "./CheckScope";
+import UndeclaredVariable from "./variables/UndeclaredVariable";
+import CheckScope from "./variables/CheckScope";
 import VariableNames from "./linter/VariableNames";
 import CognitiveComplexity from "./CognitiveComplexity";
+import CheckPrivateFieldName from "./variables/CheckPrivateFieldName";
 
 export default [
   UndeclaredVariable,
@@ -10,4 +11,5 @@ export default [
   VariableNames,
   TypeNames,
   CognitiveComplexity,
+  CheckPrivateFieldName,
 ];

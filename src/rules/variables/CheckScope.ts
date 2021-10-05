@@ -1,6 +1,6 @@
-import Rule from "../linter/Rule";
-import LinterContext from "../linter/LinterContext";
-import Report from "../linter/issue/Report";
+import Rule from "../../linter/Rule";
+import LinterContext from "../../linter/LinterContext";
+import Report from "../../linter/issue/Report";
 
 export default class CheckScope extends Rule {
   constructor() {
