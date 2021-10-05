@@ -102,6 +102,7 @@
 
 void main() {
     //emoji
+    auto test_Ads = 1;
     a = 123;
     while(-12) {}
     while("12") {}
