@@ -56,7 +56,7 @@ export async function refreshDiagnostics(
         test.link.line - 1,
         test.link.start - 1,
         test.link.line - 1,
-        test.link.start + 3
+        test.link.start + test.line?.length ?? 1
       ),
       "When you say 'emoji', do you want to find out more?",
       vscode.DiagnosticSeverity.Information
@@ -64,7 +64,8 @@ export async function refreshDiagnostics(
   );
   console.log(
     JSON.stringify(doc.lineAt(test.link.line - 1)),
-    test.link.line - 1
+    test.link.line - 1,
+    
   );
   // }
   // }
