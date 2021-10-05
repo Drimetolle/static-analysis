@@ -6,6 +6,7 @@ import CodeIssue from "./issue/CodeIssue";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import LinterConfig from "./LinterConfig";
 import RuleResolverHelper from "../utils/RuleResolverHelper";
+import { Interval } from "antlr4ts/misc";
 
 @singleton()
 @autoInjectable()
@@ -41,7 +42,12 @@ export default class Linter {
               ),
               context.fileName,
               this.ruleResolver.getRuleSeverity(r.constructor.name),
-              issue.node.text ?? ""
+              issue.node.start.inputStream?.getText(
+                new Interval(
+                  issue.node.start.startIndex,
+                  issue.node.stop!.stopIndex
+                )
+              ) ?? ""
             )
           );
         }
