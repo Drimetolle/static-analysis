@@ -42,20 +42,21 @@ export async function refreshDiagnostics(
   await controller.run();
   const diagnostics: vscode.Diagnostic[] = [];
 
-  const test = container.resolve(IssuesQueue).issues[0];
-  diagnostics.push(
-    new vscode.Diagnostic(
-      new vscode.Range(
-        test.link.line - 1,
-        test.link.start - 1,
-        test.link.line - 1,
-        test.link.start + (test.line?.length ?? 1) - 1
-      ),
-      test.description,
-      vscode.DiagnosticSeverity.Warning
-    )
-  );
-  console.log(container.resolve(IssuesQueue));
+  for (const issue of container.resolve(IssuesQueue).issues) {
+    diagnostics.push(
+      new vscode.Diagnostic(
+        new vscode.Range(
+          issue.link.line - 1,
+          issue.link.start - 1,
+          issue.link.line - 1,
+          issue.link.start + (issue.line?.length ?? 1) - 1
+        ),
+        issue.description,
+        vscode.DiagnosticSeverity.Warning
+      )
+    );
+    console.log(JSON.stringify(issue));
+  }
 
   emojiDiagnostics.set(doc.uri, diagnostics);
 }
@@ -64,26 +65,21 @@ export function subscribeToDocumentChanges(
   context: vscode.ExtensionContext,
   emojiDiagnostics: vscode.DiagnosticCollection
 ): void {
-  if (vscode.window.activeTextEditor) {
-    refreshDiagnostics(
-      vscode.window.activeTextEditor.document,
-      emojiDiagnostics
-    );
-  }
+  // context.subscriptions.push(
+	// 	vscode.workspace.onDidOpenTextDocument(document => {
+	// 		refreshDiagnostics(document, emojiDiagnostics);
+	// 	})
+	// );
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor) {
-        refreshDiagnostics(editor.document, emojiDiagnostics);
-      }
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) =>
-      refreshDiagnostics(e.document, emojiDiagnostics)
+    vscode.workspace.onDidSaveTextDocument((document) =>
+      refreshDiagnostics(document, emojiDiagnostics)
     )
   );
-
+  // context.subscriptions.push(
+  //   vscode.workspace.onDidChangeTextDocument((e) =>
+  //     refreshDiagnostics(e.document, emojiDiagnostics)
+  //   )
+  // );
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) =>
       emojiDiagnostics.delete(doc.uri)

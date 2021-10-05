@@ -102,7 +102,10 @@
 
 void main() {
     //emoji
+    a = 123;
     while(-12) {}
+    while("12") {}
+    while(12) {}
     while(12 || 1) {}
 }
 
