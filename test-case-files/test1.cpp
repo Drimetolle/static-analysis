@@ -101,6 +101,7 @@
 //auto globalVar2 = 1;
 
 void main() {
+    //emoji
     while(-12) {}
     while(12 || 1) {}
 }
