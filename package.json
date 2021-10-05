@@ -7,21 +7,14 @@
   "engines": {
     "vscode": "^1.53.0"
   },
+  "activationEvents": [
+    "onLanguage:c",
+    "onLanguage:cpp"
+  ],
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:extension.helloWorld"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
+  "main": "./out/extension/extension.js",
   "jest": {
     "testPathIgnorePatterns" : [
       "<rootDir>/tests/utils/"
