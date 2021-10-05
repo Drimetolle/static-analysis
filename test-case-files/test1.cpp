@@ -100,14 +100,18 @@
 
 //auto globalVar2 = 1;
 
+class ClassAasd {
+
+}
+
 void main() {
     //emoji
-    auto test_Ads = 1;
-    a = 123;
-    while(-12) {}
-    while("12") {}
-    while(12) {}
-    while(12 || 1) {}
+    auto test1Ads1 = 1;
+    // a = 123;
+    // while(-12) {}
+    // while("12") {}
+    // while(12) {}
+    // while(12 || 1) {}
 }
 
 //void main() {

@@ -8,7 +8,7 @@ export default class VariableNames extends Rule {
   }
 
   isSnakeCase(str: string) {
-    return /^[a-z]+([A-Z][a-z]+)*$/.test(str);
+    return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
@@ -18,7 +18,7 @@ export default class VariableNames extends Rule {
         if (!this.isSnakeCase(variable.variable.name)) {
           reports.push(
             new Report(
-              `Identifier '${variable.variable.name}' is not in snake case.`,
+              `Identifier '${variable.variable.name}' is not in camel case.`,
               variable.node
             )
           );

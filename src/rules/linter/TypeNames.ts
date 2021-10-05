@@ -23,8 +23,8 @@ export default class TypeNames extends Rule {
     super(4);
   }
 
-  private static isCamelCase(str: string) {
-    return /(^[A-Z0-9])[a-z]*/g.test(str);
+  private static isPascalCase(str: string) {
+    return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
@@ -34,10 +34,10 @@ export default class TypeNames extends Rule {
     const printer = new TypeListener(names);
     ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, context.ast);
     for (const className of names) {
-      if (!TypeNames.isCamelCase(className.text)) {
+      if (!TypeNames.isPascalCase(className.text)) {
         reports.push(
           new Report(
-            `Class name '${className.text}' is not in camel case.`,
+            `Class name '${className.text}' is not in pascal case.`,
             className
           )
         );
