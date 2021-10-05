@@ -6,13 +6,10 @@ import { CharStreams, CommonTokenStream } from "antlr4ts";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import ProjectContext from "./linter/ProjectContext";
 import LinterContext from "./linter/LinterContext";
-import MethodsVisitor from "./visitors/MethodsVisitor";
 import AppConfig from "./AppConfig";
 import { CodePointCharStream } from "antlr4ts/CodePointCharStream";
 import Linter from "./linter/Linter";
 import DataFlowVisitorFactory from "./visitors/DataFlowVisitorFactory";
-import JsonFormatter from "./utils/json-formatters/JsonFormatter";
-import IntervalsGenerator from "./source-analysis/interval-analysis/IntervalsGenerator";
 
 @singleton()
 export default class Controller {
@@ -67,6 +64,47 @@ export default class Controller {
     // methods.getMethodSignature(contentL?.path ?? "", "func");
     context.create(
       new LinterContext(contentL?.path ?? "", tree, scope, cfg, null as any)
+    );
+
+    // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
+  }
+
+  async runWithContent(document: {
+    content: string;
+    fileName: string;
+  }): Promise<void> {
+    const linter = container.resolve(Linter);
+    const context = container.resolve(ProjectContext);
+
+    const lexer = new Lexer(CharStreams.fromString(document.content));
+    const tokenStream = new CommonTokenStream(lexer);
+    const parser = new Parser(tokenStream);
+
+    const tree = parser.translationUnit();
+
+    const visitors = this.dataFlowFactory.createVisitorsForFiles([
+      document.fileName,
+    ]);
+
+    // const methodsVisitor = new MethodsVisitor(
+    //   contentL?.path ?? "",
+    //   this.config.includePath
+    // );
+
+    const walkers = container.resolve(WalkersHelper);
+    const { scope, cfg } = await walkers.analyze(visitors[0], tree);
+    // const methods = await walkers.analyze(methodsVisitor, tree);
+    // console.log(scope.isDefined(cfg.blocks[0].blocks[0].blocks[0].scope!, "b"));
+    // console.log(
+    //   JsonFormatter.ScopeToJson(cfg.blocks[0].blocks[0].scope as any)
+    // );
+    // console.log(JsonFormatter.CFGToJson(cfg.blocks[0]));
+
+    // console.log(JsonFormatter.ScopeToJson(scope));
+
+    // methods.getMethodSignature(contentL?.path ?? "", "func");
+    context.create(
+      new LinterContext(document.fileName, tree, scope, cfg, null as any)
     );
 
     // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
