@@ -12,6 +12,7 @@ import FileManager from "../file-system/FileManager";
 import WalkersHelper from "../linter/walkers/WalkersHelper";
 import IssuesQueue from "../linter/issue/IssuesQueue";
 import Controller from "../Controller";
+import SeverityConverter from "../utils/SeverityConverter";
 
 /** Code that is used to associate diagnostic entries with code actions. */
 export const EMOJI_MENTION = "emoji_mention";
@@ -52,7 +53,7 @@ export async function refreshDiagnostics(
           issue.link.start + (issue.line?.length ?? 1) - 1
         ),
         issue.description,
-        vscode.DiagnosticSeverity.Warning
+        SeverityConverter.convert(issue.severity)
       )
     );
     console.log(JSON.stringify(issue));
@@ -66,10 +67,10 @@ export function subscribeToDocumentChanges(
   emojiDiagnostics: vscode.DiagnosticCollection
 ): void {
   // context.subscriptions.push(
-	// 	vscode.workspace.onDidOpenTextDocument(document => {
-	// 		refreshDiagnostics(document, emojiDiagnostics);
-	// 	})
-	// );
+  // 	vscode.workspace.onDidOpenTextDocument(document => {
+  // 		refreshDiagnostics(document, emojiDiagnostics);
+  // 	})
+  // );
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument((document) =>
       refreshDiagnostics(document, emojiDiagnostics)
