@@ -1,18 +1,18 @@
-import GrammarDerivation from "./GrammarDerivation";
 import { TypeSpecifier } from "./LanguageKeyWords";
+import { AssignmentExpressionContext } from "../../grammar/CPP14Parser";
 
 export default class DeclarationVar {
   variable: string;
-  grammar: GrammarDerivation;
+  expression?: AssignmentExpressionContext;
   type: TypeSpecifier;
 
   constructor(
     variable: string,
-    grammar: GrammarDerivation,
-    type: TypeSpecifier
+    type: TypeSpecifier,
+    expression?: AssignmentExpressionContext
   ) {
     this.variable = variable;
-    this.grammar = grammar;
+    this.expression = expression;
     this.type = type;
   }
 }

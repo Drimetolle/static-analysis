@@ -1,34 +1,12 @@
-import { FlowGraphNumeration } from "./DiagnosticsInterfaceses";
-import DeclaredVariablesInScope, {
-  DeclaredVariables,
-} from "../data-flow/DeclaredVariablesInScope";
+import DeclaredVariablesInScope from "../data-flow/DeclaredVariablesInScope";
 
-export default class CodeBlock implements FlowGraphNumeration {
-  post: number;
-  pre: number;
+export default class CodeBlock {
   declaredVariables: DeclaredVariablesInScope;
 
-  constructor(post: number);
-  constructor(post: number, pre: number);
-  constructor(
-    post: number,
-    pre: number,
-    declaredVariables: DeclaredVariablesInScope
-  );
-  constructor(
-    post: number,
-    pre?: number,
-    declaredVariables?: DeclaredVariablesInScope
-  ) {
-    this.post = post;
-    this.pre = pre ?? Infinity;
+  constructor();
+  constructor(declaredVariables: DeclaredVariablesInScope);
+  constructor(declaredVariables?: DeclaredVariablesInScope) {
     this.declaredVariables =
       declaredVariables ?? new DeclaredVariablesInScope();
   }
-}
-
-export class Block implements FlowGraphNumeration {
-  post!: number;
-  pre!: number;
-  declaredVariables!: DeclaredVariables;
 }

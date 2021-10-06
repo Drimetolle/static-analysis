@@ -1,5 +1,6 @@
 import { Node, Tree } from "../../utils/Tree";
-import CodeBlock, { Block } from "../data-objects/CodeBlock";
+import CodeBlock from "../data-objects/CodeBlock";
+import VariableDeclaration from "../data-objects/VariableDeclaration";
 
 export type ScopeNode = Node<CodeBlock>;
 
@@ -9,7 +10,7 @@ export default class ScopeTree extends Tree<CodeBlock> {
   }
 
   constructor() {
-    super(new CodeBlock(0));
+    super(new CodeBlock());
   }
 
   toArray(): Array<ScopeNode> {
@@ -19,17 +20,22 @@ export default class ScopeTree extends Tree<CodeBlock> {
 
     return result;
   }
-}
 
-export class Scope extends Tree<Block> {
-  get getRoot(): Node<Block> {
-    return this.root;
-  }
+  isDefined(
+    variableNode: Node<CodeBlock>,
+    variableName: string
+  ): VariableDeclaration | null {
+    let result = null;
 
-  toArray(): Array<Node<Block>> {
-    const result = new Array<Node<Block>>();
+    this.traverseToRoot(variableNode, (node: ScopeNode) => {
+      const tmp = node.data.declaredVariables.getVariable(variableName);
 
-    this.traverseDF((node: Node<Block>) => result.push(node));
+      if (tmp) {
+        if (tmp.variable.isDefined()) {
+          result = tmp;
+        }
+      }
+    });
 
     return result;
   }

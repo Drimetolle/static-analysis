@@ -1,0 +1,1608 @@
+{
+  "text": "intmain(){autoautoV=1;autoassign=2;call();assign=5;deleteassign;if(a>1){autoifFirst1=1;if(true){autoinnerIf=11;}autoifSecond1=1;}elseif(a>2){autoife1=1;}else{autoelse1=1;}if(ao<1){autoifSolo1=1;}if(aOut>1){autoifSolo2=1;}while(true){autowhile1=1;while(true){autowhileInner2=1;}}autoautoV123=1;}",
+  "name": "FunctionBlock",
+  "blocks": [
+    {
+      "text": "autoautoV=1;",
+      "name": "LinearBlock",
+      "blocks": [
+        {
+          "text": "autoassign=2;",
+          "name": "LinearBlock",
+          "blocks": [
+            {
+              "text": "call();",
+              "name": "LinearBlock",
+              "blocks": [
+                {
+                  "text": "assign=5;",
+                  "name": "LinearBlock",
+                  "blocks": [
+                    {
+                      "text": "deleteassign;",
+                      "name": "LinearBlock",
+                      "blocks": [
+                        {
+                          "text": "a>1",
+                          "name": "IfBlock",
+                          "blocks": [
+                            {
+                              "text": "ao<1",
+                              "name": "IfBlock",
+                              "blocks": [
+                                {
+                                  "text": "aOut>1",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "true",
+                                      "name": "LoopBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "autoautoV123=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "",
+                                              "name": "OutBlock",
+                                              "blocks": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autowhile1=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                },
+                                                {
+                                                  "text": "autowhileInner2=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoifSolo2=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "text": "autoifSolo1=1;",
+                                  "name": "LinearBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "aOut>1",
+                                      "name": "IfBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autoifSolo2=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "text": "autoifFirst1=1;",
+                              "name": "LinearBlock",
+                              "blocks": [
+                                {
+                                  "text": "true",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "autoifSecond1=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "ao<1",
+                                          "name": "IfBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "aOut>1",
+                                              "name": "IfBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "autoautoV123=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "text": "autowhile1=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            },
+                                                            {
+                                                              "text": "autowhileInner2=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autoifSolo2=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "autoautoV123=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "text": "autowhile1=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "true",
+                                                              "name": "LoopBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                },
+                                                                {
+                                                                  "text": "autowhileInner2=1;",
+                                                                  "name": "LinearBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autoifSolo1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "aOut>1",
+                                                  "name": "IfBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "autoautoV123=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "text": "autowhile1=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "true",
+                                                              "name": "LoopBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                },
+                                                                {
+                                                                  "text": "autowhileInner2=1;",
+                                                                  "name": "LinearBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "text": "autoifSolo2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "autoautoV123=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "text": "autowhile1=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "true",
+                                                                  "name": "LoopBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    },
+                                                                    {
+                                                                      "text": "autowhileInner2=1;",
+                                                                      "name": "LinearBlock",
+                                                                      "blocks": [
+                                                                        {
+                                                                          "text": "",
+                                                                          "name": "OutBlock",
+                                                                          "blocks": []
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoinnerIf=11;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "autoifSecond1=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "ao<1",
+                                              "name": "IfBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "aOut>1",
+                                                  "name": "IfBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "autoautoV123=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "text": "autowhile1=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "true",
+                                                              "name": "LoopBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                },
+                                                                {
+                                                                  "text": "autowhileInner2=1;",
+                                                                  "name": "LinearBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "text": "autoifSolo2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "autoautoV123=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "text": "autowhile1=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "true",
+                                                                  "name": "LoopBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    },
+                                                                    {
+                                                                      "text": "autowhileInner2=1;",
+                                                                      "name": "LinearBlock",
+                                                                      "blocks": [
+                                                                        {
+                                                                          "text": "",
+                                                                          "name": "OutBlock",
+                                                                          "blocks": []
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autoifSolo1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "aOut>1",
+                                                      "name": "IfBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "autoautoV123=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "text": "autowhile1=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "true",
+                                                                  "name": "LoopBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    },
+                                                                    {
+                                                                      "text": "autowhileInner2=1;",
+                                                                      "name": "LinearBlock",
+                                                                      "blocks": [
+                                                                        {
+                                                                          "text": "",
+                                                                          "name": "OutBlock",
+                                                                          "blocks": []
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "text": "autoifSolo2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "true",
+                                                              "name": "LoopBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "autoautoV123=1;",
+                                                                  "name": "LinearBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "",
+                                                                      "name": "OutBlock",
+                                                                      "blocks": []
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "text": "autowhile1=1;",
+                                                                  "name": "LinearBlock",
+                                                                  "blocks": [
+                                                                    {
+                                                                      "text": "true",
+                                                                      "name": "LoopBlock",
+                                                                      "blocks": [
+                                                                        {
+                                                                          "text": "",
+                                                                          "name": "OutBlock",
+                                                                          "blocks": []
+                                                                        },
+                                                                        {
+                                                                          "text": "autowhileInner2=1;",
+                                                                          "name": "LinearBlock",
+                                                                          "blocks": [
+                                                                            {
+                                                                              "text": "",
+                                                                              "name": "OutBlock",
+                                                                              "blocks": []
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "text": "a>2",
+                          "name": "IfBlock",
+                          "blocks": [
+                            {
+                              "text": "ao<1",
+                              "name": "IfBlock",
+                              "blocks": [
+                                {
+                                  "text": "aOut>1",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "true",
+                                      "name": "LoopBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "autoautoV123=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "",
+                                              "name": "OutBlock",
+                                              "blocks": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autowhile1=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                },
+                                                {
+                                                  "text": "autowhileInner2=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoifSolo2=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "text": "autoifSolo1=1;",
+                                  "name": "LinearBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "aOut>1",
+                                      "name": "IfBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autoifSolo2=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "text": "autoife1=1;",
+                              "name": "LinearBlock",
+                              "blocks": [
+                                {
+                                  "text": "ao<1",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "aOut>1",
+                                      "name": "IfBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autoifSolo2=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoifSolo1=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "aOut>1",
+                                          "name": "IfBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autoifSolo2=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "autoautoV123=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "text": "autowhile1=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            },
+                                                            {
+                                                              "text": "autowhileInner2=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "text": "a>2",
+                          "name": "IfBlock",
+                          "blocks": [
+                            {
+                              "text": "ao<1",
+                              "name": "IfBlock",
+                              "blocks": [
+                                {
+                                  "text": "aOut>1",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "true",
+                                      "name": "LoopBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "autoautoV123=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "",
+                                              "name": "OutBlock",
+                                              "blocks": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autowhile1=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                },
+                                                {
+                                                  "text": "autowhileInner2=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoifSolo2=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "text": "autoifSolo1=1;",
+                                  "name": "LinearBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "aOut>1",
+                                      "name": "IfBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autoifSolo2=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "text": "autoelse1=1;",
+                              "name": "LinearBlock",
+                              "blocks": [
+                                {
+                                  "text": "ao<1",
+                                  "name": "IfBlock",
+                                  "blocks": [
+                                    {
+                                      "text": "aOut>1",
+                                      "name": "IfBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "true",
+                                          "name": "LoopBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "autoautoV123=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "",
+                                                  "name": "OutBlock",
+                                                  "blocks": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autowhile1=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    },
+                                                    {
+                                                      "text": "autowhileInner2=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "text": "autoifSolo2=1;",
+                                          "name": "LinearBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "text": "autoifSolo1=1;",
+                                      "name": "LinearBlock",
+                                      "blocks": [
+                                        {
+                                          "text": "aOut>1",
+                                          "name": "IfBlock",
+                                          "blocks": [
+                                            {
+                                              "text": "true",
+                                              "name": "LoopBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "autoautoV123=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "",
+                                                      "name": "OutBlock",
+                                                      "blocks": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "text": "autowhile1=1;",
+                                                  "name": "LinearBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "true",
+                                                      "name": "LoopBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        },
+                                                        {
+                                                          "text": "autowhileInner2=1;",
+                                                          "name": "LinearBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "text": "autoifSolo2=1;",
+                                              "name": "LinearBlock",
+                                              "blocks": [
+                                                {
+                                                  "text": "true",
+                                                  "name": "LoopBlock",
+                                                  "blocks": [
+                                                    {
+                                                      "text": "autoautoV123=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "",
+                                                          "name": "OutBlock",
+                                                          "blocks": []
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "text": "autowhile1=1;",
+                                                      "name": "LinearBlock",
+                                                      "blocks": [
+                                                        {
+                                                          "text": "true",
+                                                          "name": "LoopBlock",
+                                                          "blocks": [
+                                                            {
+                                                              "text": "",
+                                                              "name": "OutBlock",
+                                                              "blocks": []
+                                                            },
+                                                            {
+                                                              "text": "autowhileInner2=1;",
+                                                              "name": "LinearBlock",
+                                                              "blocks": [
+                                                                {
+                                                                  "text": "",
+                                                                  "name": "OutBlock",
+                                                                  "blocks": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -7,10 +7,10 @@ import MethodSignature from "./MethodSignature";
  * Not working with cpp classes. Work in progress.
  * */
 export default class DeclaredMethods {
-  private readonly methods: Array<MethodsScope>;
+  private readonly _methods: Array<MethodsScope>;
 
   constructor(scopes: Array<MethodsScope>) {
-    this.methods = scopes;
+    this._methods = scopes;
   }
 
   addMethodInScope(id: string, signature: MethodSignature): void {
@@ -34,6 +34,6 @@ export default class DeclaredMethods {
   }
 
   private findById(id: string): MethodsScope | undefined {
-    return this.methods.find((s) => s.name === id);
+    return this._methods.find((s) => s.name === id);
   }
 }

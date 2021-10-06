@@ -1,52 +1,126 @@
 #include <stdio.h>
 
-float c = 1;
+//auto globalVar1 = 1;
 
-long long func(int aF, char hF) {
-    return a;
+//int a() {
+//auto autoV = 1;
+//}
+
+//int main() {
+////    auto autoV = 1;
+////    auto assign = 2;
+////    call();
+////    assign = 5;
+////    delete assign;
+//
+////    if(a> 1) {
+////        auto ifFirst1 = 1;
+////
+////        if(true) {
+////            auto innerIf = 11;
+////        }
+////
+////        auto ifSecond1 = 1;
+////    } else if(a > 2){
+////        auto ife1 = 1;
+////    } else {
+////        auto else1 = 1;
+////    }
+//
+////    if(ao < 1) {
+////        auto ifSolo1 = 1;
+////    }
+////
+////    if(aOut > 1) {
+////       auto ifSolo2 = 1;
+////    }
+//
+////    while(true) {
+////        auto while1 = 1;
+////
+////         for(int a = 0; a < 100; a++) {
+////                auto whileInner2 = 1;
+////            }
+////
+////         auto while2 = 1;
+////    }
+//
+////switch ( expression )
+////{
+////    case constant_expression1: case constant_expression2: case constant_expression3:
+////    {
+//////        auto autoV123 = 1;
+////        break;
+////    }
+////    case constant_expression5:
+////        {
+////    //        auto autoV123 = 1;
+////            break;
+////        }
+////    case constant_expression_other:
+////    {
+//////         auto autoV123 = 1;
+////         break;
+////    }
+////    default:
+////    {
+//////        auto autoV123 = 1;
+////        break;
+////    }
+////}
+//
+////{
+////    auto autoV123 = 1;
+////}
+//
+////    try {
+////        tryExpression();
+//////            if(ao < 1) {
+//////                auto ifSolo1 = 1;
+//////            }
+////
+////        lastExpression();
+////    }
+////    catch(t) {
+////        catchExpression();
+////    }
+//
+////    {
+////        compound();
+////        compound2();
+////    }
+//
+//switch(s) {
+//    case 1:
+//    cout << sw << endl;
+//    cout << sw << endl;
+//}
+//endBlock();
+//}
+
+//auto globalVar2 = 1;
+
+class ClassAasd {
+
 }
 
-int main() {
-    auto autoV = 1;
-    long long longModifier = 0;
-    int z, x = 10, y = 10 + 13;
-    float d = 1.5;
-    xA, yA = 1, zA = 5;
-
-    z = 1;
-
-    if (int iInitIf = 0) {
-        char q = 'q';
-        zA = 1;
-        if (z < 0) {
-            aInnerIf = a;
-        }
-    } else if (z > 0) {
-        zA = 2;
-    } else if (z == 1) {
-        zA = 4;
-    } else {
-        zA = 3;
-    }
-
-    for (int iInitFor = 0; i < n; ++i) {
-        aFor1 += 1;
-        aFor2 += 1;
-        for (int i = 0; i < n; ++i) {
-            aFor3 += 1;
-            if (z < 0) {
-                a3 = a;
-            }
-        }
-    }
-
-    while (true) {
-        aWhile = 1;
-        int bWhile = 'c';
-    }
-
-    do {
-        aDoWhile = 1;
-        int bDoWhile = 'c';
-    } while (true);
+void main() {
+    //emoji
+    auto test1Ads1 = 1;
+    // a = 123;
+    // while(-12) {}
+    // while("12") {}
+    // while(12) {}
+    // while(12 || 1) {}
 }
+
+//void main() {
+//    for(kkk;;i=1,j=2) {
+//    }
+////    for(int i;;) {
+////    }
+////    for(i, j = 2; i < 5; i++) {
+////    }
+////    for(int i : j) {
+////    }
+//}

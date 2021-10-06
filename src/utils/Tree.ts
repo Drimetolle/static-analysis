@@ -2,11 +2,13 @@ export class Node<T> {
   data: T;
   parent: Node<T> | null;
   children: Array<Node<T>>;
+  level: number;
 
-  constructor(data: T) {
+  constructor(data: T, level: number) {
     this.data = data;
     this.parent = null;
     this.children = [];
+    this.level = level;
   }
 
   toString(): string {
@@ -18,7 +20,7 @@ export class Tree<T> {
   protected root: Node<T>;
 
   constructor(data: T) {
-    this.root = new Node(data);
+    this.root = new Node(data, 0);
   }
 
   add(data: T, toData: Node<T>): Node<T> | null {
@@ -32,8 +34,9 @@ export class Tree<T> {
     this.traverseDF(callback);
 
     if (parent) {
-      const child = new Node(data);
-      (parent as Node<T>).children.push(child);
+      const casted = parent as Node<T>;
+      const child = new Node(data, casted.level + 1);
+      casted.children.push(child);
       child.parent = parent;
       return child;
     } else {
@@ -83,6 +86,21 @@ export class Tree<T> {
 
       callback(currentTree);
       currentTree = queue.slice(0, 1)[0];
+    }
+  }
+
+  traverseToRoot(
+    startNode: Node<T>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback: (...args: Array<any>) => void
+  ): void {
+    let currentNode = startNode;
+
+    callback(currentNode);
+
+    while (currentNode.parent) {
+      currentNode = currentNode.parent;
+      callback(currentNode);
     }
   }
 }

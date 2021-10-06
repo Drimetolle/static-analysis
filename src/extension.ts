@@ -1,15 +1,11 @@
-import "reflect-metadata";
-import { window, commands, ExtensionContext, languages } from "vscode";
-import a from "./extension/Analyzer";
-import { refreshDiagnostics } from "./extension/diagnostics";
+import { subscribeToDocumentChanges } from "./extension/diagnostics";
+import { ExtensionContext, languages } from "vscode";
 
-export function activate(context: ExtensionContext): void {
-  const disposable = commands.registerCommand("extension.helloWorld", () => {
-    const emojiDiagnostics = languages.createDiagnosticCollection("emoji");
-    if (window.activeTextEditor) {
-      refreshDiagnostics(window.activeTextEditor.document, emojiDiagnostics);
-    }
-  });
+export function activate(context: ExtensionContext) {
+  const emojiDiagnostics = languages.createDiagnosticCollection(
+    "static-analysis"
+  );
+  context.subscriptions.push(emojiDiagnostics);
 
-  context.subscriptions.push(disposable);
+  subscribeToDocumentChanges(context, emojiDiagnostics);
 }

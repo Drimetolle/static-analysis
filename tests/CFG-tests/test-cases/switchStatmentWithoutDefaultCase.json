@@ -1,0 +1,57 @@
+{
+  "name": "FunctionBlock",
+  "depth": 0,
+  "blocks": [
+    {
+      "name": "SwitchBlock",
+      "depth": 0,
+      "blocks": [
+        {
+          "name": "CaseBlock",
+          "depth": 0,
+          "blocks": [
+            {
+              "name": "LinearBlock",
+              "depth": 0,
+              "blocks": [
+                {
+                  "name": "OutBlock",
+                  "depth": 0,
+                  "blocks": []
+                }
+              ]
+            },
+            {
+              "name": "LinearBlock",
+              "depth": 1,
+              "blocks": [
+                {
+                  "name": "LinearBlock",
+                  "depth": 0,
+                  "blocks": [
+                    {
+                      "name": "OutBlock",
+                      "depth": 0,
+                      "blocks": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LinearBlock",
+      "depth": 0,
+      "blocks": [
+        {
+          "name": "OutBlock",
+          "depth": 0,
+          "blocks": []
+        }
+      ]
+    }
+  ]
+}

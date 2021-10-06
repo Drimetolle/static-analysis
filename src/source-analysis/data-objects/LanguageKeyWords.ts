@@ -3,6 +3,7 @@
  * */
 
 export enum TypeSpecifier {
+  AUTO = "auto",
   SHORT = "short",
   SHORT_INT = "shortint",
   SIGNED_SHORT = "signedshort",
@@ -30,16 +31,15 @@ export enum TypeSpecifier {
   UNSIGNED_CHAR = "unsignedchar",
   CHAR = "char",
   WCHAR_T = "wchart",
-  CHAR8_T = "char8t",
-  CHAR16_T = "char16t",
-  CHAR32_T = "char32t",
   FLOAT = "float",
   DOUBLE = "double",
   LONG_DOUBLE = "longdouble",
   VOID = "void",
+  BOOL = "bool",
 }
 
 export enum KeyWords {
+  AUTO = "auto",
   Null = "null",
   CHAR = "char",
   CHAR16 = "char16",

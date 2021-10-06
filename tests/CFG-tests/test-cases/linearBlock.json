@@ -1,0 +1,29 @@
+{
+  "name": "FunctionBlock",
+  "depth": 0,
+  "blocks": [
+    {
+      "name": "LinearBlock",
+      "depth": 0,
+      "blocks": [
+        {
+          "name": "LinearBlock",
+          "depth": 0,
+          "blocks": [
+            {
+              "name": "LinearBlock",
+              "depth": 0,
+              "blocks": [
+                {
+                  "name": "OutBlock",
+                  "depth": 0,
+                  "blocks": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

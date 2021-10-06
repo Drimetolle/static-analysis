@@ -1,48 +1,36 @@
-import PositionInFile from "./PositionInFile";
-import { IHavePosition } from "./DiagnosticsInterfaceses";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import Expression from "./Expression";
+import Variable from "../data-flow/Variable";
+import { TypeSpecifier } from "./LanguageKeyWords";
 
 export enum VariableState {
   defined = "defined",
   undefined = "undefined",
 }
 
-export default class VariableDeclaration implements IHavePosition {
-  position: PositionInFile;
-  expression?: string;
-  blockId: number;
-  name: string;
-  state: VariableState;
-  node: ParserRuleContext;
+export default class VariableDeclaration {
+  public readonly expression: Expression;
+  public readonly variable: Variable;
+  public readonly node: ParserRuleContext;
+  public type: TypeSpecifier;
 
   constructor(
-    position: PositionInFile,
-    expression: string,
-    blockId: number,
-    name: string,
-    node: ParserRuleContext
-  );
-  constructor(
-    position: PositionInFile,
-    expression: string,
-    blockId: number,
-    name: string,
+    expression: Expression,
+    variable: Variable,
     node: ParserRuleContext,
-    type: VariableState
-  );
-  constructor(
-    position: PositionInFile,
-    expression: string,
-    blockId: number,
-    name: string,
-    node: ParserRuleContext,
-    type?: VariableState
+    type: TypeSpecifier
   ) {
-    this.position = position;
     this.expression = expression;
-    this.blockId = blockId;
-    this.name = name;
-    this.state = type ?? VariableState.defined;
     this.node = node;
+    this.variable = variable;
+    this.type = type;
+  }
+
+  public toJSON(): unknown {
+    return {
+      expression: this.expression.text,
+      variable: this.variable,
+      type: this.type,
+    };
   }
 }

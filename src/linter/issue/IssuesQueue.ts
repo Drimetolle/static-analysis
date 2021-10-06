@@ -10,7 +10,9 @@ export default class IssuesQueue {
   private readonly subscribers: Array<IssueDelegate>;
 
   get issues(): Array<CodeIssue> {
-    return clone(this._issues);
+    const result = clone(this._issues);
+    this._issues.splice(0, this._issues.length);
+    return result;
   }
 
   constructor() {
