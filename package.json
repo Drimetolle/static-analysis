@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "repository": "https://github.com/Drimetolle/static-analysis",
+  "publisher": "FireStarter",
   "engines": {
     "vscode": "^1.53.0"
   },
