@@ -7,6 +7,7 @@ import CheckPrivateFieldName from "./variables/CheckPrivateFieldName";
 import InfinityLoopTruePredicate from "./loops/InfinityLoopTruePredicate";
 import ShortGlobalVariable from "./variables/ShortGlobalVariable";
 import Rule from "../linter/Rule";
+import UnsafeFunctions from "./functions/UnsafeFunctions";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -24,6 +25,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 6, rule: CheckPrivateFieldName },
   { id: 7, rule: InfinityLoopTruePredicate },
   { id: 8, rule: ShortGlobalVariable },
+  { id: 9, rule: UnsafeFunctions },
 ];
 
 export default AllRules;
