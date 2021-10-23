@@ -27,10 +27,6 @@ class GlobalVariableListener implements CPP14ParserListener {
 }
 
 export default class ShortGlobalVariable extends Rule {
-  constructor() {
-    super(8);
-  }
-
   run(context: LinterContext): Array<Report> {
     const variables = new Array<InitDeclaratorContext>();
     const printer = new GlobalVariableListener(variables);

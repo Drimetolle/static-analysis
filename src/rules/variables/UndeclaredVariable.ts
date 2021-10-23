@@ -3,10 +3,6 @@ import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
 
 export default class UndeclaredVariable extends Rule {
-  constructor() {
-    super(1);
-  }
-
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
     context.scope

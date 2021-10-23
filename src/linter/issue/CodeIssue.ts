@@ -2,7 +2,7 @@ import PositionInFile from "../../source-analysis/data-objects/PositionInFile";
 import { mapSeverity, Severity } from "./Severity";
 
 export default class CodeIssue {
-  readonly errorCode: number;
+  readonly errorCode: string;
   readonly description: string;
   readonly link: PositionInFile;
   readonly fileName: string;
@@ -10,14 +10,14 @@ export default class CodeIssue {
   readonly line?: string;
 
   constructor(
-    errorCode: number,
+    errorCode: string,
     description: string,
     link: PositionInFile,
     fileName: string,
     severity: Severity
   );
   constructor(
-    errorCode: number,
+    errorCode: string,
     description: string,
     link: PositionInFile,
     fileName: string,
@@ -25,7 +25,7 @@ export default class CodeIssue {
     line: string
   );
   constructor(
-    errorCode: number,
+    errorCode: string,
     description: string,
     link: PositionInFile,
     fileName: string,

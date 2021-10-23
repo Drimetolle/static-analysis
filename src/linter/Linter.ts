@@ -7,20 +7,28 @@ import PositionInFile from "../source-analysis/data-objects/PositionInFile";
 import LinterConfig from "./LinterConfig";
 import RuleResolverHelper from "../utils/RuleResolverHelper";
 import { Interval } from "antlr4ts/misc";
+import { AnalyzerRule } from "../rules";
+
+interface AnalyzerRuleInternal {
+  id: string | number;
+  rule: Rule;
+}
 
 @singleton()
 @autoInjectable()
 export default class Linter {
-  readonly rules: Array<Rule>;
+  readonly rules: Array<AnalyzerRuleInternal>;
   private readonly issueService: IssuesQueue;
   private readonly ruleResolver: RuleResolverHelper;
 
   constructor(
-    rules: Array<new () => Rule>,
+    rules: Array<AnalyzerRule>,
     config: LinterConfig,
     issueService?: IssuesQueue
   ) {
-    this.rules = rules.map((con) => new con());
+    this.rules = rules.map((analyzerRule) => {
+      return { id: analyzerRule.id, rule: new analyzerRule.rule() };
+    });
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.issueService = issueService!;
     this.ruleResolver = new RuleResolverHelper(config);
@@ -28,13 +36,13 @@ export default class Linter {
 
   start(context: LinterContext): void {
     this.rules.forEach((r) => {
-      const issues = r.run(context);
+      const issues = r.rule.run(context);
 
       if (issues.length > 0) {
         for (const issue of issues) {
           this.issueService.add(
             new CodeIssue(
-              r.id,
+              r.id.toString(),
               issue.description,
               new PositionInFile(
                 issue.node.start?.line ?? 0,
