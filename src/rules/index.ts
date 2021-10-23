@@ -5,6 +5,7 @@ import VariableNames from "./linter/VariableNames";
 import CognitiveComplexity from "./CognitiveComplexity";
 import CheckPrivateFieldName from "./variables/CheckPrivateFieldName";
 import InfinityLoopTruePredicate from "./loops/InfinityLoopTruePredicate";
+import ShortGlobalVariable from "./variables/ShortGlobalVariable";
 
 export default [
   UndeclaredVariable,
@@ -14,4 +15,5 @@ export default [
   CognitiveComplexity,
   CheckPrivateFieldName,
   InfinityLoopTruePredicate,
+  ShortGlobalVariable,
 ];

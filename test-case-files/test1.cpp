@@ -100,15 +100,16 @@
 
 //auto globalVar2 = 1;
 
-class ClassAasd {
-
+namespace Const
+{
+  const float E = 2.71828;
 }
+
+const int a = 1, b = 2;
 
 void main() {
     //emoji
-    auto test1Ads1 = 1;
     // a = 123;
-    // while(-12) {}
     // while("12") {}
     // while(12) {}
     // while(12 || 1) {}
