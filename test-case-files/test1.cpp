@@ -1,12 +1,13 @@
-//#include <iostream>
+#include <iostream>
 //#include <limits>
 //#include <iomanip>
 //#include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 //#include <string.h>
 //#include <cstring>
 //#include <stdlib.h>
 
 void main() {
+    auto sdfsdfhbfjhsdfj = '';
     strncpy(str, "21" );
 }
