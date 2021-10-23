@@ -49,7 +49,7 @@ export default class Linter {
                 (issue.node.start?.charPositionInLine ?? 0) + 1
               ),
               context.fileName,
-              this.ruleResolver.getRuleSeverity(r.constructor.name),
+              this.ruleResolver.getRuleSeverity(r.rule.constructor.name),
               issue.node.start.inputStream?.getText(
                 new Interval(
                   issue.node.start.startIndex,
