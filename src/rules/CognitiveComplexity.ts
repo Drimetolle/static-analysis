@@ -6,10 +6,6 @@ import FunctionBlock from "../source-analysis/control-flow/blocks/FunctionBlock"
 import { extractFunctionSignature } from "../utils/ast-extractors/FunctionUtils";
 
 export default class CognitiveComplexity extends Rule {
-  constructor() {
-    super(5);
-  }
-
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
     const functions = this.findAllFunctions(context.cfg);

@@ -3,10 +3,6 @@ import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
 
 export default class VariableNames extends Rule {
-  constructor() {
-    super(3);
-  }
-
   isSnakeCase(str: string) {
     return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }

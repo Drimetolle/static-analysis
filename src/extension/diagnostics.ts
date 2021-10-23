@@ -1,9 +1,5 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import Linter from "../linter/Linter";
-import AllRules from "../rules";
-import FileManager from "../file-system/FileManager";
-import WalkersHelper from "../linter/walkers/WalkersHelper";
 import IssuesQueue from "../linter/issue/IssuesQueue";
 import Controller from "../Controller";
 import SeverityConverter from "../utils/SeverityConverter";
@@ -15,23 +11,15 @@ import {
   TextDocument,
   workspace,
 } from "vscode";
+import InitContainer from "../ContainerIniter";
 
-container.register<Linter>(Linter, {
-  useValue: new Linter(AllRules, {
-    rules: {},
-  }),
-});
-container.register<FileManager>(FileManager, {
-  useValue: new FileManager(),
-});
-container.register<WalkersHelper>(WalkersHelper, {
-  useValue: new WalkersHelper(),
-});
+InitContainer();
 
 export async function refreshDiagnostics(
   document: TextDocument,
   emojiDiagnostics: DiagnosticCollection
 ): Promise<void> {
+  console.log("event");
   const firstLine = document.lineAt(0);
   const lastLine = document.lineAt(document.lineCount - 1);
 
@@ -65,24 +53,24 @@ export async function refreshDiagnostics(
 
 export function subscribeToDocumentChanges(
   context: ExtensionContext,
-  emojiDiagnostics: DiagnosticCollection
+  staticDiagnostic: DiagnosticCollection
 ): void {
   // context.subscriptions.push(
-  // 	vscode.workspace.onDidOpenTextDocument(document => {
-  // 		refreshDiagnostics(document, emojiDiagnostics);
+  // 	workspace.onDidOpenTextDocument(document => {
+  // 		refreshDiagnostics(document, staticDiagnostic);
   // 	})
   // );
   context.subscriptions.push(
     workspace.onDidSaveTextDocument((document) =>
-      refreshDiagnostics(document, emojiDiagnostics)
+      refreshDiagnostics(document, staticDiagnostic)
     )
   );
   // context.subscriptions.push(
-  //   vscode.workspace.onDidChangeTextDocument((e) =>
-  //     refreshDiagnostics(e.document, emojiDiagnostics)
+  //   workspace.onDidChangeTextDocument((e) =>
+  //     refreshDiagnostics(e.document, staticDiagnostic)
   //   )
   // );
   context.subscriptions.push(
-    workspace.onDidCloseTextDocument((doc) => emojiDiagnostics.delete(doc.uri))
+    workspace.onDidCloseTextDocument((doc) => staticDiagnostic.delete(doc.uri))
   );
 }

@@ -1,28 +1,9 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import FileManager from "./file-system/FileManager";
-import Linter from "./linter/Linter";
-import WalkersHelper from "./linter/walkers/WalkersHelper";
 import Controller from "./Controller";
-import UndeclaredVariable from "./rules/variables/UndeclaredVariable";
 import IssuesQueue from "./linter/issue/IssuesQueue";
-import CheckScope from "./rules/variables/CheckScope";
-import AdditionalOnInterval from "./source-analysis/interval-analysis/functions/AdditionalOnInterval";
-import IntervalWorkListAlgorithm from "./source-analysis/interval-analysis/IntervalWorkListAlgorithm";
-import MutationBlock from "./source-analysis/interval-analysis/MutationBlock";
-import VariableInterval from "./source-analysis/interval-analysis/VariableInterval";
-import { TypeSpecifier } from "./source-analysis/data-objects/LanguageKeyWords";
-import InitInterval from "./source-analysis/interval-analysis/functions/InitInterval";
-import PassInterval from "./source-analysis/interval-analysis/functions/PassInterval";
-import SubtractionOnInterval from "./source-analysis/interval-analysis/functions/SubtractionOnInterval";
-import MultiplicationOnInterval from "./source-analysis/interval-analysis/functions/MultiplicationOnInterval";
-import DivisionOnInterval from "./source-analysis/interval-analysis/functions/DivisionOnInterval";
-import ConstraintInterval from "./source-analysis/interval-analysis/functions/ConstraintInterval";
 import Formatter from "./cli-engine/Formatter";
-import { Severity } from "./linter/issue/Severity";
-import VariableNames from "./rules/linter/VariableNames";
-import TypeNames from "./rules/linter/TypeNames";
-import AllRules from "./rules/index";
+import InitContainer from "./ContainerIniter";
 
 /*
  * x = 1;
@@ -76,17 +57,7 @@ import AllRules from "./rules/index";
 // console.log(calculator.calculate().map((v) => v.interval));
 
 // container registration
-container.register<Linter>(Linter, {
-  useValue: new Linter(AllRules, {
-    rules: {},
-  }),
-});
-container.register<FileManager>(FileManager, {
-  useValue: new FileManager(),
-});
-container.register<WalkersHelper>(WalkersHelper, {
-  useValue: new WalkersHelper(),
-});
+InitContainer();
 
 container
   .resolve(IssuesQueue)

@@ -91,10 +91,6 @@ class LoopListener implements CPP14ParserListener {
 }
 
 export default class InfinityLoopTruePredicate extends Rule {
-  constructor() {
-    super(7);
-  }
-
   run(context: LinterContext): Array<Report> {
     const loops = new Array<Report>();
     const printer = new LoopListener(loops);
