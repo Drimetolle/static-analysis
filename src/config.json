@@ -7,5 +7,6 @@
   "CheckPrivateFieldName": 1,
   "InfinityLoopTruePredicate": 1,
   "ShortGlobalVariable": 1,
-  "UnsafeFunctions": 2
+  "UnsafeFunctions": 2,
+  "StringInCStyle": 2
 }

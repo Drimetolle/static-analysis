@@ -1,12 +1,10 @@
-#include <iostream>
-//#include <limits>
-//#include <iomanip>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <cstring>
-//#include <stdlib.h>
 
 void main() {
-    strncpy(str, "21" );
+    // Плохая практика: текстовая строка в стиле Cи
+    char* str = "Hello there";
+    char* str1;
+    
+    // Хорошая практика: текстовая строка в стиле C++
+    string str3 = "Hello there";
+    string str4;
 }

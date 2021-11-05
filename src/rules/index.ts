@@ -8,6 +8,7 @@ import InfinityLoopTruePredicate from "./loops/InfinityLoopTruePredicate";
 import ShortGlobalVariable from "./variables/ShortGlobalVariable";
 import Rule from "../linter/Rule";
 import UnsafeFunctions from "./functions/UnsafeFunctions";
+import StringInCStyle from "./variables/StringInCStyle";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -26,6 +27,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 7, rule: InfinityLoopTruePredicate },
   { id: 8, rule: ShortGlobalVariable },
   { id: 9, rule: UnsafeFunctions },
+  { id: 10, rule: StringInCStyle },
 ];
 
 export default AllRules;
