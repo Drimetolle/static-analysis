@@ -19,8 +19,9 @@ class TypeListener implements CPP14ParserListener {
 }
 
 export default class TypeNames extends Rule {
-  private static isPascalCase(str: string) {
-    return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+  private static isPascalCase(str: string): boolean {
+    return true;
+    // return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
