@@ -8,5 +8,5 @@
   "InfinityLoopTruePredicate": 1,
   "ShortGlobalVariable": 1,
   "UnsafeFunctions": 2,
-  "StringInCStyle": 2
+  "StringInCStyle": 1
 }

@@ -1,4 +1,6 @@
 
+int aaaa = 1;
+
 void main() {
     // Плохая практика: текстовая строка в стиле Cи
     char* str = "Hello there";
