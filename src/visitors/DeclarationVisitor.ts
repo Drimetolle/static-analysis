@@ -4,6 +4,7 @@ import {
   DeclaratorContext,
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
+  ParameterDeclarationContext,
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
@@ -23,8 +24,8 @@ export default class DeclarationVisitor {
     decSeq?: DeclSpecifierSeqContext
   ): DeclarationVar {
     const type = parseType(decSeq);
-
-    return new DeclarationVar(dec.text, type, init);
+    console.log(dec.text);
+    return new DeclarationVar(dec.text, "", type, init);
   }
 
   createSimpleDeclaration(
@@ -33,7 +34,7 @@ export default class DeclarationVisitor {
   ): DeclarationVar {
     const type = parseType(decSeq);
 
-    return new DeclarationVar(dec.text, type);
+    return new DeclarationVar(dec.text, "", type);
   }
 
   simpleDeclaration(
@@ -72,5 +73,26 @@ export default class DeclarationVisitor {
     }
 
     return [];
+  }
+
+  visitParameterDeclaration(
+    ctx: ParameterDeclarationContext
+  ): DeclarationVar | null {
+    const type = parseType(ctx.declSpecifierSeq());
+    const argumentByOther = ctx.declarator();
+
+    if (argumentByOther) {
+      const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
+        ?.text;
+      return new DeclarationVar(name!, "", type);
+    }
+
+    const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
+
+    if (argumentByValue) {
+      return new DeclarationVar(argumentByValue, "", type);
+    }
+
+    return null;
   }
 }

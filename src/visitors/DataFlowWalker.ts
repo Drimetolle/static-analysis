@@ -130,27 +130,6 @@ export default class DataFlowWalker
     }
   }
 
-  visitParameterDeclaration(
-    ctx: ParameterDeclarationContext
-  ): DeclarationVar | null {
-    const type = parseType(ctx.declSpecifierSeq());
-    const argumentByOther = ctx.declarator();
-
-    if (argumentByOther) {
-      const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
-        ?.text;
-      return new DeclarationVar(name!, type);
-    }
-
-    const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
-
-    if (argumentByValue) {
-      return new DeclarationVar(argumentByValue, type);
-    }
-
-    return null;
-  }
-
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
     return ctx
       .statement()
@@ -262,7 +241,7 @@ export default class DataFlowWalker
     ctx: ParameterDeclarationContext,
     toNode: ScopeNode
   ): void {
-    const result = this.visitParameterDeclaration(ctx);
+    const result = this.declarationVisitor.visitParameterDeclaration(ctx);
     if (result) {
       DataFlowWalker.setScope(toNode, result, ctx);
     }
