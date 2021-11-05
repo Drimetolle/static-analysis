@@ -129,8 +129,7 @@ export default class DeclarationVisitor {
     const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
 
     if (argumentByValue) {
-      const variable = DeclarationVisitor.getVariableName(ctx);
-      return new DeclarationVar(argumentByValue, variable, type);
+      return new DeclarationVar(argumentByValue, argumentByValue, type);
     }
 
     return null;
