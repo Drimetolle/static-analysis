@@ -70,4 +70,11 @@ export default class FileManager {
     const fileContent = readFileSync(this.files[0], "utf8");
     yield new SourceFile(this.files[0], fileContent);
   }
+
+  public *readTmp() {
+    for (const file of this.files) {
+      const fileContent = readFileSync(file, "utf8");
+      yield new SourceFile(file, fileContent);
+    }
+  }
 }

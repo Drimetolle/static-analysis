@@ -1,7 +1,6 @@
 import VariableDeclaration, {
   VariableState,
 } from "../data-objects/VariableDeclaration";
-import VariableAlreadyDefinedException from "../../exceptions/VariableAlreadyDefinedException";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import Expression from "../data-objects/Expression";
 import Variable from "./Variable";
@@ -64,7 +63,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     );
 
     if (this._variables.has(variable)) {
-      throw new VariableAlreadyDefinedException(
+      console.log(
         `Variable: ${variable} already declared in position: ${node.start.line}:${node.start.charPositionInLine}.`
       );
     }
