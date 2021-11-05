@@ -4,6 +4,7 @@ import Report from "../../linter/issue/Report";
 
 export default class VariableNames extends Rule {
   isSnakeCase(str: string) {
+    str = str.replace(/[&*]+/g, "");
     return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
