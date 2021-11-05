@@ -64,20 +64,20 @@ class LoopListener implements CPP14ParserListener {
         .castExpression(0)
         .unaryExpression();
 
-      const simpleLiteral = expression
+      const simpleLiterals = expression
         ?.postfixExpression()
         ?.primaryExpression()
-        ?.literal(0);
+        ?.literal();
 
-      const postfixLiteral = expression
+      const postfixLiterals = expression
         ?.unaryExpression()
         ?.postfixExpression()
         ?.primaryExpression()
-        ?.literal(0);
+        ?.literal();
 
       if (
-        LoopListener.checkSimpleLiteral(simpleLiteral) ||
-        LoopListener.checkSimpleLiteral(postfixLiteral)
+        LoopListener.checkSimpleLiteral(simpleLiterals?.pop()) ||
+        LoopListener.checkSimpleLiteral(postfixLiterals?.pop())
       ) {
         this.reports.push(
           new Report(
