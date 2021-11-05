@@ -3,7 +3,6 @@
   "CheckScope": 1,
   "VariableNames": 3,
   "TypeNames": 3,
-  "CognitiveComplexity": 1,
   "CheckPrivateFieldName": 1,
   "InfinityLoopTruePredicate": 1,
   "ShortGlobalVariable": 1,
