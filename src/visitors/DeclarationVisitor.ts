@@ -102,6 +102,10 @@ export default class DeclarationVisitor {
         };
       });
     } else if (simpleDeclaration) {
+      // for example: class U;
+      if (1 >= simpleDeclaration.childCount) {
+        return [];
+      }
       return new Array<DeclarationVarAndNode>({
         declaration: this.createSimpleDeclaration(
           simpleDeclaration?.declSpecifier(1),

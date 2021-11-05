@@ -3,31 +3,60 @@ import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
 import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
-import { ClassNameContext } from "../../grammar/CPP14Parser";
+import {
+  ClassHeadContext,
+  ClassHeadNameContext,
+} from "../../grammar/CPP14Parser";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
+/**
+ * @example
+  class Vector;
+  class Matrix {
+  
+  };
+  class Vector {
+  
+  };
+  
+  struct MyStruct {
+  
+  };
+  
+  namespace ns {
+     class VectorInNamespace {};
+  }
+  
+  template <typename T>
+  struct identity
+  {
+      using type = T;
+  };
+ */
 class TypeListener implements CPP14ParserListener {
   private readonly names;
 
-  constructor(names: Array<ClassNameContext>) {
+  constructor(names: Array<ClassHeadNameContext>) {
     this.names = names;
   }
 
-  enterClassName(ctx: ClassNameContext) {
-    this.names.push(ctx);
+  enterClassHead(ctx: ClassHeadContext) {
+    const className = ctx.classHeadName();
+    if (className instanceof ClassHeadNameContext) {
+      this.names.push(className);
+    }
   }
 }
 
 export default class TypeNames extends Rule {
   private static isPascalCase(str: string): boolean {
-    return true;
-    // return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+    return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
 
-    const names = new Array<ClassNameContext>();
+    const names = new Array<ClassHeadNameContext>();
     const printer = new TypeListener(names);
     ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, context.ast);
     for (const className of names) {
