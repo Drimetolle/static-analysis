@@ -30,11 +30,12 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   declare(
     declaration: string,
+    name: string,
     expression: Expression,
     node: ParserRuleContext,
     type: TypeSpecifier = TypeSpecifier.AUTO
   ): void {
-    this.setVariable(declaration, expression, node, type);
+    this.setVariable(declaration, name, expression, node, type);
   }
 
   assign(
@@ -48,12 +49,14 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   private setVariable(
     variable: string,
+    name: string,
     expression: Expression,
     node: ParserRuleContext,
     type: TypeSpecifier
   ) {
     const declaration = DeclaredVariablesInScope.createDeclaration(
       variable,
+      name,
       expression,
       VariableState.defined,
       node,
@@ -78,6 +81,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     if (this._variables.has(variable)) {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
+        "",
         expression,
         VariableState.defined,
         node,
@@ -88,6 +92,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     } else {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
+        "",
         expression,
         VariableState.undefined,
         node,
@@ -109,6 +114,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
 
   private static createDeclaration(
     variable: string,
+    variableName: string,
     expression: Expression,
     state: VariableState,
     node: ParserRuleContext,
@@ -116,7 +122,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   ): VariableDeclaration {
     return new VariableDeclaration(
       expression,
-      new Variable(variable, state),
+      new Variable(variable, variableName, state),
       node,
       type
     );

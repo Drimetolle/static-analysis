@@ -1,12 +1,19 @@
-
-int aaaa = 1;
-
 void main() {
-    // Плохая практика: текстовая строка в стиле Cи
-    char* str = "Hello there";
-    char* str1;
+    auto a1;
+    auto *a2;
+    auto a3[];
+    auto a4[123];
+    auto &a5;
+    const auto &a6;
+    const auto *a7;
+    const auto **a8;
     
-    // Хорошая практика: текстовая строка в стиле C++
-    string str3 = "Hello there";
-    string str4;
+    auto a9, a10;
+    auto *a11, *a12;
+    auto a13[], a14[];
+    auto a15[123], a16[123];
+    auto &a17, &a18;
+    const auto &a19, &a20;
+    const auto *a21, *a22;
+    const auto **a23, **a24;
 }

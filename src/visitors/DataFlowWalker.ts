@@ -26,7 +26,6 @@ import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
-import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
@@ -150,6 +149,7 @@ export default class DataFlowWalker
 
     root.data.declaredVariables.declare(
       ctx.variable,
+      ctx.variableName,
       expression,
       node,
       ctx.type
