@@ -14,7 +14,6 @@ import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { CPP14ParserListener } from "../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
-import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -131,11 +130,13 @@ export default class DeclarationVisitor {
       return new DeclarationVar(name!, name!, type);
     }
 
-    if (type == TypeSpecifier.VOID) {
-      return null;
-    }
+    let argumentByValue;
 
-    const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
+    if (ctx.declSpecifierSeq().childCount > 1) {
+      argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
+    } else {
+      argumentByValue = null;
+    }
 
     if (argumentByValue) {
       return new DeclarationVar(argumentByValue, argumentByValue, type);
