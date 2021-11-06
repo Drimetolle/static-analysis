@@ -2,6 +2,7 @@
 import Report from "../../linter/issue/Report";
 import LinterContext from "../../linter/LinterContext";
 import { TypeSpecifier } from "../../source-analysis/data-objects/LanguageKeyWords";
+import { isCppFile } from "../../utils/Utils";
 
 /**
  * This function does something see example below:
@@ -17,7 +18,7 @@ import { TypeSpecifier } from "../../source-analysis/data-objects/LanguageKeyWor
  */
 export default class StringInCStyle extends Rule {
   run(context: LinterContext): Array<Report> {
-    if (context.fileName.indexOf(".cpp") == -1) {
+    if (!isCppFile(context.fileName)) {
       return [];
     }
 

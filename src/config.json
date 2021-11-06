@@ -7,5 +7,6 @@
   "ShortGlobalVariable": 1,
   "UnsafeFunctions": 2,
   "StringInCStyle": 1,
-  "ConstNames": 3
+  "ConstNames": 3,
+  "UseConstInsteadMacro": 3
 }
