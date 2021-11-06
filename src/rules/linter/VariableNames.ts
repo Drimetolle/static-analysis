@@ -4,7 +4,7 @@ import Report from "../../linter/issue/Report";
 import { isEmpty } from "ramda";
 
 export default class VariableNames extends Rule {
-  isSnakeCase(str: string) {
+  isCamelCase(str: string) {
     return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
   }
 
@@ -16,7 +16,7 @@ export default class VariableNames extends Rule {
           ? variable.variable.name
           : variable.variable.variableName;
         if (
-          !this.isSnakeCase(variableName) &&
+          !this.isCamelCase(variableName) &&
           /^[a-zA-Z_]+[0-9]*$/.test(variableName)
         ) {
           reports.push(
