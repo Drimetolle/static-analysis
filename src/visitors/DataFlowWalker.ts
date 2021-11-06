@@ -147,13 +147,15 @@ export default class DataFlowWalker
       expression = new Expression();
     }
 
-    root.data.declaredVariables.declare(
-      ctx.variable,
-      ctx.variableName,
-      expression,
-      node,
-      ctx.type
-    );
+    if (ctx.variable) {
+      root.data.declaredVariables.declare(
+        ctx.variable,
+        ctx.variableName,
+        expression,
+        node,
+        ctx.type
+      );
+    }
   }
 
   private setAssignScope(
