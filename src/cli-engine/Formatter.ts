@@ -2,6 +2,14 @@ import chalk from "chalk";
 import CodeIssue from "../linter/issue/CodeIssue";
 import { mapSeverity, Severity } from "../linter/issue/Severity";
 
+export interface JsonIssueScheme {
+  fileName: string;
+  code: string;
+  level: string;
+  link: string;
+  description: string;
+}
+
 export default class Formatter {
   static formatMessage(issue: CodeIssue): string {
     const maxLineWidth = 80;
@@ -24,6 +32,18 @@ export default class Formatter {
         ? issue.description
         : issue.description + "."
     }\n${underline}`;
+  }
+
+  static formatMessageToJson(issue: CodeIssue): JsonIssueScheme {
+    return {
+      fileName: issue.fileName,
+      code: issue.errorCode,
+      level: mapSeverity(issue.severity),
+      link: `${issue.link.line}:${issue.link.start}`,
+      description: issue.description.endsWith(".")
+        ? issue.description
+        : issue.description + ".",
+    };
   }
 
   private static coloredSeverity(severity: Severity, message: string): string {

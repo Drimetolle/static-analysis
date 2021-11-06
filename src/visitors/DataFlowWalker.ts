@@ -26,7 +26,6 @@ import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
-import { parseType } from "../utils/TypeInference";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
@@ -130,27 +129,6 @@ export default class DataFlowWalker
     }
   }
 
-  visitParameterDeclaration(
-    ctx: ParameterDeclarationContext
-  ): DeclarationVar | null {
-    const type = parseType(ctx.declSpecifierSeq());
-    const argumentByOther = ctx.declarator();
-
-    if (argumentByOther) {
-      const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
-        ?.text;
-      return new DeclarationVar(name!, type);
-    }
-
-    const argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
-
-    if (argumentByValue) {
-      return new DeclarationVar(argumentByValue, type);
-    }
-
-    return null;
-  }
-
   visitStatementSeq(ctx: StatementSeqContext): Array<StatementContext> {
     return ctx
       .statement()
@@ -169,12 +147,15 @@ export default class DataFlowWalker
       expression = new Expression();
     }
 
-    root.data.declaredVariables.declare(
-      ctx.variable,
-      expression,
-      node,
-      ctx.type
-    );
+    if (ctx.variable) {
+      root.data.declaredVariables.declare(
+        ctx.variable,
+        ctx.variableName,
+        expression,
+        node,
+        ctx.type
+      );
+    }
   }
 
   private setAssignScope(
@@ -262,7 +243,7 @@ export default class DataFlowWalker
     ctx: ParameterDeclarationContext,
     toNode: ScopeNode
   ): void {
-    const result = this.visitParameterDeclaration(ctx);
+    const result = this.declarationVisitor.visitParameterDeclaration(ctx);
     if (result) {
       DataFlowWalker.setScope(toNode, result, ctx);
     }

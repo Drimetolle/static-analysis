@@ -11,7 +11,7 @@ export default class UndeclaredVariable extends Rule {
       .filter((_) => _.variable.isUndefined())
       .forEach((r) =>
         reports.push(
-          new Report(`Variable ${r.variable.name} is undefined`, r.node)
+          new Report(`Variable ${r.variable.variableName} is undefined`, r.node)
         )
       );
 

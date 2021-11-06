@@ -28,7 +28,12 @@ async function createTestCase(code: string, expected: ScopeTree) {
 
 function createDeclaration(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
-  variables.declare(name, { text: expression } as Expression, null as any);
+  variables.declare(
+    name,
+    name,
+    { text: expression } as Expression,
+    null as any
+  );
   return variables;
 }
 
@@ -63,6 +68,7 @@ describe("declaration and assigment tests in simple blocks", () => {
     const variables = new DeclaredVariablesInScope();
     variables.declare(
       "a",
+      "a",
       { text: "" } as Expression,
       null as any,
       TypeSpecifier.INT
@@ -86,9 +92,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare("a", new Expression(), null as any);
-    variables.declare("b", new Expression(), null as any);
-    variables.declare("c", new Expression(), null as any);
+    variables.declare("a", "a", new Expression(), null as any);
+    variables.declare("b", "b", new Expression(), null as any);
+    variables.declare("c", "c", new Expression(), null as any);
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -115,9 +121,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare("a", { text: "1" } as Expression, null as any);
-    variables.declare("b", { text: "2" } as Expression, null as any);
-    variables.declare("c", new Expression(), null as any);
+    variables.declare("a", "a", { text: "1" } as Expression, null as any);
+    variables.declare("b", "b", { text: "2" } as Expression, null as any);
+    variables.declare("c", "c", new Expression(), null as any);
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);

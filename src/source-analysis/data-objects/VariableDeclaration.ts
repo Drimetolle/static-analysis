@@ -29,7 +29,7 @@ export default class VariableDeclaration {
   public toJSON(): unknown {
     return {
       expression: this.expression.text,
-      variable: this.variable,
+      name: this.variable,
       type: this.type,
     };
   }
