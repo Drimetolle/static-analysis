@@ -7,6 +7,7 @@ import {
   NoPointerDeclaratorContext,
   ParameterDeclarationContext,
   SimpleDeclarationContext,
+  StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { parseType } from "../utils/TypeInference";
@@ -14,34 +15,13 @@ import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { CPP14ParserListener } from "../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
+import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
   node: ParserRuleContext;
 }
 
-/**
- * @example
- * void main() {
-    auto a1;
-    auto *a2;
-    char a3[];
-    char a4[123];
-    char &a5;
-    const char &a6;
-    const char *a7;
-    const char **a8;
-    
-    auto a9, a10;
-    auto *a11, *a12;
-    char a13[], a14[];
-    char a15[123], a16[123];
-    char &a17, &a18;
-    const char &a19, &a20;
-    const char *a21, *a22;
-    const char **a23, **a24;
-}
- */
 class GlobalVariableListener implements CPP14ParserListener {
   private variables;
 
@@ -67,7 +47,7 @@ export default class DeclarationVisitor {
     return new DeclarationVar(dec.text, variable ?? dec.text, type, init);
   }
 
-  createSimpleDeclaration(
+  private static createSimpleDeclaration(
     dec: DeclSpecifierContext,
     decSeq: DeclSpecifierSeqContext
   ): DeclarationVar {
@@ -107,7 +87,7 @@ export default class DeclarationVisitor {
         return [];
       }
       return new Array<DeclarationVarAndNode>({
-        declaration: this.createSimpleDeclaration(
+        declaration: DeclarationVisitor.createSimpleDeclaration(
           simpleDeclaration?.declSpecifier(1),
           simpleDeclaration
         ),
@@ -124,9 +104,12 @@ export default class DeclarationVisitor {
     const type = parseType(ctx.declSpecifierSeq());
     const argumentByOther = ctx.declarator();
 
+    this.createParameterDeclaration(ctx);
+
     if (argumentByOther) {
       const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
         ?.text;
+
       return new DeclarationVar(name!, name!, type);
     }
 
@@ -143,6 +126,65 @@ export default class DeclarationVisitor {
     }
 
     return null;
+  }
+
+  private createParameterDeclaration(
+    ctx: ParameterDeclarationContext
+  ): Array<any> {
+    const declarationSpecifiers = ctx.declSpecifierSeq();
+    const declarator = ctx.declarator();
+
+    DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+      declarationSpecifiers
+    );
+
+    if (declarator) {
+      console.log(declarator.text);
+    }
+
+    return [];
+  }
+
+  private static extractAllSpecifiersFromDeclaration(
+    ctx: DeclSpecifierSeqContext
+  ): Array<DeclarationSpecifier> {
+    const result = [];
+
+    for (const specifier of ctx.declSpecifier()) {
+      const classSpecifier = specifier.storageClassSpecifier();
+      const typeSpecifier = specifier.typeSpecifier()?.trailingTypeSpecifier()!;
+
+      if (classSpecifier) {
+        const declarationSpecifier = DeclarationVisitor.convertClassSpecifier(
+          classSpecifier
+        );
+        result.push(declarationSpecifier);
+        continue;
+      }
+
+      if (typeSpecifier) {
+        // TODO implement typeSpecifier
+        continue;
+      }
+    }
+
+    return result;
+  }
+
+  private static convertClassSpecifier(
+    ctx: StorageClassSpecifierContext
+  ): DeclarationSpecifier {
+    if (ctx.Static()) {
+      return DeclarationSpecifier.Static;
+    } else if (ctx.Extern()) {
+      return DeclarationSpecifier.Extern;
+    } else if (ctx.Register()) {
+      return DeclarationSpecifier.Extern;
+    } else if (ctx.Thread_local()) {
+      return DeclarationSpecifier.ThreadLocal;
+    }
+
+    throw new Error(`Unexpected specifier: ${ctx.text}`);
   }
 
   private static getVariableName(dec: ParserRuleContext): string {
