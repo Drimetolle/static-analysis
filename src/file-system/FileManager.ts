@@ -1,8 +1,9 @@
-import { readFileSync, readdirSync, readdir, readFile } from "fs";
+import { readFileSync, readdirSync, readdir, readFile, lstatSync } from "fs";
 import { promisify } from "util";
 import { join } from "path";
 import { singleton } from "tsyringe";
 import SourceFile from "../utils/SourceFile";
+import * as path from "path";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
@@ -18,7 +19,7 @@ export default class FileManager {
     this.homeDirectory =
       homeDirectory ?? join(__dirname, "../../test-case-files");
     this.files = readdirSync(this.homeDirectory).map(
-      (f) => `${this.homeDirectory}\\${f}`
+      (f) => `${this.homeDirectory}/${f}`
     );
   }
 
@@ -71,8 +72,12 @@ export default class FileManager {
     yield new SourceFile(this.files[0], fileContent);
   }
 
-  public *readTmp() {
-    for (const file of this.files) {
+  public *readCLikeFile() {
+    const cLikeFiles = this.files
+      .filter((file) => [".cpp", ".c"].indexOf(path.extname(file)) >= 0)
+      .filter((file) => lstatSync(file).isFile());
+
+    for (const file of cLikeFiles) {
       const fileContent = readFileSync(file, "utf8");
       yield new SourceFile(file, fileContent);
     }

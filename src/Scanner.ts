@@ -27,6 +27,6 @@ container.resolve(IssuesQueue).subscribe((i) => {
   appendFile(process.env.OUT_FILE as string, message, () => console.log);
 });
 
-for (const { text, path } of fileManager.readTmp()) {
+for (const { text, path } of fileManager.readCLikeFile()) {
   controller.runWithContent({ content: text, fileName: path });
 }
