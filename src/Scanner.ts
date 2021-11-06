@@ -4,9 +4,9 @@ import InitContainer from "./ContainerIniter";
 import Controller from "./Controller";
 import FileManager from "./file-system/FileManager";
 import IssuesQueue from "./linter/issue/IssuesQueue";
-import Formatter from "./cli-engine/Formatter";
+import Formatter, { JsonIssueScheme } from "./cli-engine/Formatter";
 import dotenv from "dotenv";
-import { appendFile } from "fs";
+import { writeFile } from "fs";
 import * as console from "console";
 
 dotenv.config({ path: ".env.local" });
@@ -15,18 +15,33 @@ InitContainer();
 const controller = container.resolve(Controller);
 const fileManager = new FileManager(process.env.SCAN_PATH as string);
 
-const result = new Map<string, Array<string>>();
+const result = Array<JsonIssueScheme>();
+const promises = Array<Promise<void>>();
 
 container.resolve(IssuesQueue).subscribe((i) => {
-  const message = Formatter.formatMessage(i);
-  if (result.has(i.fileName)) {
-    result.get(i.fileName)?.push(message);
-  } else {
-    result.set(i.fileName, []);
-  }
-  appendFile(process.env.OUT_FILE as string, message, () => console.log);
+  const message = Formatter.formatMessageToJson(i);
+  result.push(message);
 });
 
+let totalFiles = 0;
+
 for (const { text, path } of fileManager.readCLikeFile()) {
-  controller.runWithContent({ content: text, fileName: path });
+  promises.push(controller.runWithContent({ content: text, fileName: path }));
+  totalFiles++;
+}
+
+let counterCompletedPromises = 0;
+
+for (const promise of promises) {
+  promise.then((_) => {
+    counterCompletedPromises++;
+
+    if (counterCompletedPromises == totalFiles) {
+      writeFile(
+        process.env.OUT_FILE as string,
+        JSON.stringify(result, null, 2),
+        () => console.log
+      );
+    }
+  });
 }
