@@ -3,6 +3,7 @@ import {
   ConditionContext,
   ConstantExpressionContext,
   IterationStatementContext,
+  LabeledStatementContext,
   SelectionStatementContext,
   StatementContext,
 } from "../grammar/CPP14Parser";
@@ -154,9 +155,19 @@ export default class ConditionVisitor {
       const caseBlock = ConditionVisitor.extractCaseAndBlockStatements(
         switchStatement
       );
-      const seq = this.blockVisitor.getBlockOfStatementsFromStatement(
-        switchStatement!.labeledStatement()!.statement()
-      );
+
+      let seq = new Array<StatementContext>();
+
+      if (
+        switchStatement.labeledStatement() instanceof LabeledStatementContext
+      ) {
+        const statements = this.blockVisitor.getBlockOfStatementsFromStatement(
+          switchStatement.labeledStatement()!.statement()
+        );
+        seq.push(...statements);
+      } else {
+        seq.push(switchStatement);
+      }
 
       if (caseExpression) {
         if (isEmpty(caseBlock.cases)) {
