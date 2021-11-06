@@ -1,11 +1,11 @@
 import chalk from "chalk";
 import CodeIssue from "../linter/issue/CodeIssue";
-import { mapSeverity, Severity } from "../linter/issue/Severity";
+import { mapSeverity, messageLevel, Severity } from "../linter/issue/Severity";
 
 export interface JsonIssueScheme {
   fileName: string;
   code: string;
-  level: string;
+  level: messageLevel;
   link: string;
   description: string;
 }
