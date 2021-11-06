@@ -8,5 +8,6 @@
   "UnsafeFunctions": 2,
   "StringInCStyle": 1,
   "ConstNames": 3,
-  "UseConstInsteadMacro": 3
+  "UseConstInsteadMacro": 3,
+  "UnnamedFunctionParameters": 1
 }
