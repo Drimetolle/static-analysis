@@ -5,3 +5,7 @@ node_modules
 package-lock.json
 .idea
 .env.local
+
+#ANTLR files
+.interp
+.tokens

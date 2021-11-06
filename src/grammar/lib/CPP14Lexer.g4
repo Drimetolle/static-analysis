@@ -29,6 +29,8 @@ UserDefinedLiteral:
 
 Include: '#include';
 
+Define: '#define';
+
 /*Keywords*/
 
 Alignas: 'alignas';
