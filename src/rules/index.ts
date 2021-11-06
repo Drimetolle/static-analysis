@@ -9,6 +9,7 @@ import ShortGlobalVariable from "./variables/ShortGlobalVariable";
 import Rule from "../linter/Rule";
 import UnsafeFunctions from "./functions/UnsafeFunctions";
 import StringInCStyle from "./variables/StringInCStyle";
+import ConstNames from "./linter/ConstNames";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -28,6 +29,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 8, rule: ShortGlobalVariable },
   { id: 9, rule: UnsafeFunctions },
   { id: 10, rule: StringInCStyle },
+  { id: 11, rule: ConstNames },
 ];
 
 export default AllRules;

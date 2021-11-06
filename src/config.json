@@ -6,5 +6,6 @@
   "InfinityLoopTruePredicate": 1,
   "ShortGlobalVariable": 1,
   "UnsafeFunctions": 2,
-  "StringInCStyle": 1
+  "StringInCStyle": 1,
+  "ConstNames": 3
 }
