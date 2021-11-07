@@ -3,22 +3,31 @@ import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import { createTestCase } from "./ScopeTests";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
 import VariableDeclaration from "../../src/source-analysis/data-objects/VariableDeclaration";
+import { DeclarationSpecifier } from "../../src/source-analysis/data-objects/DeclarationSpecifier";
 
-function createIntegerDeclaration(name = "a") {
+function createIntegerDeclaration(
+  name = "a",
+  specifiers: Array<DeclarationSpecifier>
+) {
   const variables = new DeclaredVariablesInScope();
-  variables.declare(new VariableDeclaration(name, undefined as any));
+  variables.declare(
+    new VariableDeclaration(name, undefined as any).addSpecifier(...specifiers)
+  );
   return variables;
 }
 
-export async function checkDeclaration(code: string) {
+export async function checkDeclaration(
+  code: string,
+  specifiers: Array<DeclarationSpecifier> = []
+) {
   const scope = new ScopeTree();
-  const variables = createIntegerDeclaration("a");
+  const variables = createIntegerDeclaration("a", specifiers);
   scope.add(new CodeBlock(variables), scope.getRoot);
 
   await createTestCase(code, scope);
 }
 
-describe("Parameter declaration tests", () => {
+describe("Declaration tests", () => {
   test.each([
     [
       `
@@ -152,15 +161,15 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const int a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const int a;
+      }
+    `,
+    ],
   ])("declaration with const specifier", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [DeclarationSpecifier.Const]);
   });
 
   test.each([
@@ -170,15 +179,18 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const static int a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const static int a;
+      }
+    `,
+    ],
   ])("declaration with const and static specifier", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [
+      DeclarationSpecifier.Const,
+      DeclarationSpecifier.Static,
+    ]);
   });
 
   test.each([
@@ -196,7 +208,7 @@ describe("Parameter declaration tests", () => {
     `,
     ],
   ])("declaration with const and reference specifier", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [DeclarationSpecifier.Const]);
   });
 
   test.each([
@@ -214,7 +226,7 @@ describe("Parameter declaration tests", () => {
     `,
     ],
   ])("declaration with const and pointer specifier", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [DeclarationSpecifier.Const]);
   });
 
   test.each([
@@ -340,7 +352,7 @@ describe("Parameter declaration tests", () => {
     `,
     ],
   ])("declaration with const braces", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [DeclarationSpecifier.Const]);
   });
 
   test.each([
@@ -358,6 +370,6 @@ describe("Parameter declaration tests", () => {
     `,
     ],
   ])("declaration with const multiple braces", async (code) => {
-    await checkDeclaration(code);
+    await checkDeclaration(code, [DeclarationSpecifier.Const]);
   });
 });
