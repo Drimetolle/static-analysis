@@ -17,7 +17,7 @@ function createIntegerDeclaration(name = "a", expression = "1") {
   return variables;
 }
 
-async function checkDeclaration(code: string) {
+export async function checkDeclaration(code: string) {
   const scope = new ScopeTree();
   const variables = createIntegerDeclaration("a", "");
   scope.add(new CodeBlock(variables), scope.getRoot);
@@ -26,136 +26,345 @@ async function checkDeclaration(code: string) {
 }
 
 describe("Parameter declaration tests", () => {
-  test("simple declaration", async () => {
-    await checkDeclaration(`
-      void main(int &a) {
+  test.each([
+    [
+      `
+      void main(int a) {
       }
-    `);
+    `,
+    ],
+    [
+      `
+      void main() {
+        int a;
+      }
+    `,
+    ],
+  ])("simple declaration", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with reference", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int &a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int &a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with reference", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with multiple references", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int &&a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int &&a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with multiple references", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with pointer", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int *a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int *a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with pointer", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with multiple pointer", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int **a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int **a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with multiple pointer", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with multiple pointers", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int **a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int **a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with multiple pointers", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with pointer and reference", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int *&a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int *&a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with pointer and reference", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const specifier", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const int a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const int a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with const specifier", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const and static specifier", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const static int a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const static int a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with const and static specifier", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const and reference specifier", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const int &a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const int &a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with const and reference specifier", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const and pointer specifier", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const int *a) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const int *a;
+    //   }
+    // `,
+    // ],
+  ])("declaration with const and pointer specifier", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int a[]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int a[];
+    //   }
+    // `,
+    // ],
+  ])("declaration with braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with multiple braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int a[][]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int a[][];
+    //   }
+    // `,
+    // ],
+  ])("declaration with multiple braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with pointer braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int *a[]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int *a[];
+    //   }
+    // `,
+    // ],
+  ])("declaration with pointer braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with pointer multiple braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int *a[][]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int *a[][];
+    //   }
+    // `,
+    // ],
+  ])("declaration with pointer multiple braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with reference braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int &a[]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int &a[];
+    //   }
+    // `,
+    // ],
+  ])("declaration with reference braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with reference multiple braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(int &a[][]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     int &a[][];
+    //   }
+    // `,
+    // ],
+  ])("declaration with reference multiple braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const int a[]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const int a[];
+    //   }
+    // `,
+    // ],
+  ])("declaration with const braces", async (code) => {
+    await checkDeclaration(code);
   });
 
-  test("declaration with const multiple braces", async () => {
-    await checkDeclaration(`
+  test.each([
+    [
+      `
       void main(const int a[][]) {
       }
-    `);
+    `,
+    ],
+    // [
+    //   `
+    //   void main() {
+    //     const int a[][];
+    //   }
+    // `,
+    // ],
+  ])("declaration with const multiple braces", async (code) => {
+    await checkDeclaration(code);
   });
 });
