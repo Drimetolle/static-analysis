@@ -51,13 +51,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int &a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int &a;
+      }
+    `,
+    ],
   ])("declaration with reference", async (code) => {
     await checkDeclaration(code);
   });
@@ -69,13 +69,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int &&a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int &&a;
+      }
+    `,
+    ],
   ])("declaration with multiple references", async (code) => {
     await checkDeclaration(code);
   });
@@ -87,13 +87,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int *a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int *a;
+      }
+    `,
+    ],
   ])("declaration with pointer", async (code) => {
     await checkDeclaration(code);
   });
@@ -105,13 +105,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int **a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int **a;
+      }
+    `,
+    ],
   ])("declaration with multiple pointer", async (code) => {
     await checkDeclaration(code);
   });
@@ -123,13 +123,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int **a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int **a;
+      }
+    `,
+    ],
   ])("declaration with multiple pointers", async (code) => {
     await checkDeclaration(code);
   });
@@ -141,13 +141,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int *&a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int *&a;
+      }
+    `,
+    ],
   ])("declaration with pointer and reference", async (code) => {
     await checkDeclaration(code);
   });
@@ -195,13 +195,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const int &a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const int &a;
+      }
+    `,
+    ],
   ])("declaration with const and reference specifier", async (code) => {
     await checkDeclaration(code);
   });
@@ -213,13 +213,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const int *a;
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const int *a;
+      }
+    `,
+    ],
   ])("declaration with const and pointer specifier", async (code) => {
     await checkDeclaration(code);
   });
@@ -231,13 +231,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int a[];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int a[];
+      }
+    `,
+    ],
   ])("declaration with braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -249,13 +249,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int a[][];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int a[][];
+      }
+    `,
+    ],
   ])("declaration with multiple braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -267,13 +267,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int *a[];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int *a[];
+      }
+    `,
+    ],
   ])("declaration with pointer braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -285,13 +285,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int *a[][];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int *a[][];
+      }
+    `,
+    ],
   ])("declaration with pointer multiple braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -303,13 +303,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int &a[];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int &a[];
+      }
+    `,
+    ],
   ])("declaration with reference braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -321,13 +321,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     int &a[][];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        int &a[][];
+      }
+    `,
+    ],
   ])("declaration with reference multiple braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -339,13 +339,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const int a[];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const int a[];
+      }
+    `,
+    ],
   ])("declaration with const braces", async (code) => {
     await checkDeclaration(code);
   });
@@ -357,13 +357,13 @@ describe("Parameter declaration tests", () => {
       }
     `,
     ],
-    // [
-    //   `
-    //   void main() {
-    //     const int a[][];
-    //   }
-    // `,
-    // ],
+    [
+      `
+      void main() {
+        const int a[][];
+      }
+    `,
+    ],
   ])("declaration with const multiple braces", async (code) => {
     await checkDeclaration(code);
   });

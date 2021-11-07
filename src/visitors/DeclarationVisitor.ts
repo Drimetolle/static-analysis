@@ -40,7 +40,7 @@ export default class DeclarationVisitor {
     }
 
     const type = parseType(decSeq);
-    return new DeclarationVar(dec.text, variable, init)
+    return new DeclarationVar(variable, variable, init)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -51,7 +51,12 @@ export default class DeclarationVisitor {
   ): DeclarationVar {
     const type = parseType(decSeq);
 
-    return new DeclarationVar(dec.text, dec.text).trySetSimpleType(type);
+    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+      decSeq
+    );
+    return new DeclarationVar(dec.text, dec.text)
+      .addSpecifier(...specifiers)
+      .trySetSimpleType(type);
   }
 
   simpleDeclaration(
