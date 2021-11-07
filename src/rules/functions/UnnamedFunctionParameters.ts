@@ -23,20 +23,18 @@ class FunctionArgumentListener implements CPP14ParserListener {
         ?.simpleTypeSpecifier()
         ?.theTypeName() != undefined ?? false;
 
-    console.log(
-      declarator
-        ?.typeSpecifier()
-        ?.trailingTypeSpecifier()
-        ?.simpleTypeSpecifier()
-        ?.theTypeName()?.text
-    );
-
     if (!hasNamedArgument) {
       this.parameters.push(ctx);
     }
   }
 }
 
+/**
+ * @example
+  //Bad
+  main(int) {
+  }
+ */
 export default class UnnamedFunctionParameters extends Rule {
   run(context: LinterContext): Array<Report> {
     const parameters = new Array<ParameterDeclarationContext>();
