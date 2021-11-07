@@ -6,33 +6,19 @@ import {
   DeclSpecifierSeqContext,
   NoPointerDeclaratorContext,
   ParameterDeclarationContext,
+  PointerDeclaratorContext,
   SimpleDeclarationContext,
   StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
 import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
 import { parseType } from "../utils/TypeInference";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import { CPP14ParserListener } from "../grammar/CPP14ParserListener";
-import { ParseTreeWalker } from "antlr4ts/tree";
-import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
   node: ParserRuleContext;
-}
-
-class GlobalVariableListener implements CPP14ParserListener {
-  private variables;
-
-  constructor(variables: { name: string }) {
-    this.variables = variables;
-  }
-
-  enterNoPointerDeclarator(ctx: NoPointerDeclaratorContext) {
-    this.variables.name = ctx.text;
-  }
 }
 
 @scoped(Lifecycle.ContainerScoped)
@@ -42,14 +28,21 @@ export default class DeclarationVisitor {
     init?: AssignmentExpressionContext,
     decSeq?: DeclSpecifierSeqContext
   ): DeclarationVar {
-    const variable = DeclarationVisitor.getVariableName(dec);
+    const variable = this.getVariableNameFromDeclarator(
+      dec.pointerDeclarator()!
+    ).text;
+    const specifiers = [];
+
+    if (decSeq) {
+      specifiers.push(
+        ...DeclarationVisitor.extractAllSpecifiersFromDeclaration(decSeq)
+      );
+    }
 
     const type = parseType(decSeq);
-    return new DeclarationVar(
-      dec.text,
-      variable ?? dec.text,
-      init
-    ).trySetSimpleType(type);
+    return new DeclarationVar(dec.text, variable, init)
+      .addSpecifier(...specifiers)
+      .trySetSimpleType(type);
   }
 
   private static createSimpleDeclaration(
@@ -143,7 +136,7 @@ export default class DeclarationVisitor {
   }
 
   private getVariableNameFromDeclarator(
-    ctx: any,
+    ctx: PointerDeclaratorContext | NoPointerDeclaratorContext,
     declarator: { noPointerDeclarator: NoPointerDeclaratorContext | null } = {
       noPointerDeclarator: null,
     }
@@ -181,7 +174,6 @@ export default class DeclarationVisitor {
 
       if (typeSpecifier) {
         // TODO implement typeSpecifier
-        continue;
       }
     }
 
@@ -202,13 +194,5 @@ export default class DeclarationVisitor {
     }
 
     throw new Error(`Unexpected specifier: ${ctx.text}`);
-  }
-
-  private static getVariableName(dec: ParserRuleContext): string {
-    const variable = { name: "" };
-    const printer = new GlobalVariableListener(variable);
-    ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, dec);
-
-    return variable.name;
   }
 }
