@@ -1,5 +1,4 @@
 import TypeNames from "./linter/TypeNames";
-import UndeclaredVariable from "./variables/UndeclaredVariable";
 import CheckScope from "./variables/CheckScope";
 import VariableNames from "./linter/VariableNames";
 import CognitiveComplexity from "./CognitiveComplexity";
@@ -21,7 +20,6 @@ export interface AnalyzerRule {
 }
 
 const AllRules: Array<AnalyzerRule> = [
-  { id: 1, rule: UndeclaredVariable },
   { id: 2, rule: CheckScope },
   { id: 3, rule: VariableNames },
   { id: 4, rule: TypeNames },
