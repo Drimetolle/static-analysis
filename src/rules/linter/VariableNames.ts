@@ -86,6 +86,6 @@ export default class VariableNames extends Rule {
         }
       }
     }
-    return reports; ///
+    return reports;
   }
 }
