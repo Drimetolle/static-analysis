@@ -1,7 +1,7 @@
 import Rule from "../../linter/Rule";
 import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
-import { head, isEmpty } from "ramda";
+import { head } from "ramda";
 import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import {
@@ -45,13 +45,13 @@ class VariableNamesListener implements CPP14ParserListener {
  * @example
   int a1aa = 3;
   int a2aa;
-  
+
   void main() {
     auto *a2;
     auto &a3;
     auto a4[];
     auto *a5[];
-  
+
     auto b1 = 1;
     auto *b2 = 1;
     auto &b3 = 1;
@@ -74,13 +74,13 @@ export default class VariableNames extends Rule {
     for (const node of context.scope.toArray()) {
       for (const variable of node.data.declaredVariables.variables) {
         if (
-          !this.isCamelCase(variable.variable.variableName) &&
-          /^[a-zA-Z_]+[0-9]*$/.test(variable.variable.variableName)
+          !this.isCamelCase(variable.variableName) &&
+          /^[a-zA-Z_]+[0-9]*$/.test(variable.variableName)
         ) {
           reports.push(
             new Report(
-              `Identifier '${variable.variable.variableName}' is not in camel case.`,
-              variable.node
+              `Identifier '${variable.variableName}' is not in camel case.`,
+              variable.declaration
             )
           );
         }

@@ -32,7 +32,7 @@ export default class StringInCStyle extends Rule {
 
     return a.map(
       (variable) =>
-        new Report("C style text string. Use 'string'", variable.node)
+        new Report("C style text string. Use 'string'", variable.declaration)
     );
   }
 }
