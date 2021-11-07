@@ -46,15 +46,17 @@ export default class DeclarationVisitor {
   }
 
   private static createSimpleDeclaration(
-    dec: DeclSpecifierContext,
     decSeq: DeclSpecifierSeqContext
   ): DeclarationVar {
+    const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
+      decSeq.declSpecifier().pop()!
+    ).text;
     const type = parseType(decSeq);
 
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
     );
-    return new DeclarationVar(dec.text, dec.text)
+    return new DeclarationVar(variable, variable)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -91,7 +93,6 @@ export default class DeclarationVisitor {
       }
       return new Array<DeclarationVarAndNode>({
         declaration: DeclarationVisitor.createSimpleDeclaration(
-          simpleDeclaration?.declSpecifier(1),
           simpleDeclaration
         ),
         node: simpleDeclaration,
@@ -157,6 +158,18 @@ export default class DeclarationVisitor {
       ?.declaratorid()
       ?.idExpression()
       ?.unqualifiedId()
+      ?.Identifier()!;
+  }
+
+  private static getVariableNameFromDeclarationSpecifier(
+    ctx: DeclSpecifierContext
+  ): TerminalNode {
+    return ctx
+      .typeSpecifier()
+      ?.trailingTypeSpecifier()
+      ?.simpleTypeSpecifier()
+      ?.theTypeName()
+      ?.className()
       ?.Identifier()!;
   }
 
