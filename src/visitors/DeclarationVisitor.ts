@@ -16,6 +16,7 @@ import { CPP14ParserListener } from "../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
+import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 
 export interface DeclarationVarAndNode {
   declaration: DeclarationVar;
@@ -44,7 +45,11 @@ export default class DeclarationVisitor {
     const variable = DeclarationVisitor.getVariableName(dec);
 
     const type = parseType(decSeq);
-    return new DeclarationVar(dec.text, variable ?? dec.text, type, init);
+    return new DeclarationVar(
+      dec.text,
+      variable ?? dec.text,
+      init
+    ).trySetSimpleType(type);
   }
 
   private static createSimpleDeclaration(
@@ -53,7 +58,7 @@ export default class DeclarationVisitor {
   ): DeclarationVar {
     const type = parseType(decSeq);
 
-    return new DeclarationVar(dec.text, dec.text, type);
+    return new DeclarationVar(dec.text, dec.text).trySetSimpleType(type);
   }
 
   simpleDeclaration(
@@ -102,47 +107,59 @@ export default class DeclarationVisitor {
     ctx: ParameterDeclarationContext
   ): DeclarationVar | null {
     const type = parseType(ctx.declSpecifierSeq());
-    const argumentByOther = ctx.declarator();
 
-    this.createParameterDeclaration(ctx);
+    const declaration = this.createParameterDeclaration(ctx);
 
-    if (argumentByOther) {
-      const name = argumentByOther.pointerDeclarator()?.noPointerDeclarator()
-        ?.text;
-
-      return new DeclarationVar(name!, name!, type);
+    if (type) {
+      declaration.setSimpleType(type);
     }
 
-    let argumentByValue;
-
-    if (ctx.declSpecifierSeq().childCount > 1) {
-      argumentByValue = ctx.declSpecifierSeq().declSpecifier(1).text;
-    } else {
-      argumentByValue = null;
-    }
-
-    if (argumentByValue) {
-      return new DeclarationVar(argumentByValue, argumentByValue, type);
-    }
-
-    return null;
+    return declaration;
   }
 
   private createParameterDeclaration(
     ctx: ParameterDeclarationContext
-  ): Array<any> {
+  ): DeclarationVar {
     const declarationSpecifiers = ctx.declSpecifierSeq();
     const declarator = ctx.declarator();
-
-    DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       declarationSpecifiers
     );
 
     if (declarator) {
-      console.log(declarator.text);
+      return this.createDeclarator(declarator).addSpecifier(...specifiers);
     }
 
-    return [];
+    const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
+
+    return new DeclarationVar(simpleDeclaration!.text, simpleDeclaration!.text);
+  }
+
+  private createDeclarator(ctx: DeclaratorContext) {
+    const variableId = this.getVariableNameFromDeclarator(
+      ctx.pointerDeclarator()!
+    );
+    return new DeclarationVar(variableId.text, variableId.text);
+  }
+
+  private getVariableNameFromDeclarator(
+    ctx: any,
+    declarator: { noPointerDeclarator: NoPointerDeclaratorContext | null } = {
+      noPointerDeclarator: null,
+    }
+  ): TerminalNode {
+    const noPointerDeclarator = ctx.noPointerDeclarator();
+
+    if (noPointerDeclarator) {
+      declarator.noPointerDeclarator = noPointerDeclarator;
+      this.getVariableNameFromDeclarator(noPointerDeclarator, declarator);
+    }
+
+    return declarator.noPointerDeclarator
+      ?.declaratorid()
+      ?.idExpression()
+      ?.unqualifiedId()
+      ?.Identifier()!;
   }
 
   private static extractAllSpecifiersFromDeclaration(

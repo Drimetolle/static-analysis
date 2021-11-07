@@ -6,20 +6,31 @@ export default class DeclarationVar {
   readonly variable: string | null;
   readonly variableName: string;
   readonly expression?: AssignmentExpressionContext;
-  readonly type: TypeSpecifier;
+  type?: TypeSpecifier;
   private readonly specifiers: Array<DeclarationSpecifier>;
 
   constructor(
     variable: string | null,
     variableName: string,
-    type: TypeSpecifier,
     expression?: AssignmentExpressionContext
   ) {
     this.variable = variable;
     this.variableName = variableName;
     this.expression = expression;
-    this.type = type;
     this.specifiers = [];
+  }
+
+  public trySetSimpleType(type?: TypeSpecifier) {
+    if (type) {
+      return this.setSimpleType(type);
+    }
+
+    return this;
+  }
+
+  public setSimpleType(type: TypeSpecifier) {
+    this.type = type;
+    return this;
   }
 
   public addSpecifier(
