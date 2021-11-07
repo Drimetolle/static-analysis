@@ -1,123 +1,58 @@
-import VariableDeclaration, {
-  VariableState,
-} from "../data-objects/VariableDeclaration";
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import Expression from "../data-objects/Expression";
-import Variable from "./Variable";
 import { insert, last } from "ramda";
-import { TypeSpecifier } from "../data-objects/LanguageKeyWords";
+import DeclarationVar from "../data-objects/DeclarationVar";
 
 export interface DeclaredVariables {
-  variables: Array<VariableDeclaration>;
-  getVariable(id: string): VariableDeclaration | null;
+  variables: Array<DeclarationVar>;
+  getVariable(id: string): DeclarationVar | null;
 }
 
 export default class DeclaredVariablesInScope implements DeclaredVariables {
-  private readonly _variables: Map<string, Array<VariableDeclaration>>;
+  private readonly _variables: Map<string, Array<DeclarationVar>>;
 
-  get variables(): Array<VariableDeclaration> {
+  get variables(): Array<DeclarationVar> {
     return Array.from(this._variables.values()).flatMap((vars) => vars);
   }
 
   constructor() {
-    this._variables = new Map<string, Array<VariableDeclaration>>();
+    this._variables = new Map<string, Array<DeclarationVar>>();
   }
 
-  getVariable(id: string): VariableDeclaration | null {
+  getVariable(id: string): DeclarationVar | null {
     return last(this._variables.get(id) ?? []) ?? null;
   }
 
-  declare(
-    name: string,
-    expression: Expression,
-    node: ParserRuleContext,
-    type: TypeSpecifier = TypeSpecifier.AUTO
-  ): void {
-    this.setVariable(name, expression, node, type);
+  declare(variable: DeclarationVar): void {
+    this.setVariable(variable);
   }
 
-  assign(
-    declaration: string,
-    expression: Expression,
-    node: ParserRuleContext,
-    type: TypeSpecifier = TypeSpecifier.AUTO
-  ): void {
-    this.assignVariable(declaration, expression, node, type);
+  assign(variable: DeclarationVar): void {
+    this.assignVariable(variable);
   }
 
-  private setVariable(
-    name: string,
-    expression: Expression,
-    node: ParserRuleContext,
-    type: TypeSpecifier
-  ) {
-    const declaration = DeclaredVariablesInScope.createDeclaration(
-      name,
-      expression,
-      VariableState.defined,
-      node,
-      type
-    );
-
-    if (this._variables.has(name)) {
+  private setVariable(variable: DeclarationVar) {
+    if (this._variables.has(variable.variableName)) {
       console.log(
-        `Variable: ${name} already declared in position: ${node.start.line}:${node.start.charPositionInLine}.`
+        `Variable: ${variable.variableName} already declared in position: ${variable.declaration.start.line}:${variable.declaration.start.charPositionInLine}.`
       );
     }
 
-    this.addVariable(name, declaration);
+    this.addVariable(variable);
   }
 
-  private assignVariable(
-    variable: string,
-    expression: Expression,
-    node: ParserRuleContext,
-    type: TypeSpecifier
-  ) {
-    if (this._variables.has(variable)) {
-      const declaration = DeclaredVariablesInScope.createDeclaration(
-        variable,
-        expression,
-        VariableState.defined,
-        node,
-        this._variables.get(variable)![0].type ?? type
-      );
-
-      this.addVariable(variable, declaration);
-    } else {
-      const declaration = DeclaredVariablesInScope.createDeclaration(
-        variable,
-        expression,
-        VariableState.undefined,
-        node,
-        type
-      );
-
-      this.addVariable(variable, declaration);
-    }
+  private assignVariable(variable: DeclarationVar) {
+    this.addVariable(variable);
   }
 
-  private addVariable(variable: string, declaration: VariableDeclaration) {
+  private addVariable(declaration: DeclarationVar) {
     this._variables.set(
-      variable,
-      this._variables.get(variable) != null
-        ? insert(-1, declaration, this._variables.get(variable)!)
+      declaration.variableName,
+      this._variables.get(declaration.variableName) != null
+        ? insert(
+            -1,
+            declaration,
+            this._variables.get(declaration.variableName)!
+          )
         : [declaration]
-    );
-  }
-
-  private static createDeclaration(
-    variableName: string,
-    expression: Expression,
-    state: VariableState,
-    node: ParserRuleContext,
-    type: TypeSpecifier
-  ): VariableDeclaration {
-    return new VariableDeclaration(
-      expression,
-      new Variable(variableName, state),
-      node,
-      type
     );
   }
 }

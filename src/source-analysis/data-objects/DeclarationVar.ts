@@ -50,4 +50,10 @@ export default class DeclarationVar {
     this.specifiers.push(...specifier);
     return this;
   }
+
+  private toJSON(): unknown {
+    return {
+      name: this.variableName,
+    };
+  }
 }

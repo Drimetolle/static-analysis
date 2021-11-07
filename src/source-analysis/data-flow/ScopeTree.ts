@@ -31,9 +31,7 @@ export default class ScopeTree extends Tree<CodeBlock> {
       const tmp = node.data.declaredVariables.getVariable(variableName);
 
       if (tmp) {
-        if (tmp.variable.isDefined()) {
-          result = tmp;
-        }
+        result = tmp;
       }
     });
 

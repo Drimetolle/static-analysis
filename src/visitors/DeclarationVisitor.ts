@@ -16,11 +16,6 @@ import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 
-export interface DeclarationVarAndNode {
-  declaration: DeclarationVar;
-  node: ParserRuleContext;
-}
-
 @scoped(Lifecycle.ContainerScoped)
 export default class DeclarationVisitor {
   createDeclaration(
@@ -62,9 +57,7 @@ export default class DeclarationVisitor {
       .trySetSimpleType(type);
   }
 
-  simpleDeclaration(
-    ctx: SimpleDeclarationContext
-  ): Array<DeclarationVarAndNode> {
+  simpleDeclaration(ctx: SimpleDeclarationContext): Array<DeclarationVar> {
     const nodeVars =
       ctx
         .initDeclaratorList()
@@ -74,31 +67,24 @@ export default class DeclarationVisitor {
 
     if (nodeVars.length > 0) {
       return nodeVars.map((node, i) => {
-        return {
-          declaration: this.createDeclaration(
-            node.declarator(),
-            node
-              .initializer()
-              ?.braceOrEqualInitializer()
-              ?.initializerClause()
-              ?.assignmentExpression(),
-            ctx.declSpecifierSeq()
-          ),
-          node: nodeVars[i],
-        };
+        return this.createDeclaration(
+          node.declarator(),
+          node
+            .initializer()
+            ?.braceOrEqualInitializer()
+            ?.initializerClause()
+            ?.assignmentExpression(),
+          ctx.declSpecifierSeq()
+        );
       });
     } else if (simpleDeclaration) {
       // for example: class U;
       if (1 >= simpleDeclaration.childCount) {
         return [];
       }
-      return new Array<DeclarationVarAndNode>({
-        declaration: DeclarationVisitor.createSimpleDeclaration(
-          ctx,
-          simpleDeclaration
-        ),
-        node: simpleDeclaration,
-      });
+      return new Array<DeclarationVar>(
+        DeclarationVisitor.createSimpleDeclaration(ctx, simpleDeclaration)
+      );
     }
 
     return [];
