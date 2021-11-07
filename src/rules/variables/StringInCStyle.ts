@@ -7,14 +7,14 @@ import { isCppFile } from "../../utils/Utils";
 /**
  * This function does something see example below:
  * @example
- * void main() {
- *  // Bad
- *   char* str = "Hello there";
- *   char* str1;
- *   // Good
- *   string str3 = "Hello there";
- *   string str4;
- * }
+  void main() {
+   // Bad
+   char* str = "Hello there";
+   char* str1;
+   // Good
+   string str3 = "Hello there";
+   string str4;
+  }
  */
 export default class StringInCStyle extends Rule {
   run(context: LinterContext): Array<Report> {
