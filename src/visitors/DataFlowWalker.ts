@@ -54,6 +54,7 @@ import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
+import JsonFormatter from "../utils/json-formatters/JsonFormatter";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -89,6 +90,7 @@ export default class DataFlowWalker
       this.visitDeclarationseq(sequence);
     }
 
+    // console.log(JsonFormatter.ScopeToJson(this.scopeTree));
     return { scope: this.scopeTree, cfg: this.cfg };
   }
 
@@ -164,15 +166,15 @@ export default class DataFlowWalker
     const init = ctx.initializerClause()?.assignmentExpression();
 
     if (variable && init) {
-      const variableName = variable.text;
-
-      root.data.declaredVariables.assign(
-        variableName,
-        new Expression(init),
-        node
-      );
-
-      this.changeVariableState(root, variableName);
+      // const variableName = variable.text;
+      // TODO disable assign
+      // root.data.declaredVariables.assign(
+      //   variableName,
+      //   new Expression(init),
+      //   node
+      // );
+      //
+      // this.changeVariableState(root, variableName);
     }
   }
 
@@ -252,6 +254,7 @@ export default class DataFlowWalker
     toNode: ScopeNode
   ): void;
   private assignStatement(ctx: ParserRuleContext, toNode: ScopeNode): void {
+    console.log(ctx.text);
     if (ctx instanceof ExpressionContext) {
       this.createScopesForAssigment(ctx.assignmentExpression(), toNode);
     } else if (ctx instanceof ExpressionStatementContext) {
