@@ -9,30 +9,6 @@ import {
 } from "../../grammar/CPP14Parser";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-/**
- * @example
-  class Vector;
-  class Matrix {
-  
-  };
-  class Vector {
-  
-  };
-  
-  struct MyStruct {
-  
-  };
-  
-  namespace ns {
-     class VectorInNamespace {};
-  }
-  
-  template <typename T>
-  struct identity
-  {
-      using type = T;
-  };
- */
 class TypeListener implements CPP14ParserListener {
   private readonly names;
 
@@ -48,6 +24,30 @@ class TypeListener implements CPP14ParserListener {
   }
 }
 
+/**
+ * @example
+ class Vector;
+ class Matrix {
+  
+  };
+ class Vector {
+  
+  };
+
+ struct MyStruct {
+  
+  };
+
+ namespace ns {
+     class VectorInNamespace {};
+  }
+
+ template <typename T>
+ struct identity
+ {
+      using type = T;
+  };
+ */
 export default class TypeNames extends Rule {
   private static isPascalCase(str: string): boolean {
     return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);

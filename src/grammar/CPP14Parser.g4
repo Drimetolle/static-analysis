@@ -301,11 +301,16 @@ declaration:
 	| namespaceDefinition
 	| emptyDeclaration
 	| attributeDeclaration
-	| includeDefinition;
+	| includeDefinition
+	| defineDeclaration;
 
 includeDefinition:
     Include Less fileName Greater
     | IncludeQuote fileName Quote;
+
+defineDeclaration:
+    Define Identifier IntegerLiteral
+    | Define Identifier;
 
 fileName: Identifier (Div Identifier)* (Dot HFormat)?;
 

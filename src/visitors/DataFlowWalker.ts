@@ -25,11 +25,9 @@ import {
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
-import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
+import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import { VariableState } from "../source-analysis/data-objects/VariableDeclaration";
-import Expression from "../source-analysis/data-objects/Expression";
 import BasicBlock from "../source-analysis/control-flow/blocks/BasicBlock";
 import FunctionBlock from "../source-analysis/control-flow/blocks/FunctionBlock";
 import LinearBlock from "../source-analysis/control-flow/blocks/LinearBlock";
@@ -44,9 +42,7 @@ import ConditionVisitor, {
   ExpressionAndStatementContext,
 } from "./ConditionVisitor";
 import { isEmpty } from "ramda";
-import DeclarationVisitor, {
-  DeclarationVarAndNode,
-} from "./DeclarationVisitor";
+import DeclarationVisitor from "./DeclarationVisitor";
 import CaseBlock from "../source-analysis/control-flow/blocks/switch/CaseBlock";
 import DefaultCaseBlock from "../source-analysis/control-flow/blocks/switch/DefaultCaseBlock";
 import SwitchBlock from "../source-analysis/control-flow/blocks/switch/SwitchBlock";
@@ -89,6 +85,7 @@ export default class DataFlowWalker
       this.visitDeclarationseq(sequence);
     }
 
+    // console.log(JsonFormatter.ScopeToJson(this.scopeTree));
     return { scope: this.scopeTree, cfg: this.cfg };
   }
 
@@ -115,7 +112,7 @@ export default class DataFlowWalker
 
   visitSimpleDeclaration(
     ctx: SimpleDeclarationContext
-  ): Array<DeclarationVarAndNode> {
+  ): Array<VariableDeclaration> {
     if (
       !ctx
         .declSpecifierSeq()
@@ -135,27 +132,8 @@ export default class DataFlowWalker
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
-  private static setScope(
-    root: ScopeNode,
-    ctx: DeclarationVar,
-    node: ParserRuleContext
-  ): void {
-    let expression: Expression;
-    if (ctx.expression) {
-      expression = new Expression(ctx.expression);
-    } else {
-      expression = new Expression();
-    }
-
-    if (ctx.variable) {
-      root.data.declaredVariables.declare(
-        ctx.variable,
-        ctx.variableName,
-        expression,
-        node,
-        ctx.type
-      );
-    }
+  private static setScope(root: ScopeNode, ctx: VariableDeclaration): void {
+    root.data.declaredVariables.declare(ctx);
   }
 
   private setAssignScope(
@@ -167,29 +145,29 @@ export default class DataFlowWalker
     const init = ctx.initializerClause()?.assignmentExpression();
 
     if (variable && init) {
-      const variableName = variable.text;
-
-      root.data.declaredVariables.assign(
-        variableName,
-        new Expression(init),
-        node
-      );
-
-      this.changeVariableState(root, variableName);
+      // const variableName = variable.text;
+      // TODO disable assign
+      // root.data.declaredVariables.assign(
+      //   variableName,
+      //   new Expression(init),
+      //   node
+      // );
+      //
+      // this.changeVariableState(root, variableName);
     }
   }
 
-  private changeVariableState(root: ScopeNode, variableName: string) {
-    const isDefined = this.scopeTree.isDefined(root, variableName);
-    if (isDefined) {
-      const variable = root.data.declaredVariables.getVariable(variableName);
-
-      if (variable) {
-        variable.variable.state = VariableState.defined;
-        variable.type = isDefined.type;
-      }
-    }
-  }
+  // private changeVariableState(root: ScopeNode, variableName: string) {
+  //   const isDefined = this.scopeTree.isDefined(root, variableName);
+  //   if (isDefined) {
+  //     const variable = root.data.declaredVariables.getVariable(variableName);
+  //
+  //     if (variable) {
+  //       variable.variable.state = VariableState.defined;
+  //       variable.type = isDefined.type;
+  //     }
+  //   }
+  // }
 
   private declarationStatement(
     ctx: SimpleDeclarationContext,
@@ -211,8 +189,8 @@ export default class DataFlowWalker
     if (simpleDeclaration) {
       const result = this.visitSimpleDeclaration(simpleDeclaration);
 
-      for (const { declaration, node } of result) {
-        DataFlowWalker.setScope(toNode, declaration, node);
+      for (const declaration of result) {
+        DataFlowWalker.setScope(toNode, declaration);
       }
     }
   }
@@ -235,7 +213,7 @@ export default class DataFlowWalker
         init,
         decSeq
       );
-      DataFlowWalker.setScope(toNode, varDeclaration, dec);
+      DataFlowWalker.setScope(toNode, varDeclaration);
     }
   }
 
@@ -245,7 +223,7 @@ export default class DataFlowWalker
   ): void {
     const result = this.declarationVisitor.visitParameterDeclaration(ctx);
     if (result) {
-      DataFlowWalker.setScope(toNode, result, ctx);
+      DataFlowWalker.setScope(toNode, result);
     }
   }
 
@@ -280,8 +258,8 @@ export default class DataFlowWalker
     if (simpleDeclaration) {
       const tmp = this.visitSimpleDeclaration(simpleDeclaration);
 
-      for (const { declaration, node } of tmp) {
-        DataFlowWalker.setScope(this.scopeTree?.getRoot, declaration, node);
+      for (const declaration of tmp) {
+        DataFlowWalker.setScope(this.scopeTree?.getRoot, declaration);
       }
     }
   }

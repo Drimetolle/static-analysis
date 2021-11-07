@@ -8,6 +8,7 @@ import LinterConfig from "./LinterConfig";
 import RuleResolverHelper from "../utils/RuleResolverHelper";
 import { Interval } from "antlr4ts/misc";
 import { AnalyzerRule } from "../rules";
+import * as console from "console";
 
 interface AnalyzerRuleInternal {
   id: string | number;
@@ -36,7 +37,13 @@ export default class Linter {
 
   start(context: LinterContext): void {
     this.rules.forEach((r) => {
-      const issues = r.rule.run(context);
+      const issues = [];
+
+      try {
+        issues.push(...r.rule.run(context));
+      } catch (error) {
+        console.error(error);
+      }
 
       if (issues.length > 0) {
         for (const issue of issues) {

@@ -70,6 +70,7 @@ import { DeclarationStatementContext } from "./CPP14Parser";
 import { DeclarationseqContext } from "./CPP14Parser";
 import { DeclarationContext } from "./CPP14Parser";
 import { IncludeDefinitionContext } from "./CPP14Parser";
+import { DefineDeclarationContext } from "./CPP14Parser";
 import { FileNameContext } from "./CPP14Parser";
 import { BlockDeclarationContext } from "./CPP14Parser";
 import { AliasDeclarationContext } from "./CPP14Parser";
@@ -897,6 +898,17 @@ export interface CPP14ParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIncludeDefinition?: (ctx: IncludeDefinitionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CPP14Parser.defineDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	enterDefineDeclaration?: (ctx: DefineDeclarationContext) => void;
+	/**
+	 * Exit a parse tree produced by `CPP14Parser.defineDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	exitDefineDeclaration?: (ctx: DefineDeclarationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CPP14Parser.fileName`.

@@ -9,23 +9,23 @@ import {
 
 export function parseType(
   declaration?: DeclSpecifierSeqContext
-): TypeSpecifier {
+): TypeSpecifier | undefined {
   return _parseType(declaration?.declSpecifier() ?? []);
 }
 
 export function parseFunctionReturnType(
   declaration?: DeclSpecifierSeqContext
-): TypeSpecifier {
+): TypeSpecifier | undefined {
   return _parseType(declaration?.declSpecifier() ?? []);
 }
 
-function _parseType(declarations: Array<DeclSpecifierContext>): TypeSpecifier {
+function _parseType(
+  declarations: Array<DeclSpecifierContext>
+): TypeSpecifier | undefined {
   const rawType = declarations
     .map((d) => d.text.toUpperCase())
     .filter((d) => KeyWords[d as keyof typeof KeyWords])
     .join("_");
 
-  return (
-    TypeSpecifier[rawType as keyof typeof TypeSpecifier] ?? TypeSpecifier.VOID
-  );
+  return TypeSpecifier[rawType as keyof typeof TypeSpecifier] ?? undefined;
 }

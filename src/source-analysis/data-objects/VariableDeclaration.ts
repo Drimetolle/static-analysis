@@ -1,36 +1,59 @@
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import Expression from "./Expression";
-import Variable from "../data-flow/Variable";
 import { TypeSpecifier } from "./LanguageKeyWords";
-
-export enum VariableState {
-  defined = "defined",
-  undefined = "undefined",
-}
+import {
+  AssignmentExpressionContext,
+  DeclSpecifierSeqContext,
+  ParameterDeclarationContext,
+  SimpleDeclarationContext,
+} from "../../grammar/CPP14Parser";
+import { DeclarationSpecifier } from "./DeclarationSpecifier";
 
 export default class VariableDeclaration {
-  public readonly expression: Expression;
-  public readonly variable: Variable;
-  public readonly node: ParserRuleContext;
-  public type: TypeSpecifier;
+  readonly variableName: string;
+  readonly declaration:
+    | ParameterDeclarationContext
+    | SimpleDeclarationContext
+    | DeclSpecifierSeqContext;
+  readonly expression?: AssignmentExpressionContext;
+  type?: TypeSpecifier;
+  private readonly specifiers: Array<DeclarationSpecifier>;
 
   constructor(
-    expression: Expression,
-    variable: Variable,
-    node: ParserRuleContext,
-    type: TypeSpecifier
+    variableName: string,
+    declaration:
+      | ParameterDeclarationContext
+      | SimpleDeclarationContext
+      | DeclSpecifierSeqContext,
+    expression?: AssignmentExpressionContext
   ) {
+    this.variableName = variableName;
+    this.declaration = declaration;
     this.expression = expression;
-    this.node = node;
-    this.variable = variable;
-    this.type = type;
+    this.specifiers = [];
   }
 
-  public toJSON(): unknown {
+  public trySetSimpleType(type?: TypeSpecifier) {
+    if (type) {
+      return this.setSimpleType(type);
+    }
+
+    return this;
+  }
+
+  public setSimpleType(type: TypeSpecifier) {
+    this.type = type;
+    return this;
+  }
+
+  public addSpecifier(
+    ...specifier: Array<DeclarationSpecifier>
+  ): VariableDeclaration {
+    this.specifiers.push(...specifier);
+    return this;
+  }
+
+  private toJSON(): unknown {
     return {
-      expression: this.expression.text,
-      name: this.variable,
-      type: this.type,
+      name: this.variableName,
     };
   }
 }

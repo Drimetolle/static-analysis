@@ -90,6 +90,14 @@ class LoopListener implements CPP14ParserListener {
   }
 }
 
+/**
+ * @example
+  //Bad
+  while(1);
+
+  //Good
+  while(true);
+ */
 export default class InfinityLoopTruePredicate extends Rule {
   run(context: LinterContext): Array<Report> {
     const loops = new Array<Report>();

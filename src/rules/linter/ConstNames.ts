@@ -1,17 +1,17 @@
 import Rule from "../../linter/Rule";
 import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
-import { head } from "ramda";
 import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { ParseTreeWalker } from "antlr4ts/tree";
 import {
   BlockDeclarationContext,
   DeclSpecifierContext,
 } from "../../grammar/CPP14Parser";
-import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { head } from "ramda";
 
-class VariableNamesListener implements CPP14ParserListener {
+class ConstVariableListener implements CPP14ParserListener {
   private readonly variables;
 
   constructor(variables: Array<ParserRuleContext>) {
@@ -26,12 +26,12 @@ class VariableNamesListener implements CPP14ParserListener {
       ctx.simpleDeclaration()?.declSpecifierSeq()?.declSpecifier() ?? [];
     const declarator = simpleDeclaratorSpecifier.pop();
     if (declarator && declarators.length == 0) {
-      if (VariableNamesListener.isConst(simpleDeclaratorSpecifier)) {
+      if (ConstVariableListener.isConst(simpleDeclaratorSpecifier)) {
         this.variables.push(declarator);
       }
     }
 
-    if (VariableNamesListener.isConst(simpleDeclaratorSpecifier)) {
+    if (ConstVariableListener.isConst(simpleDeclaratorSpecifier)) {
       this.variables.push(...declarators);
     }
   }
@@ -43,49 +43,46 @@ class VariableNamesListener implements CPP14ParserListener {
 
 /**
  * @example
-  int a1aa = 3;
-  int a2aa;
-
+  //Bad
+  const int g1 = 3;
+  const int g2;
+  
   void main() {
-    auto *a2;
-    auto &a3;
-    auto a4[];
-    auto *a5[];
-
-    auto b1 = 1;
-    auto *b2 = 1;
-    auto &b3 = 1;
-    auto b4[] = 1;
-    auto *b5[] = 1;
+    const auto a1;
+    const auto *a2;
+    const auto &a3;
+    const auto a4[];
+    const auto *a5[];
+    
+    const auto b1 = 1;
+    const auto *b2 = 1;
+    const auto &b3 = 1;
+    const auto b4[] = 1;
+    const auto *b5[] = 1;
   }
  */
-export default class VariableNames extends Rule {
-  isCamelCase(str: string) {
-    return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+export default class ConstNames extends Rule {
+  private static isUpperSnakeCase(str: string): boolean {
+    return /^[A-Z]+(?:_[A-Z]+)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
 
     const names = new Array<ParserRuleContext>();
-    const listener = new VariableNamesListener(names);
-    ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, context.ast);
-
-    for (const node of context.scope.toArray()) {
-      for (const variable of node.data.declaredVariables.variables) {
-        if (
-          !this.isCamelCase(variable.variableName) &&
-          /^[a-zA-Z_]+[0-9]*$/.test(variable.variableName)
-        ) {
-          reports.push(
-            new Report(
-              `Identifier '${variable.variableName}' is not in camel case.`,
-              variable.declaration
-            )
-          );
-        }
+    const printer = new ConstVariableListener(names);
+    ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, context.ast);
+    for (const className of names) {
+      if (!ConstNames.isUpperSnakeCase(className.text)) {
+        reports.push(
+          new Report(
+            `Const '${className.text}' is not in upper shake case.`,
+            className
+          )
+        );
       }
     }
+
     return reports;
   }
 }

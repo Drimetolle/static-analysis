@@ -21,6 +21,7 @@ import FileManager from "../file-system/FileManager";
 import Lexer from "../parsers/Lexer";
 import Parser from "../parsers/Parser";
 import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
+import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 
 export default class MethodsVisitor
   implements CPP14ParserVisitor<any>, Walker<DeclaredMethods> {
@@ -135,8 +136,11 @@ export default class MethodsVisitor
 
     return new MethodSignature(
       name,
-      argsTmp.map((t) => new MethodArgument(t.type, false, t.pointers)),
-      cppType
+      argsTmp.map(
+        (t) =>
+          new MethodArgument(t.type ?? TypeSpecifier.AUTO, false, t.pointers)
+      ),
+      cppType ?? TypeSpecifier.AUTO
     );
   }
 

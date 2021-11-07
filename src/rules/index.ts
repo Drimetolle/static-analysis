@@ -1,14 +1,16 @@
 import TypeNames from "./linter/TypeNames";
-import UndeclaredVariable from "./variables/UndeclaredVariable";
 import CheckScope from "./variables/CheckScope";
 import VariableNames from "./linter/VariableNames";
 import CognitiveComplexity from "./CognitiveComplexity";
-import CheckPrivateFieldName from "./variables/CheckPrivateFieldName";
+import CheckPrivateFieldName from "./linter/CheckPrivateFieldName";
 import InfinityLoopTruePredicate from "./loops/InfinityLoopTruePredicate";
-import ShortGlobalVariable from "./variables/ShortGlobalVariable";
+import ShortGlobalVariable from "./linter/ShortGlobalVariable";
 import Rule from "../linter/Rule";
 import UnsafeFunctions from "./functions/UnsafeFunctions";
 import StringInCStyle from "./variables/StringInCStyle";
+import ConstNames from "./linter/ConstNames";
+import UseConstInsteadMacro from "./variables/UseConstInsteadMacro";
+import UnnamedFunctionParameters from "./functions/UnnamedFunctionParameters";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -18,7 +20,6 @@ export interface AnalyzerRule {
 }
 
 const AllRules: Array<AnalyzerRule> = [
-  { id: 1, rule: UndeclaredVariable },
   { id: 2, rule: CheckScope },
   { id: 3, rule: VariableNames },
   { id: 4, rule: TypeNames },
@@ -28,6 +29,9 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 8, rule: ShortGlobalVariable },
   { id: 9, rule: UnsafeFunctions },
   { id: 10, rule: StringInCStyle },
+  { id: 11, rule: ConstNames },
+  { id: 12, rule: UseConstInsteadMacro },
+  { id: 13, rule: UnnamedFunctionParameters },
 ];
 
 export default AllRules;
