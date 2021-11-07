@@ -40,7 +40,7 @@ export default class DeclarationVisitor {
     }
 
     const type = parseType(decSeq);
-    return new DeclarationVar(variable, variable, init)
+    return new DeclarationVar(variable, init)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -56,7 +56,7 @@ export default class DeclarationVisitor {
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
     );
-    return new DeclarationVar(variable, variable)
+    return new DeclarationVar(variable)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -131,14 +131,14 @@ export default class DeclarationVisitor {
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
 
-    return new DeclarationVar(simpleDeclaration!.text, simpleDeclaration!.text);
+    return new DeclarationVar(simpleDeclaration!.text);
   }
 
   private createDeclarator(ctx: DeclaratorContext) {
     const variableId = this.getVariableNameFromDeclarator(
       ctx.pointerDeclarator()!
     );
-    return new DeclarationVar(variableId.text, variableId.text);
+    return new DeclarationVar(variableId.text);
   }
 
   private getVariableNameFromDeclarator(

@@ -73,12 +73,9 @@ export default class VariableNames extends Rule {
 
     for (const node of context.scope.toArray()) {
       for (const variable of node.data.declaredVariables.variables) {
-        const variableName = isEmpty(variable.variable.variableName)
-          ? variable.variable.name
-          : variable.variable.variableName;
         if (
-          !this.isCamelCase(variableName) &&
-          /^[a-zA-Z_]+[0-9]*$/.test(variableName)
+          !this.isCamelCase(variable.variable.variableName) &&
+          /^[a-zA-Z_]+[0-9]*$/.test(variable.variable.variableName)
         ) {
           reports.push(
             new Report(

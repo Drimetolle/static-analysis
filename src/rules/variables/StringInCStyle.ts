@@ -26,10 +26,8 @@ export default class StringInCStyle extends Rule {
       .toArray()
       .flatMap((_) => _.data.declaredVariables.variables)
       .filter((variable) => {
-        return (
-          variable.type == TypeSpecifier.CHAR &&
-          variable.variable.name.indexOf("*") >= 0
-        );
+        // TODO check pointer
+        return variable.type == TypeSpecifier.CHAR;
       });
 
     return a.map(

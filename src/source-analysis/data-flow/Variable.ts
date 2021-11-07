@@ -1,7 +1,6 @@
 import { VariableState } from "../data-objects/VariableDeclaration";
 
 export default class Variable {
-  readonly name: string;
   readonly variableName: string;
   private _state: VariableState;
 
@@ -13,8 +12,7 @@ export default class Variable {
     this._state = value;
   }
 
-  constructor(name: string, variableName: string, state: VariableState) {
-    this.name = name;
+  constructor(variableName: string, state: VariableState) {
     this.variableName = variableName;
     this._state = state;
   }

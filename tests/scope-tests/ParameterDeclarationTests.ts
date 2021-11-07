@@ -5,12 +5,11 @@ import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/Declar
 import Expression from "../../src/source-analysis/data-objects/Expression";
 import { TypeSpecifier } from "../../src/source-analysis/data-objects/LanguageKeyWords";
 
-function createIntegerDeclaration(name = "a", expression = "1") {
+function createIntegerDeclaration(name = "a") {
   const variables = new DeclaredVariablesInScope();
   variables.declare(
     name,
-    name,
-    { text: expression } as Expression,
+    { text: "" } as Expression,
     null as any,
     TypeSpecifier.INT
   );
@@ -19,7 +18,7 @@ function createIntegerDeclaration(name = "a", expression = "1") {
 
 export async function checkDeclaration(code: string) {
   const scope = new ScopeTree();
-  const variables = createIntegerDeclaration("a", "");
+  const variables = createIntegerDeclaration("a");
   scope.add(new CodeBlock(variables), scope.getRoot);
 
   await createTestCase(code, scope);

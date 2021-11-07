@@ -28,13 +28,12 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   }
 
   declare(
-    declaration: string,
     name: string,
     expression: Expression,
     node: ParserRuleContext,
     type: TypeSpecifier = TypeSpecifier.AUTO
   ): void {
-    this.setVariable(declaration, name, expression, node, type);
+    this.setVariable(name, expression, node, type);
   }
 
   assign(
@@ -47,14 +46,12 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   }
 
   private setVariable(
-    variable: string,
     name: string,
     expression: Expression,
     node: ParserRuleContext,
     type: TypeSpecifier
   ) {
     const declaration = DeclaredVariablesInScope.createDeclaration(
-      variable,
       name,
       expression,
       VariableState.defined,
@@ -62,13 +59,13 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
       type
     );
 
-    if (this._variables.has(variable)) {
+    if (this._variables.has(name)) {
       console.log(
-        `Variable: ${variable} already declared in position: ${node.start.line}:${node.start.charPositionInLine}.`
+        `Variable: ${name} already declared in position: ${node.start.line}:${node.start.charPositionInLine}.`
       );
     }
 
-    this.addVariable(variable, declaration);
+    this.addVariable(name, declaration);
   }
 
   private assignVariable(
@@ -80,7 +77,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     if (this._variables.has(variable)) {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
-        "",
         expression,
         VariableState.defined,
         node,
@@ -91,7 +87,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     } else {
       const declaration = DeclaredVariablesInScope.createDeclaration(
         variable,
-        "",
         expression,
         VariableState.undefined,
         node,
@@ -112,7 +107,6 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   }
 
   private static createDeclaration(
-    variable: string,
     variableName: string,
     expression: Expression,
     state: VariableState,
@@ -121,7 +115,7 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
   ): VariableDeclaration {
     return new VariableDeclaration(
       expression,
-      new Variable(variable, variableName, state),
+      new Variable(variableName, state),
       node,
       type
     );

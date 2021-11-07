@@ -3,18 +3,12 @@ import { AssignmentExpressionContext } from "../../grammar/CPP14Parser";
 import { DeclarationSpecifier } from "./DeclarationSpecifier";
 
 export default class DeclarationVar {
-  readonly variable: string | null;
   readonly variableName: string;
   readonly expression?: AssignmentExpressionContext;
   type?: TypeSpecifier;
   private readonly specifiers: Array<DeclarationSpecifier>;
 
-  constructor(
-    variable: string | null,
-    variableName: string,
-    expression?: AssignmentExpressionContext
-  ) {
-    this.variable = variable;
+  constructor(variableName: string, expression?: AssignmentExpressionContext) {
     this.variableName = variableName;
     this.expression = expression;
     this.specifiers = [];
