@@ -1,15 +1,32 @@
 import { TypeSpecifier } from "./LanguageKeyWords";
-import { AssignmentExpressionContext } from "../../grammar/CPP14Parser";
+import {
+  AssignmentExpressionContext,
+  DeclSpecifierSeqContext,
+  ParameterDeclarationContext,
+  SimpleDeclarationContext,
+} from "../../grammar/CPP14Parser";
 import { DeclarationSpecifier } from "./DeclarationSpecifier";
 
 export default class DeclarationVar {
   readonly variableName: string;
+  readonly declaration:
+    | ParameterDeclarationContext
+    | SimpleDeclarationContext
+    | DeclSpecifierSeqContext;
   readonly expression?: AssignmentExpressionContext;
   type?: TypeSpecifier;
   private readonly specifiers: Array<DeclarationSpecifier>;
 
-  constructor(variableName: string, expression?: AssignmentExpressionContext) {
+  constructor(
+    variableName: string,
+    declaration:
+      | ParameterDeclarationContext
+      | SimpleDeclarationContext
+      | DeclSpecifierSeqContext,
+    expression?: AssignmentExpressionContext
+  ) {
     this.variableName = variableName;
+    this.declaration = declaration;
     this.expression = expression;
     this.specifiers = [];
   }

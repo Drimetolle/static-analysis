@@ -40,12 +40,13 @@ export default class DeclarationVisitor {
     }
 
     const type = parseType(decSeq);
-    return new DeclarationVar(variable, init)
+    return new DeclarationVar(variable, decSeq!, init)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
 
   private static createSimpleDeclaration(
+    simpleDeclaration: SimpleDeclarationContext,
     decSeq: DeclSpecifierSeqContext
   ): DeclarationVar {
     const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
@@ -56,7 +57,7 @@ export default class DeclarationVisitor {
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
     );
-    return new DeclarationVar(variable)
+    return new DeclarationVar(variable, simpleDeclaration)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -93,6 +94,7 @@ export default class DeclarationVisitor {
       }
       return new Array<DeclarationVarAndNode>({
         declaration: DeclarationVisitor.createSimpleDeclaration(
+          ctx,
           simpleDeclaration
         ),
         node: simpleDeclaration,
@@ -126,19 +128,22 @@ export default class DeclarationVisitor {
     );
 
     if (declarator) {
-      return this.createDeclarator(declarator).addSpecifier(...specifiers);
+      return this.createDeclarator(ctx, declarator).addSpecifier(...specifiers);
     }
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
 
-    return new DeclarationVar(simpleDeclaration!.text);
+    return new DeclarationVar(simpleDeclaration!.text, ctx);
   }
 
-  private createDeclarator(ctx: DeclaratorContext) {
+  private createDeclarator(
+    parameterDeclaration: ParameterDeclarationContext,
+    ctx: DeclaratorContext
+  ) {
     const variableId = this.getVariableNameFromDeclarator(
       ctx.pointerDeclarator()!
     );
-    return new DeclarationVar(variableId.text);
+    return new DeclarationVar(variableId.text, parameterDeclaration);
   }
 
   private getVariableNameFromDeclarator(
