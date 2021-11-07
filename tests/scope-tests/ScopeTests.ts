@@ -13,7 +13,7 @@ import { VariableState } from "../../src/source-analysis/data-objects/VariableDe
 import { TypeSpecifier } from "../../src/source-analysis/data-objects/LanguageKeyWords";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 
-async function createTestCase(code: string, expected: ScopeTree) {
+export async function createTestCase(code: string, expected: ScopeTree) {
   const { scope } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
@@ -26,7 +26,7 @@ async function createTestCase(code: string, expected: ScopeTree) {
   );
 }
 
-function createDeclaration(name = "a", expression = "1") {
+export function createDeclaration(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
   variables.declare(
     name,
@@ -37,7 +37,7 @@ function createDeclaration(name = "a", expression = "1") {
   return variables;
 }
 
-function createAssigment(name = "a", expression = "1") {
+export function createAssigment(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
   variables.assign(name, { text: expression } as Expression, null as any);
   return variables;
