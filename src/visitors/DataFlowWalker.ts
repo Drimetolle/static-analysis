@@ -25,7 +25,7 @@ import {
 import { CPP14ParserVisitor } from "../grammar/CPP14ParserVisitor";
 import ScopeTree, { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
 import CodeBlock from "../source-analysis/data-objects/CodeBlock";
-import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
+import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
 import { Walker } from "../linter/walkers/Walker";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import BasicBlock from "../source-analysis/control-flow/blocks/BasicBlock";
@@ -110,7 +110,9 @@ export default class DataFlowWalker
     }
   }
 
-  visitSimpleDeclaration(ctx: SimpleDeclarationContext): Array<DeclarationVar> {
+  visitSimpleDeclaration(
+    ctx: SimpleDeclarationContext
+  ): Array<VariableDeclaration> {
     if (
       !ctx
         .declSpecifierSeq()
@@ -130,7 +132,7 @@ export default class DataFlowWalker
       .filter((s) => !s.declarationStatement() || !s.expressionStatement());
   }
 
-  private static setScope(root: ScopeNode, ctx: DeclarationVar): void {
+  private static setScope(root: ScopeNode, ctx: VariableDeclaration): void {
     root.data.declaredVariables.declare(ctx);
   }
 

@@ -1,4 +1,4 @@
-import { VariableState } from "../data-objects/VariableDeclaration";
+import { VariableState } from "../data-objects/VariableState";
 
 export default class Variable {
   readonly variableName: string;

@@ -10,7 +10,7 @@ import {
   SimpleDeclarationContext,
   StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
-import DeclarationVar from "../source-analysis/data-objects/DeclarationVar";
+import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
 import { parseType } from "../utils/TypeInference";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
@@ -22,7 +22,7 @@ export default class DeclarationVisitor {
     dec: DeclaratorContext,
     init?: AssignmentExpressionContext,
     decSeq?: DeclSpecifierSeqContext
-  ): DeclarationVar {
+  ): VariableDeclaration {
     const variable = this.getVariableNameFromDeclarator(
       dec.pointerDeclarator()!
     ).text;
@@ -35,7 +35,7 @@ export default class DeclarationVisitor {
     }
 
     const type = parseType(decSeq);
-    return new DeclarationVar(variable, decSeq!, init)
+    return new VariableDeclaration(variable, decSeq!, init)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
@@ -43,7 +43,7 @@ export default class DeclarationVisitor {
   private static createSimpleDeclaration(
     simpleDeclaration: SimpleDeclarationContext,
     decSeq: DeclSpecifierSeqContext
-  ): DeclarationVar {
+  ): VariableDeclaration {
     const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
       decSeq.declSpecifier().pop()!
     ).text;
@@ -52,12 +52,12 @@ export default class DeclarationVisitor {
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
     );
-    return new DeclarationVar(variable, simpleDeclaration)
+    return new VariableDeclaration(variable, simpleDeclaration)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
   }
 
-  simpleDeclaration(ctx: SimpleDeclarationContext): Array<DeclarationVar> {
+  simpleDeclaration(ctx: SimpleDeclarationContext): Array<VariableDeclaration> {
     const nodeVars =
       ctx
         .initDeclaratorList()
@@ -82,7 +82,7 @@ export default class DeclarationVisitor {
       if (1 >= simpleDeclaration.childCount) {
         return [];
       }
-      return new Array<DeclarationVar>(
+      return new Array<VariableDeclaration>(
         DeclarationVisitor.createSimpleDeclaration(ctx, simpleDeclaration)
       );
     }
@@ -92,7 +92,7 @@ export default class DeclarationVisitor {
 
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
-  ): DeclarationVar | null {
+  ): VariableDeclaration | null {
     const type = parseType(ctx.declSpecifierSeq());
 
     const declaration = this.createParameterDeclaration(ctx);
@@ -106,7 +106,7 @@ export default class DeclarationVisitor {
 
   private createParameterDeclaration(
     ctx: ParameterDeclarationContext
-  ): DeclarationVar {
+  ): VariableDeclaration {
     const declarationSpecifiers = ctx.declSpecifierSeq();
     const declarator = ctx.declarator();
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
@@ -119,7 +119,7 @@ export default class DeclarationVisitor {
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
 
-    return new DeclarationVar(simpleDeclaration!.text, ctx);
+    return new VariableDeclaration(simpleDeclaration!.text, ctx);
   }
 
   private createDeclarator(
@@ -129,7 +129,7 @@ export default class DeclarationVisitor {
     const variableId = this.getVariableNameFromDeclarator(
       ctx.pointerDeclarator()!
     );
-    return new DeclarationVar(variableId.text, parameterDeclaration);
+    return new VariableDeclaration(variableId.text, parameterDeclaration);
   }
 
   private getVariableNameFromDeclarator(

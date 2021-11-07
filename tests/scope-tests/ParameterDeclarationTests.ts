@@ -2,11 +2,11 @@
 import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import { createTestCase } from "./ScopeTests";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
-import DeclarationVar from "../../src/source-analysis/data-objects/DeclarationVar";
+import VariableDeclaration from "../../src/source-analysis/data-objects/VariableDeclaration";
 
 function createIntegerDeclaration(name = "a") {
   const variables = new DeclaredVariablesInScope();
-  variables.declare(new DeclarationVar(name, undefined as any));
+  variables.declare(new VariableDeclaration(name, undefined as any));
   return variables;
 }
 

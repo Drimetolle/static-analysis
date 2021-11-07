@@ -9,7 +9,7 @@ import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
 import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
-import DeclarationVar from "../../src/source-analysis/data-objects/DeclarationVar";
+import VariableDeclaration from "../../src/source-analysis/data-objects/VariableDeclaration";
 
 export async function createTestCase(code: string, expected: ScopeTree) {
   const { scope } = await new DataFlowWalker(
@@ -26,7 +26,7 @@ export async function createTestCase(code: string, expected: ScopeTree) {
 
 export function createDeclaration(name = "a", expression = "1") {
   const variables = new DeclaredVariablesInScope();
-  variables.declare(new DeclarationVar(name, undefined as any));
+  variables.declare(new VariableDeclaration(name, undefined as any));
   return variables;
 }
 
@@ -84,9 +84,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare(new DeclarationVar("a", undefined as any));
-    variables.declare(new DeclarationVar("b", undefined as any));
-    variables.declare(new DeclarationVar("c", undefined as any));
+    variables.declare(new VariableDeclaration("a", undefined as any));
+    variables.declare(new VariableDeclaration("b", undefined as any));
+    variables.declare(new VariableDeclaration("c", undefined as any));
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);
@@ -113,9 +113,9 @@ describe("declaration and assigment tests in simple blocks", () => {
     `;
     const scope = new ScopeTree();
     const variables = new DeclaredVariablesInScope();
-    variables.declare(new DeclarationVar("a", undefined as any));
-    variables.declare(new DeclarationVar("b", undefined as any));
-    variables.declare(new DeclarationVar("c", undefined as any));
+    variables.declare(new VariableDeclaration("a", undefined as any));
+    variables.declare(new VariableDeclaration("b", undefined as any));
+    variables.declare(new VariableDeclaration("c", undefined as any));
     scope.add(new CodeBlock(variables), scope.getRoot);
 
     await createTestCase(code, scope);

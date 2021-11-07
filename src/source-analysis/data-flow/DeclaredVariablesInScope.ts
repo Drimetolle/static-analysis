@@ -1,35 +1,35 @@
 import { insert, last } from "ramda";
-import DeclarationVar from "../data-objects/DeclarationVar";
+import VariableDeclaration from "../data-objects/VariableDeclaration";
 
 export interface DeclaredVariables {
-  variables: Array<DeclarationVar>;
-  getVariable(id: string): DeclarationVar | null;
+  variables: Array<VariableDeclaration>;
+  getVariable(id: string): VariableDeclaration | null;
 }
 
 export default class DeclaredVariablesInScope implements DeclaredVariables {
-  private readonly _variables: Map<string, Array<DeclarationVar>>;
+  private readonly _variables: Map<string, Array<VariableDeclaration>>;
 
-  get variables(): Array<DeclarationVar> {
+  get variables(): Array<VariableDeclaration> {
     return Array.from(this._variables.values()).flatMap((vars) => vars);
   }
 
   constructor() {
-    this._variables = new Map<string, Array<DeclarationVar>>();
+    this._variables = new Map<string, Array<VariableDeclaration>>();
   }
 
-  getVariable(id: string): DeclarationVar | null {
+  getVariable(id: string): VariableDeclaration | null {
     return last(this._variables.get(id) ?? []) ?? null;
   }
 
-  declare(variable: DeclarationVar): void {
+  declare(variable: VariableDeclaration): void {
     this.setVariable(variable);
   }
 
-  assign(variable: DeclarationVar): void {
+  assign(variable: VariableDeclaration): void {
     this.assignVariable(variable);
   }
 
-  private setVariable(variable: DeclarationVar) {
+  private setVariable(variable: VariableDeclaration) {
     if (this._variables.has(variable.variableName)) {
       console.log(
         `Variable: ${variable.variableName} already declared in position: ${variable.declaration.start.line}:${variable.declaration.start.charPositionInLine}.`
@@ -39,11 +39,11 @@ export default class DeclaredVariablesInScope implements DeclaredVariables {
     this.addVariable(variable);
   }
 
-  private assignVariable(variable: DeclarationVar) {
+  private assignVariable(variable: VariableDeclaration) {
     this.addVariable(variable);
   }
 
-  private addVariable(declaration: DeclarationVar) {
+  private addVariable(declaration: VariableDeclaration) {
     this._variables.set(
       declaration.variableName,
       this._variables.get(declaration.variableName) != null
