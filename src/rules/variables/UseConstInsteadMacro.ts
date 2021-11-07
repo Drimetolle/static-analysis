@@ -23,6 +23,7 @@ class DefineMacrosListener implements CPP14ParserListener {
 
 /**
  * @example
+  //Bad
   #define a 123;
   #define b;
  */
