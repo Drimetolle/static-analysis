@@ -28,14 +28,14 @@ class TypeListener implements CPP14ParserListener {
  * @example
  class Vector;
  class Matrix {
-  
+
   };
  class Vector {
-  
+
   };
 
  struct MyStruct {
-  
+
   };
 
  namespace ns {
@@ -50,7 +50,7 @@ class TypeListener implements CPP14ParserListener {
  */
 export default class TypeNames extends Rule {
   private static isPascalCase(str: string): boolean {
-    return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+    return /^([A-Z][a-z0-9]+)*[A-Z][a-z0-9]*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
