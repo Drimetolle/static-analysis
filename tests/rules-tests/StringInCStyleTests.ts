@@ -30,8 +30,11 @@ describe("Check declaration string in C like style", () => {
   };
 
   const rule = new StringInCStyle();
-
-  test.each([
+  const functionWrapper = (code: string) => `main() { ${code} }`;
+  const ifWrapper = (code: string) => `main() { if(true) { ${code} } }`;
+  const whileWrapper = (code: string) => `main() { while(true) { ${code} } }`;
+  const parameterWrapper = (code: string) => `main(${code}) { }`;
+  const testCases: Array<[string, number]> = [
     [`char *str = "";`, 1],
     [`char *str;`, 1],
     [`const char *str = "";`, 1],
@@ -40,9 +43,59 @@ describe("Check declaration string in C like style", () => {
     [`string str;`, 0],
     [`const string str = "";`, 0],
     [`const string str;`, 0],
-  ])("declaration C like string", async (code, expected) => {
-    const result = rule.run(await createContext(code));
+  ];
 
-    expect(result).toHaveLength(expected);
-  });
+  test.each(testCases)(
+    "global declaration C like string (%s)",
+    async (code, expected) => {
+      const result = rule.run(await createContext(code));
+
+      expect(result).toHaveLength(expected);
+    }
+  );
+
+  test.each(testCases)(
+    "local declaration C like string (%s)",
+    async (code, expected) => {
+      const result = rule.run(await createContext(functionWrapper(code)));
+
+      expect(result).toHaveLength(expected);
+    }
+  );
+
+  test.each(testCases)(
+    "local declaration in if C like string (%s)",
+    async (code, expected) => {
+      const result = rule.run(await createContext(ifWrapper(code)));
+
+      expect(result).toHaveLength(expected);
+    }
+  );
+
+  test.each(testCases)(
+    "local declaration in while C like string (%s)",
+    async (code, expected) => {
+      const result = rule.run(await createContext(whileWrapper(code)));
+
+      expect(result).toHaveLength(expected);
+    }
+  );
+
+  test.each([
+    [`char *str = ""`, 1],
+    [`char *str`, 1],
+    [`const char *str = ""`, 1],
+    [`const char *str`, 1],
+    [`string str = ""`, 0],
+    [`string str`, 0],
+    [`const string str = ""`, 0],
+    [`const string str`, 0],
+  ])(
+    "local declaration in parameter C like string (%s)",
+    async (code, expected) => {
+      const result = rule.run(await createContext(parameterWrapper(code)));
+
+      expect(result).toHaveLength(expected);
+    }
+  );
 });

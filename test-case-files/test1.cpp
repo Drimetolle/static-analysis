@@ -1,6 +1,3 @@
 void main() {
-    int var = 1;
-    while(1) {
-        
-    }
+    int *&var = 1;
 }

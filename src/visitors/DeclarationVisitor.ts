@@ -12,22 +12,24 @@ import {
 } from "../grammar/CPP14Parser";
 import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
 import { parseType } from "../utils/TypeInference";
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
 
 @scoped(Lifecycle.ContainerScoped)
 export default class DeclarationVisitor {
   createDeclaration(
-    dec: DeclaratorContext,
+    declarator: DeclaratorContext,
     init?: AssignmentExpressionContext,
     decSeq?: DeclSpecifierSeqContext
   ): VariableDeclaration {
     const variable = this.getVariableNameFromDeclarator(
-      dec.pointerDeclarator()!
+      declarator.pointerDeclarator()!
     ).text;
     const specifiers = [];
-
+    const declarators = DeclarationVisitor.extractAllDeclaratorsFromDeclaration(
+      declarator
+    );
     if (decSeq) {
       specifiers.push(
         ...DeclarationVisitor.extractAllSpecifiersFromDeclaration(decSeq)
@@ -37,7 +39,8 @@ export default class DeclarationVisitor {
     const type = parseType(decSeq);
     return new VariableDeclaration(variable, decSeq!, init)
       .addSpecifier(...specifiers)
-      .trySetSimpleType(type);
+      .trySetSimpleType(type)
+      .addDeclarator(...declarators);
   }
 
   private static createSimpleDeclaration(
@@ -66,7 +69,7 @@ export default class DeclarationVisitor {
     const simpleDeclaration = ctx.declSpecifierSeq();
 
     if (nodeVars.length > 0) {
-      return nodeVars.map((node, i) => {
+      return nodeVars.map((node) => {
         return this.createDeclaration(
           node.declarator(),
           node
@@ -114,7 +117,12 @@ export default class DeclarationVisitor {
     );
 
     if (declarator) {
-      return this.createDeclarator(ctx, declarator).addSpecifier(...specifiers);
+      const declarators = DeclarationVisitor.extractAllDeclaratorsFromDeclaration(
+        declarator
+      );
+      return this.createDeclarator(ctx, declarator)
+        .addSpecifier(...specifiers)
+        .addDeclarator(...declarators);
     }
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
@@ -187,6 +195,21 @@ export default class DeclarationVisitor {
     }
 
     return result;
+  }
+
+  private static *extractAllDeclaratorsFromDeclaration(ctx: DeclaratorContext) {
+    const declarators = ctx.pointerDeclarator()?.pointerOperator() ?? [];
+
+    for (const declarator of declarators) {
+      const star = declarator.Star();
+      const ref = declarator.And();
+
+      if (star) {
+        yield DeclaratorSpecifier.Pointer;
+      } else if (ref) {
+        yield DeclaratorSpecifier.Ref;
+      }
+    }
   }
 
   private static convertClassSpecifier(

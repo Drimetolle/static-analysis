@@ -73,8 +73,6 @@ export default class VariableDeclaration {
   private toJSON(): unknown {
     return {
       name: this.variableName,
-      specifiers: this._specifiers,
-      declarators: this._declarators,
     };
   }
 }
