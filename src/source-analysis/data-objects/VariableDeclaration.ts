@@ -6,6 +6,8 @@ import {
   SimpleDeclarationContext,
 } from "../../grammar/CPP14Parser";
 import { DeclarationSpecifier } from "./DeclarationSpecifier";
+import { clone } from "ramda";
+import { DeclaratorSpecifier } from "./DeclaratorSpecifier";
 
 export default class VariableDeclaration {
   readonly variableName: string;
@@ -15,7 +17,8 @@ export default class VariableDeclaration {
     | DeclSpecifierSeqContext;
   readonly expression?: AssignmentExpressionContext;
   type?: TypeSpecifier;
-  private readonly specifiers: Array<DeclarationSpecifier>;
+  private readonly _specifiers: Array<DeclarationSpecifier>;
+  private readonly _declarators: Array<DeclaratorSpecifier>;
 
   constructor(
     variableName: string,
@@ -28,7 +31,8 @@ export default class VariableDeclaration {
     this.variableName = variableName;
     this.declaration = declaration;
     this.expression = expression;
-    this.specifiers = [];
+    this._specifiers = [];
+    this._declarators = [];
   }
 
   public trySetSimpleType(type?: TypeSpecifier) {
@@ -47,13 +51,30 @@ export default class VariableDeclaration {
   public addSpecifier(
     ...specifier: Array<DeclarationSpecifier>
   ): VariableDeclaration {
-    this.specifiers.push(...specifier);
+    this._specifiers.push(...specifier);
     return this;
+  }
+
+  public addDeclarator(
+    ...declarators: Array<DeclaratorSpecifier>
+  ): VariableDeclaration {
+    this._declarators.push(...declarators);
+    return this;
+  }
+
+  get specifiers(): Set<DeclarationSpecifier> {
+    return new Set<DeclarationSpecifier>(clone(this._specifiers));
+  }
+
+  get declarators(): Set<DeclaratorSpecifier> {
+    return new Set<DeclaratorSpecifier>(clone(this._declarators));
   }
 
   private toJSON(): unknown {
     return {
       name: this.variableName,
+      specifiers: this._specifiers,
+      declarators: this._declarators,
     };
   }
 }
