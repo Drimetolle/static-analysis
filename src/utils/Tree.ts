@@ -62,13 +62,16 @@ export class Tree<T> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  traverseDF(callback: (...args: Array<any>) => void): void {
+  traverseDF(
+    callback: (...args: Array<any>) => void,
+    node: Node<T> = this.root
+  ): void {
     (function recurse(currentNode: Node<T>) {
       for (let i = 0, length = currentNode.children.length; i < length; i++) {
         recurse(currentNode.children[i]);
       }
       callback(currentNode);
-    })(this.root);
+    })(node);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

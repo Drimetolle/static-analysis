@@ -115,7 +115,7 @@ describe("Check variable names", () => {
   );
 
   test.each([
-    // ["int A;", undefined],
+    ["int A;", undefined],
     ["int a;", undefined],
   ])(
     "declared variable in global scope, check name for: %s",
