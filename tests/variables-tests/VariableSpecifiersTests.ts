@@ -10,6 +10,7 @@ import {
   forLoopWrapper,
   functionWrapper,
   globalWrapper,
+  parameterWrapper,
   TestCase,
   whileWrapper,
 } from "../../utils-for-testing/CodeWrappers";
@@ -78,7 +79,7 @@ describe("Check const variable names", () => {
   const testCases: TestCase = [
     ...globalWrapper(rawCases),
     ...functionWrapper(rawCases),
-    // ...parameterWrapper(rawCases), TODO some tests failed
+    ...parameterWrapper(rawCases),
     ...conditionWrapper(rawCases),
     ...whileWrapper(rawCases),
     ...forLoopWrapper(rawCases),

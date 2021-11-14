@@ -153,12 +153,15 @@ export default class DeclarationVisitor {
       );
       return this.createDeclarator(ctx, declarator)
         .addSpecifier(...specifiers)
-        .addDeclarator(...declarators);
+        .addDeclarator(...declarators)
+        .changeToParameter();
     }
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
 
-    return new VariableDeclaration(simpleDeclaration!.text, ctx);
+    return new VariableDeclaration(simpleDeclaration!.text, ctx)
+      .addSpecifier(...specifiers)
+      .changeToParameter();
   }
 
   private createDeclarator(

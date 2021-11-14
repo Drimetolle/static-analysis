@@ -72,7 +72,8 @@ export default class ConstNames extends Rule {
       for (const variable of data.declaredVariables.variables) {
         if (
           !ConstNames.isUpperSnakeCase(variable.variableName) &&
-          variable.specifiers.has(DeclarationSpecifier.Const)
+          variable.specifiers.has(DeclarationSpecifier.Const) &&
+          !variable.isParameter
         ) {
           reports.push(
             new Report(

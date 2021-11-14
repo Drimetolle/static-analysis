@@ -21,6 +21,7 @@ export default class VariableDeclaration {
   type?: TypeSpecifier;
   private readonly _specifiers: Array<DeclarationSpecifier>;
   private readonly _declarators: Array<DeclaratorSpecifier>;
+  private _isParameter: boolean;
 
   constructor(
     variableName: string,
@@ -36,6 +37,16 @@ export default class VariableDeclaration {
     this.expression = expression;
     this._specifiers = [];
     this._declarators = [];
+    this._isParameter = false;
+  }
+
+  public changeToParameter() {
+    this._isParameter = true;
+    return this;
+  }
+
+  get isParameter() {
+    return this._isParameter;
   }
 
   public trySetSimpleType(type?: TypeSpecifier) {

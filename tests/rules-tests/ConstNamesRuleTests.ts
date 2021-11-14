@@ -111,8 +111,7 @@ describe("Check const variable names", () => {
     async (code, expected) => {
       const result = rule.run(await createContext(`main(${code}) {}`));
 
-      // TODO don't check parameter variable
-      // expect(result.pop()?.node.text).toBe(expected);
+      expect(result.pop()?.node.text).toBe(expected);
     }
   );
 });
