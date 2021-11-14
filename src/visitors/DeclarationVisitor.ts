@@ -1,6 +1,7 @@
 import { Lifecycle, scoped } from "tsyringe";
 import {
   AssignmentExpressionContext,
+  CvQualifierContext,
   DeclaratorContext,
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
@@ -96,6 +97,7 @@ export default class DeclarationVisitor {
       if (1 >= simpleDeclaration.childCount) {
         return [];
       }
+
       return new Array<VariableDeclaration>(
         DeclarationVisitor.createSimpleDeclaration(ctx, simpleDeclaration)
       );
@@ -116,6 +118,7 @@ export default class DeclarationVisitor {
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
     );
+
     return new VariableDeclaration(variable, simpleDeclaration)
       .addSpecifier(...specifiers)
       .trySetSimpleType(type);
@@ -213,12 +216,17 @@ export default class DeclarationVisitor {
         const declarationSpecifier = DeclarationVisitor.convertClassSpecifier(
           classSpecifier
         );
+
         result.push(declarationSpecifier);
         continue;
       }
 
       if (typeSpecifier) {
-        // TODO implement typeSpecifier
+        const cvQualifier = typeSpecifier.cvQualifier();
+
+        if (cvQualifier) {
+          result.push(DeclarationVisitor.convertCvQualifier(cvQualifier));
+        }
       }
     }
 
@@ -251,6 +259,18 @@ export default class DeclarationVisitor {
       return DeclarationSpecifier.Extern;
     } else if (ctx.Thread_local()) {
       return DeclarationSpecifier.ThreadLocal;
+    }
+
+    throw new Error(`Unexpected specifier: ${ctx.text}`);
+  }
+
+  private static convertCvQualifier(
+    ctx: CvQualifierContext
+  ): DeclarationSpecifier {
+    if (ctx.Const()) {
+      return DeclarationSpecifier.Const;
+    } else if (ctx.Volatile()) {
+      return DeclarationSpecifier.Volatile;
     }
 
     throw new Error(`Unexpected specifier: ${ctx.text}`);
