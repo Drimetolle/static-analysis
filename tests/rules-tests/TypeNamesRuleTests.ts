@@ -24,17 +24,21 @@ describe("Check type names", () => {
     cases: Array<[string, unknown]>
   ): Array<[string, unknown]> =>
     cases.map(([code, expected]) => [`struct ${code}`, expected]);
-  const raw: Array<[string, unknown]> = [
+  const rawCases: Array<[string, unknown]> = [
     ["a {};", "a"],
     ["A {};", undefined],
     ["Type {};", undefined],
     ["TypeType {};", undefined],
     ["aB {};", "aB"],
     ["AA {};", "AA"],
+    ["a_B {};", "a_B"],
+    ["A_A {};", "A_A"],
+    ["a_b {};", "a_b"],
+    ["A_b {};", "A_b"],
   ];
   const testCases: Array<[string, unknown]> = [
-    ...concatClass(raw),
-    ...concatStruct(raw),
+    ...concatClass(rawCases),
+    ...concatStruct(rawCases),
   ];
   const rule = new TypeNames();
 
