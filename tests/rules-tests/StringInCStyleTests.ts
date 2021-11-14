@@ -9,6 +9,14 @@ import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
+import {
+  conditionWrapper,
+  forLoopWrapper,
+  functionWrapper,
+  parameterWrapper,
+  TestCase,
+  whileWrapper,
+} from "../../utils-for-testing/CodeWrappers";
 
 describe("Check declaration string in C like style", () => {
   const createContext = async (code: string) => {
@@ -30,19 +38,22 @@ describe("Check declaration string in C like style", () => {
   };
 
   const rule = new StringInCStyle();
-  const functionWrapper = (code: string) => `main() { ${code} }`;
-  const ifWrapper = (code: string) => `main() { if(true) { ${code} } }`;
-  const whileWrapper = (code: string) => `main() { while(true) { ${code} } }`;
-  const parameterWrapper = (code: string) => `main(${code}) { }`;
-  const testCases: Array<[string, number]> = [
-    [`char *str = "";`, 1],
-    [`char *str;`, 1],
-    [`const char *str = "";`, 1],
-    [`const char *str;`, 1],
-    [`string str = "";`, 0],
-    [`string str;`, 0],
-    [`const string str = "";`, 0],
-    [`const string str;`, 0],
+  const rawCases: TestCase = [
+    [`char *str = ""`, `char*str=""`],
+    [`char *str`, `char*str`],
+    [`const char *str = ""`, `constchar*str=""`],
+    [`const char *str`, `constchar*str`],
+    [`string str = ""`, undefined],
+    [`string str`, undefined],
+    [`const string str = ""`, undefined],
+    [`const string str`, undefined],
+  ];
+  const testCases: TestCase = [
+    ...functionWrapper(rawCases),
+    ...conditionWrapper(rawCases),
+    ...whileWrapper(rawCases),
+    ...parameterWrapper(rawCases),
+    ...forLoopWrapper(rawCases),
   ];
 
   test.each(testCases)(
@@ -50,52 +61,11 @@ describe("Check declaration string in C like style", () => {
     async (code, expected) => {
       const result = rule.run(await createContext(code));
 
-      expect(result).toHaveLength(expected);
-    }
-  );
-
-  test.each(testCases)(
-    "local declaration C like string (%s)",
-    async (code, expected) => {
-      const result = rule.run(await createContext(functionWrapper(code)));
-
-      expect(result).toHaveLength(expected);
-    }
-  );
-
-  test.each(testCases)(
-    "local declaration in if C like string (%s)",
-    async (code, expected) => {
-      const result = rule.run(await createContext(ifWrapper(code)));
-
-      expect(result).toHaveLength(expected);
-    }
-  );
-
-  test.each(testCases)(
-    "local declaration in while C like string (%s)",
-    async (code, expected) => {
-      const result = rule.run(await createContext(whileWrapper(code)));
-
-      expect(result).toHaveLength(expected);
-    }
-  );
-
-  test.each([
-    [`char *str = ""`, 1],
-    [`char *str`, 1],
-    [`const char *str = ""`, 1],
-    [`const char *str`, 1],
-    [`string str = ""`, 0],
-    [`string str`, 0],
-    [`const string str = ""`, 0],
-    [`const string str`, 0],
-  ])(
-    "local declaration in parameter C like string (%s)",
-    async (code, expected) => {
-      const result = rule.run(await createContext(parameterWrapper(code)));
-
-      expect(result).toHaveLength(expected);
+      if (typeof expected === "string") {
+        expect(result.pop()?.node.text).toMatch(expected);
+      } else {
+        expect(result.pop()?.node.text).toBe(expected);
+      }
     }
   );
 });

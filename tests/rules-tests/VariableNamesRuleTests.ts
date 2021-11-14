@@ -9,8 +9,14 @@ import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLR
 import LinterContext from "../../src/linter/LinterContext";
 import StartBlock from "../../src/source-analysis/control-flow/blocks/StartBlock";
 import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";
-
-type TestCase = Array<[string, unknown]>;
+import {
+  conditionWrapper,
+  forLoopWrapper,
+  functionWrapper,
+  parameterWrapper,
+  TestCase,
+  whileWrapper,
+} from "../../utils-for-testing/CodeWrappers";
 
 describe("Check variable names", () => {
   const createContext = async (code: string) => {
@@ -31,25 +37,6 @@ describe("Check variable names", () => {
     );
   };
 
-  const functionWrapper = (cases: TestCase): TestCase =>
-    cases.map(([code, expected]) => [`main() { ${code}; }`, expected]);
-  const parameterWrapper = (cases: TestCase): TestCase =>
-    cases.map(([code, expected]) => [`main(${code}) { }`, expected]);
-  const conditionWrapper = (cases: TestCase): TestCase =>
-    cases.map(([code, expected]) => [
-      `main() { if(true) { ${code}; } }`,
-      expected,
-    ]);
-  const whileWrapper = (cases: TestCase): TestCase =>
-    cases.map(([code, expected]) => [
-      `main() { while(true) { ${code}; } }`,
-      expected,
-    ]);
-  const forLoopWrapper = (cases: TestCase): TestCase =>
-    cases.map(([code, expected]) => [
-      `main() { for(;;) { ${code}; } }`,
-      expected,
-    ]);
   const rawCases: TestCase = [
     ["int a", undefined],
     ["int A", "intA"],
@@ -76,21 +63,21 @@ describe("Check variable names", () => {
     ["const int *a[][1]", undefined],
     ["const int &a[][1]", undefined],
     ["const int *&a[][1]", undefined],
-    ["int *A", ""],
-    ["int &A", ""],
-    ["int *&A", ""],
-    ["const int *A", ""],
-    ["const int &A", ""],
-    ["const int *&A", ""],
-    // ["int *A[]", "int*A[]"],
-    // ["int &A[]", "int&A[]"],
-    // ["int *&A[]", "int*&A[]"],
-    // ["const int *A[]", "constint*A[]"],
-    // ["const int &A[]", "constint&A[]"],
-    // ["const int *&A[]", "constint*&A[]"],
-    // ["const int *A[][1]", "constint*A[][1]"],
-    // ["const int &A[][1]", "constint&A[][1]"],
-    // ["const int *&A[][1]", "constint*&A[][1]"],
+    ["int *A", "int*A"],
+    ["int &A", "int&A"],
+    ["int *&A", "int*&A"],
+    ["const int *A", "constint*A"],
+    ["const int &A", "constint&A"],
+    ["const int *&A", "constint*&A"],
+    ["int *A[]", "int*A[]"],
+    ["int &A[]", "int&A[]"],
+    ["int *&A[]", "int*&A[]"],
+    ["const int *A[]", "constint*A[]"],
+    ["const int &A[]", "constint&A[]"],
+    ["const int *&A[]", "constint*&A[]"],
+    ["const int *A[][1]", "constint*A[][1]"],
+    ["const int &A[][1]", "constint&A[][1]"],
+    ["const int *&A[][1]", "constint*&A[][1]"],
   ];
   const testCases: TestCase = [
     ...functionWrapper(rawCases),

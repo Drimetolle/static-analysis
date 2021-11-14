@@ -1,7 +1,8 @@
 import { TypeSpecifier } from "./LanguageKeyWords";
 import {
   AssignmentExpressionContext,
-  DeclSpecifierSeqContext,
+  DeclaratorContext,
+  InitDeclaratorContext,
   ParameterDeclarationContext,
   SimpleDeclarationContext,
 } from "../../grammar/CPP14Parser";
@@ -14,7 +15,8 @@ export default class VariableDeclaration {
   readonly declaration:
     | ParameterDeclarationContext
     | SimpleDeclarationContext
-    | DeclSpecifierSeqContext;
+    | DeclaratorContext
+    | InitDeclaratorContext;
   readonly expression?: AssignmentExpressionContext;
   type?: TypeSpecifier;
   private readonly _specifiers: Array<DeclarationSpecifier>;
@@ -25,7 +27,8 @@ export default class VariableDeclaration {
     declaration:
       | ParameterDeclarationContext
       | SimpleDeclarationContext
-      | DeclSpecifierSeqContext,
+      | DeclaratorContext
+      | InitDeclaratorContext,
     expression?: AssignmentExpressionContext
   ) {
     this.variableName = variableName;

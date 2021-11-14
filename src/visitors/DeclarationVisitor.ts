@@ -4,6 +4,7 @@ import {
   DeclaratorContext,
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
+  InitDeclaratorContext,
   NoPointerDeclaratorContext,
   ParameterDeclarationContext,
   PointerDeclaratorContext,
@@ -21,7 +22,8 @@ export default class DeclarationVisitor {
   createDeclaration(
     declarator: DeclaratorContext,
     init?: AssignmentExpressionContext,
-    decSeq?: DeclSpecifierSeqContext
+    decSeq?: DeclSpecifierSeqContext,
+    simpleDeclaration?: SimpleDeclarationContext
   ): VariableDeclaration {
     const variable = this.getVariableNameFromDeclarator(
       declarator.pointerDeclarator()!
@@ -37,27 +39,22 @@ export default class DeclarationVisitor {
     }
 
     const type = parseType(decSeq);
-    return new VariableDeclaration(variable, decSeq!, init)
+    return new VariableDeclaration(
+      variable,
+      simpleDeclaration ?? DeclarationVisitor.getInitDeclarator(declarator),
+      init
+    )
       .addSpecifier(...specifiers)
       .trySetSimpleType(type)
       .addDeclarator(...declarators);
   }
 
-  private static createSimpleDeclaration(
-    simpleDeclaration: SimpleDeclarationContext,
-    decSeq: DeclSpecifierSeqContext
-  ): VariableDeclaration {
-    const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
-      decSeq.declSpecifier().pop()!
-    ).text;
-    const type = parseType(decSeq);
+  private static getInitDeclarator(
+    declarator: DeclaratorContext
+  ): DeclaratorContext | InitDeclaratorContext {
+    const init = declarator.parent;
 
-    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
-      decSeq
-    );
-    return new VariableDeclaration(variable, simpleDeclaration)
-      .addSpecifier(...specifiers)
-      .trySetSimpleType(type);
+    return (init as InitDeclaratorContext) ?? declarator;
   }
 
   simpleDeclaration(ctx: SimpleDeclarationContext): Array<VariableDeclaration> {
@@ -68,7 +65,21 @@ export default class DeclarationVisitor {
         .map((v) => v) ?? [];
     const simpleDeclaration = ctx.declSpecifierSeq();
 
-    if (nodeVars.length > 0) {
+    if (nodeVars.length == 1) {
+      const node = nodeVars.pop()!;
+      return [
+        this.createDeclaration(
+          node.declarator(),
+          node
+            .initializer()
+            ?.braceOrEqualInitializer()
+            ?.initializerClause()
+            ?.assignmentExpression(),
+          ctx.declSpecifierSeq(),
+          ctx
+        ),
+      ];
+    } else if (nodeVars.length > 0) {
       return nodeVars.map((node) => {
         return this.createDeclaration(
           node.declarator(),
@@ -91,6 +102,23 @@ export default class DeclarationVisitor {
     }
 
     return [];
+  }
+
+  private static createSimpleDeclaration(
+    simpleDeclaration: SimpleDeclarationContext,
+    decSeq: DeclSpecifierSeqContext
+  ): VariableDeclaration {
+    const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
+      decSeq.declSpecifier().pop()!
+    ).text;
+    const type = parseType(decSeq);
+
+    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+      decSeq
+    );
+    return new VariableDeclaration(variable, simpleDeclaration)
+      .addSpecifier(...specifiers)
+      .trySetSimpleType(type);
   }
 
   visitParameterDeclaration(
