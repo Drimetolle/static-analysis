@@ -78,7 +78,7 @@ describe("Check const variable names", () => {
   const testCases: TestCase = [
     ...globalWrapper(rawCases),
     ...functionWrapper(rawCases),
-    // ...parameterWrapper(rawCases),
+    // ...parameterWrapper(rawCases), TODO some tests failed
     ...conditionWrapper(rawCases),
     ...whileWrapper(rawCases),
     ...forLoopWrapper(rawCases),

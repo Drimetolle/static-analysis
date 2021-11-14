@@ -13,6 +13,7 @@ import {
   conditionWrapper,
   forLoopWrapper,
   functionWrapper,
+  globalWrapper,
   parameterWrapper,
   TestCase,
   whileWrapper,
@@ -49,6 +50,7 @@ describe("Check declaration string in C like style", () => {
     [`const string str`, undefined],
   ];
   const testCases: TestCase = [
+    ...globalWrapper(rawCases),
     ...functionWrapper(rawCases),
     ...conditionWrapper(rawCases),
     ...whileWrapper(rawCases),
