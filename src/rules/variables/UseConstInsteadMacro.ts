@@ -24,8 +24,7 @@ class DefineMacrosListener implements CPP14ParserListener {
 /**
  * @example
   //Bad
-  #define a 123;
-  #define b;
+  #define a 123
  */
 export default class UseConstInsteadMacro extends Rule {
   run(context: LinterContext): Array<Report> {
