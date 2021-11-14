@@ -17,6 +17,7 @@ import {
   TestCase,
   whileWrapper,
 } from "../../utils-for-testing/CodeWrappers";
+import { isEmpty } from "ramda";
 
 describe("Check variable names", () => {
   const createContext = async (code: string) => {
@@ -79,12 +80,60 @@ describe("Check variable names", () => {
     ["const int &A[][1]", "constint&A[][1]"],
     ["const int *&A[][1]", "constint*&A[][1]"],
   ];
+  const rawCasesForMultipleVars: TestCase = [
+    ["int a, b", []],
+    ["int A, B", ["A", "B"]],
+    ["int Type, Typ", ["Type", "Typ"]],
+    ["int TypeA, TypeB", ["TypeA", "TypeB"]],
+    ["int aB", []],
+    ["int AA, BB", ["AA", "BB"]],
+    ["int a_B, b_A", ["a_B", "b_A"]],
+    ["int A_A, B_B", ["A_A", "B_B"]],
+    ["int a_b, b_a", ["a_b", "b_a"]],
+    ["int A_b, B_a", ["A_b", "B_a"]],
+    ["int *a", []],
+    ["int &a", []],
+    ["int *&a", []],
+    ["const int *a", []],
+    ["const int &a", []],
+    ["const int *&a", []],
+    ["int *a[]", []],
+    ["int &a[]", []],
+    ["int *&a[]", []],
+    ["const int *a[]", []],
+    ["const int &a[]", []],
+    ["const int *&a[]", []],
+    ["const int *a[][1]", []],
+    ["const int &a[][1]", []],
+    ["const int *&a[][1]", []],
+    ["int *A, *B", ["*A", "*B"]],
+    ["int &A, &B", ["&A", "&B"]],
+    ["int *&A, *&B", ["*&A", "*&B"]],
+    ["const int *A, *B", ["*A", "*B"]],
+    ["const int &A, &B", ["&A", "&B"]],
+    ["const int *&A, *&B", ["*&A", "*&B"]],
+    ["int *A[], *B[]", ["*A[]", "*B[]"]],
+    ["int &A[], &B[]", ["&A[]", "&B[]"]],
+    ["int *&A[], *&B[]", ["*&A[]", "*&B[]"]],
+    ["const int *A[], *B[]", ["*A[]", "*B[]"]],
+    ["const int &A[], &B[]", ["&A[]", "&B[]"]],
+    ["const int *&A[], *&B[]", ["*&A[]", "*&B[]"]],
+    ["const int *A[][1], *B[2][1]", ["*A[][1]", "*B[2][1]"]],
+    ["const int &A[][1], &B[2][1]", ["&A[][1]", "&B[2][1]"]],
+    ["const int *&A[][1], *&B[2][1]", ["*&A[][1]", "*&B[2][1]"]],
+  ];
   const testCases: TestCase = [
     ...functionWrapper(rawCases),
     ...parameterWrapper(rawCases),
     ...conditionWrapper(rawCases),
     ...whileWrapper(rawCases),
     ...forLoopWrapper(rawCases),
+  ];
+  const testCasesForMultipleVars: TestCase = [
+    ...functionWrapper(rawCasesForMultipleVars),
+    ...conditionWrapper(rawCasesForMultipleVars),
+    ...whileWrapper(rawCasesForMultipleVars),
+    ...forLoopWrapper(rawCasesForMultipleVars),
   ];
   const rule = new VariableNames();
 
@@ -108,7 +157,24 @@ describe("Check variable names", () => {
     "declared variable in global scope, check name for: %s",
     async (code, expected) => {
       const result = rule.run(await createContext(code));
-      expect(result.pop()?.node.text).toBe(expected);
+      expect(result.pop()?.node.text).toEqual(expected);
+    }
+  );
+
+  test.each(testCasesForMultipleVars)(
+    "multiple declared variable in local scope, check name for: %s",
+    async (code, expects) => {
+      const result = rule
+        .run(await createContext(code))
+        .map(({ node }) => node.text.replace(";", ""));
+
+      if (isEmpty(expects)) {
+        expect(result).toHaveLength(0);
+      }
+
+      for (const expected of expects as Array<string>) {
+        expect(result).toContainEqual(expected);
+      }
     }
   );
 });
