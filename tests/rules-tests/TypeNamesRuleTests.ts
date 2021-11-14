@@ -1,30 +1,14 @@
-﻿import LinterContext from "../../src/linter/LinterContext";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
-import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
-import StartBlock from "../../src/source-analysis/control-flow/blocks/StartBlock";
-import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";
-import TypeNames from "../../src/rules/linter/TypeNames";
+﻿import TypeNames from "../../src/rules/linter/TypeNames";
+import { createContextWithAst } from "../../utils-for-testing/LinterContextCreators";
+
+type TestCase = Array<[string, unknown]>;
 
 describe("Check type names", () => {
-  const createContext = (code: string) => {
-    return new LinterContext(
-      "",
-      ASTGenerator.fromString(code),
-      new ScopeTree(),
-      new StartBlock(0, undefined as any),
-      new DeclaredMethods([])
-    );
-  };
-
-  const concatClass = (
-    cases: Array<[string, unknown]>
-  ): Array<[string, unknown]> =>
+  const concatClass = (cases: TestCase): TestCase =>
     cases.map(([code, expected]) => [`class ${code}`, expected]);
-  const concatStruct = (
-    cases: Array<[string, unknown]>
-  ): Array<[string, unknown]> =>
+  const concatStruct = (cases: TestCase): TestCase =>
     cases.map(([code, expected]) => [`struct ${code}`, expected]);
-  const rawCases: Array<[string, unknown]> = [
+  const rawCases: TestCase = [
     ["a {};", "a"],
     ["A {};", undefined],
     ["Type {};", undefined],
@@ -36,7 +20,7 @@ describe("Check type names", () => {
     ["a_b {};", "a_b"],
     ["A_b {};", "A_b"],
   ];
-  const testCases: Array<[string, unknown]> = [
+  const testCases: TestCase = [
     ...concatClass(rawCases),
     ...concatStruct(rawCases),
   ];
@@ -45,7 +29,7 @@ describe("Check type names", () => {
   test.each(testCases)(
     "declared type check name for: %s",
     async (code, expected) => {
-      const result = rule.run(await createContext(code));
+      const result = rule.run(await createContextWithAst(code));
       expect(result.pop()?.node.text).toBe(expected);
     }
   );

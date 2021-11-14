@@ -61,7 +61,7 @@ class VariableNamesListener implements CPP14ParserListener {
  */
 export default class VariableNames extends Rule {
   isCamelCase(str: string) {
-    return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+    return /^[a-z]+([A-Z][a-z]*)*$/.test(str);
   }
 
   run(context: LinterContext): Array<Report> {
@@ -73,10 +73,7 @@ export default class VariableNames extends Rule {
 
     for (const node of context.scope.toArray()) {
       for (const variable of node.data.declaredVariables.variables) {
-        if (
-          !this.isCamelCase(variable.variableName) &&
-          /^[a-zA-Z_]+[0-9]*$/.test(variable.variableName)
-        ) {
+        if (!this.isCamelCase(variable.variableName)) {
           reports.push(
             new Report(
               `Identifier '${variable.variableName}' is not in camel case.`,
