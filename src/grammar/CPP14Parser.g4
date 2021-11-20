@@ -310,7 +310,9 @@ includeDefinition:
 
 defineDeclaration:
     Define Identifier IntegerLiteral
-    | Define Identifier;
+    | Define Identifier+
+    | Define Identifier simpleTypeSpecifier
+    | Define Identifier StringLiteral;
 
 fileName: Identifier (Div Identifier)* (Dot Identifier)?;
 
