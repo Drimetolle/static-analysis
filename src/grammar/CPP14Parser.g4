@@ -312,7 +312,7 @@ defineDeclaration:
     Define Identifier IntegerLiteral
     | Define Identifier;
 
-fileName: Identifier (Div Identifier)* (Dot HFormat)?;
+fileName: Identifier (Div Identifier)* (Dot Identifier)?;
 
 blockDeclaration:
 	simpleDeclaration

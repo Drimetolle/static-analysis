@@ -284,8 +284,6 @@ Quote: '"';
 
 IncludeQuote: Include Whitespace* Quote;
 
-HFormat: 'h';
-
 MultiLineMacro:
 	'#' (~[\n]*? '\\' '\r'? '\n')+ ~ [\n]+ -> channel (HIDDEN);
 
