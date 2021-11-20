@@ -1,4 +1,5 @@
 ﻿{
+  "CheckScope": 1,
   "VariableNames": 3,
   "TypeNames": 3,
   "CheckPrivateFieldName": 1,
@@ -9,5 +10,6 @@
   "ConstNames": 3,
   "UseConstInsteadMacro": 3,
   "UnnamedFunctionParameters": 1,
-  "ReturnForNotVoidFunction": 1
+  "ReturnForNotVoidFunction": 1,
+  "CheckUserInput": 2
 }
