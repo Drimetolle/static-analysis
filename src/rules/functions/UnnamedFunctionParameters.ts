@@ -5,6 +5,7 @@ import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { ParameterDeclarationContext } from "../../grammar/CPP14Parser";
+import { head } from "ramda";
 
 class FunctionArgumentListener implements CPP14ParserListener {
   private readonly parameters: Array<ParameterDeclarationContext>;
@@ -15,7 +16,7 @@ class FunctionArgumentListener implements CPP14ParserListener {
 
   enterParameterDeclaration(ctx: ParameterDeclarationContext) {
     const specifiers = ctx.declSpecifierSeq().declSpecifier() ?? [];
-    const declarator = specifiers.pop();
+    const declarator = head(specifiers);
     const hasNamedArgument =
       declarator
         ?.typeSpecifier()
