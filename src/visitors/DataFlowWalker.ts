@@ -85,7 +85,6 @@ export default class DataFlowWalker
       this.visitDeclarationseq(sequence);
     }
 
-    // console.log(JsonFormatter.ScopeToJson(this.scopeTree));
     return { scope: this.scopeTree, cfg: this.cfg };
   }
 

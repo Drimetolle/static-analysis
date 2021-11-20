@@ -98,9 +98,15 @@ export default class DeclarationVisitor {
         return [];
       }
 
-      return new Array<VariableDeclaration>(
-        DeclarationVisitor.createSimpleDeclaration(ctx, simpleDeclaration)
+      const result = new Array<VariableDeclaration>();
+      const declaration = DeclarationVisitor.createSimpleDeclaration(
+        ctx,
+        simpleDeclaration
       );
+      if (declaration) {
+        result.push(declaration);
+      }
+      return result;
     }
 
     return [];
@@ -109,10 +115,25 @@ export default class DeclarationVisitor {
   private static createSimpleDeclaration(
     simpleDeclaration: SimpleDeclarationContext,
     decSeq: DeclSpecifierSeqContext
-  ): VariableDeclaration {
+  ): VariableDeclaration | null {
+    const declarationSpecifier = decSeq.declSpecifier().pop()!;
+
+    /* For this declarations:
+    typedef struct point{
+      double x, y;
+    };
+    */
+    // TODO now ignore
+    if (
+      declarationSpecifier?.typeSpecifier()?.classSpecifier()?.classHead().text
+    ) {
+      return null;
+    }
+
     const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
-      decSeq.declSpecifier().pop()!
+      declarationSpecifier
     ).text;
+
     const type = parseType(decSeq);
 
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
