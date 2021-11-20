@@ -7,7 +7,7 @@ import {
   TypeSpecifier,
 } from "../source-analysis/data-objects/LanguageKeyWords";
 
-export function parseType(
+export function parseSimpleType(
   declaration?: DeclSpecifierSeqContext
 ): TypeSpecifier | undefined {
   return _parseType(declaration?.declSpecifier() ?? []);

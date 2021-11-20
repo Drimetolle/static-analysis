@@ -50,6 +50,7 @@ import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
+import { parseSimpleType } from "../utils/TypeInference";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -99,7 +100,12 @@ export default class DataFlowWalker
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          const block = new FunctionBlock(0, functionDef);
+          const block = new FunctionBlock(
+            0,
+            functionDef,
+            parseSimpleType(functionDef.declSpecifierSeq())
+          );
+
           this.cfg.createEdge(block);
           this.topLevelFunctionStatement(functionDef, block);
         }

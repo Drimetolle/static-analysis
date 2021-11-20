@@ -16,7 +16,10 @@ import HeaderScope from "../source-analysis/methods/HeaderScope";
 import MethodSignature, {
   MethodArgument,
 } from "../source-analysis/methods/MethodSignature";
-import { parseFunctionReturnType, parseType } from "../utils/TypeInference";
+import {
+  parseFunctionReturnType,
+  parseSimpleType,
+} from "../utils/TypeInference";
 import FileManager from "../file-system/FileManager";
 import Lexer from "../parsers/Lexer";
 import Parser from "../parsers/Parser";
@@ -124,7 +127,7 @@ export default class MethodsVisitor
     const cppType = parseFunctionReturnType(type);
     const argsTmp = args.map((i) => {
       return {
-        type: parseType(i.declSpecifierSeq()),
+        type: parseSimpleType(i.declSpecifierSeq()),
         pointers: i
           .declarator()
           ?.pointerDeclarator()

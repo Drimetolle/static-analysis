@@ -13,7 +13,7 @@ import {
   StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
 import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
-import { parseType } from "../utils/TypeInference";
+import { parseSimpleType } from "../utils/TypeInference";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
@@ -39,7 +39,7 @@ export default class DeclarationVisitor {
       );
     }
 
-    const type = parseType(decSeq);
+    const type = parseSimpleType(decSeq);
     return new VariableDeclaration(
       variable,
       simpleDeclaration ?? DeclarationVisitor.getInitDeclarator(declarator),
@@ -134,7 +134,7 @@ export default class DeclarationVisitor {
       declarationSpecifier
     ).text;
 
-    const type = parseType(decSeq);
+    const type = parseSimpleType(decSeq);
 
     const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
       decSeq
@@ -148,7 +148,7 @@ export default class DeclarationVisitor {
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
   ): VariableDeclaration | null {
-    const type = parseType(ctx.declSpecifierSeq());
+    const type = parseSimpleType(ctx.declSpecifierSeq());
 
     const declaration = this.createParameterDeclaration(ctx);
 
