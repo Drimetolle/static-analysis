@@ -10,6 +10,10 @@ import {
 export function parseSimpleType(
   declaration?: DeclSpecifierSeqContext
 ): TypeSpecifier | undefined {
+  if (!declaration) {
+    return TypeSpecifier.VOID;
+  }
+
   return _parseType(declaration?.declSpecifier() ?? []);
 }
 
@@ -24,7 +28,9 @@ function _parseType(
 ): TypeSpecifier | undefined {
   const rawType = declarations
     .map((d) => d.text.toUpperCase())
-    .filter((d) => KeyWords[d as keyof typeof KeyWords])
+    .filter((d) => {
+      return KeyWords[d as keyof typeof KeyWords];
+    })
     .join("_");
 
   return TypeSpecifier[rawType as keyof typeof TypeSpecifier] ?? undefined;

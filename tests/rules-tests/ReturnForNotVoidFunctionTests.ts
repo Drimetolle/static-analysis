@@ -38,8 +38,7 @@ describe("Tests for rule ReturnForNotVoidFunction", () => {
     [`void main() {}`, undefined],
     [`void main() { return; }`, undefined],
     [`void main() { return 1; }`, undefined],
-    // TODO no function type specified
-    // [`main() {}`, undefined],
+    [`main() {}`, undefined],
   ])("Check return statement in non void function", async (code, expected) => {
     const result = rule.run(await createContext(code));
 
