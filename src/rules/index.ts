@@ -11,6 +11,7 @@ import StringInCStyle from "./variables/StringInCStyle";
 import ConstNames from "./linter/ConstNames";
 import UseConstInsteadMacro from "./variables/UseConstInsteadMacro";
 import UnnamedFunctionParameters from "./functions/UnnamedFunctionParameters";
+import ReturnForNotVoidFunction from "./functions/ReturnForNotVoidFunction";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -32,6 +33,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 11, rule: ConstNames },
   { id: 12, rule: UseConstInsteadMacro },
   { id: 13, rule: UnnamedFunctionParameters },
+  { id: 14, rule: ReturnForNotVoidFunction },
 ];
 
 export default AllRules;
