@@ -110,8 +110,6 @@ export default class DataFlowWalker
           this.topLevelFunctionStatement(functionDef, block);
         }
       }
-
-      this.cfg.createEdge(firstRay);
     }
   }
 
