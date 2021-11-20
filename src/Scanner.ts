@@ -24,7 +24,7 @@ const controller = container.resolve(Controller);
 const fileManager = new FileManager(process.env.SCAN_PATH as string);
 
 const issues = Array<JsonIssueScheme>();
-const promises = Array<Promise<void>>();
+const promises = Array<{ path: string; promise: Promise<void> }>();
 
 container.resolve(IssuesQueue).subscribe((i) => {
   const message = Formatter.formatMessageToJson(i);
@@ -34,30 +34,37 @@ container.resolve(IssuesQueue).subscribe((i) => {
 let totalFiles = 0;
 
 for (const { text, path } of fileManager.readCLikeFile()) {
-  promises.push(controller.runWithContent({ content: text, fileName: path }));
+  promises.push({
+    path,
+    promise: controller.runWithContent({ content: text, fileName: path }),
+  });
   totalFiles++;
 }
 
 let counterCompletedPromises = 0;
 
-for (const promise of promises) {
-  promise.then((_) => {
-    counterCompletedPromises++;
+for (const { path, promise } of promises) {
+  promise
+    .then((_) => {
+      counterCompletedPromises++;
 
-    if (counterCompletedPromises == totalFiles) {
-      const result: JsonReport = {
-        totalIssue: issues.length,
-        totalErrors: issues.filter((issue) => issue.level == "error").length,
-        totalWarnings: issues.filter((issue) => issue.level == "warning")
-          .length,
-        totalStyle: issues.filter((issue) => issue.level == "typo").length,
-        issues,
-      };
-      writeFile(
-        process.env.OUT_FILE as string,
-        JSON.stringify(result, null, 2),
-        () => console.log
-      );
-    }
-  });
+      if (counterCompletedPromises == totalFiles) {
+        const result: JsonReport = {
+          totalIssue: issues.length,
+          totalErrors: issues.filter((issue) => issue.level == "error").length,
+          totalWarnings: issues.filter((issue) => issue.level == "warning")
+            .length,
+          totalStyle: issues.filter((issue) => issue.level == "typo").length,
+          issues,
+        };
+        writeFile(
+          process.env.OUT_FILE as string,
+          JSON.stringify(result, null, 2),
+          () => console.log
+        );
+      }
+    })
+    .catch((error) => {
+      console.error(`Error in file: ${path}`, error);
+    });
 }
