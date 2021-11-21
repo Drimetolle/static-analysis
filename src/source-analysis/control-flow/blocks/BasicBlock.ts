@@ -2,7 +2,7 @@ import { ScopeNode } from "../../data-flow/ScopeTree";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export default abstract class BasicBlock {
-  public scope?: ScopeNode;
+  private _scope?: ScopeNode;
   public parent!: BasicBlock;
   public readonly ast: ParserRuleContext;
   public blocks: Array<BasicBlock>;
@@ -38,6 +38,15 @@ export default abstract class BasicBlock {
       depth: this.scopeDepth,
       blocks: this.blocks,
     };
+  }
+
+  get scope(): ScopeNode | undefined {
+    return this._scope;
+  }
+
+  trySetScope(value: ScopeNode | undefined): this {
+    this._scope ??= value;
+    return this;
   }
 
   // http://www.ucw.cz/~hubicka/papers/proj/node18.html#:~:text=A%20control%20flow%20graph%20is,one%20basic%20block%20to%20another.

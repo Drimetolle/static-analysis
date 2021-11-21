@@ -11,6 +11,7 @@ import {
   UnqualifiedIdContext,
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
+import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 
 class IdentifierListener implements CPP14ParserListener {
   private readonly wrapper: { variable?: string };

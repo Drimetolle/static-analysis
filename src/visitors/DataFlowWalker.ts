@@ -326,13 +326,14 @@ export default class DataFlowWalker
 
       if (declaration) {
         const newBlock = new LinearBlock(depth, declaration);
+        newBlock.trySetScope(node);
         block.createEdge(newBlock);
         block = newBlock;
-        newBlock.scope = node;
 
         this.declarationStatement(declaration, node);
       } else if (expressionStatement) {
         const newBlock = new LinearBlock(depth, expressionStatement);
+        newBlock.trySetScope(node);
         block.createEdge(newBlock);
         block = newBlock;
 
