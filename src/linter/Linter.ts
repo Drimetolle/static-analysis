@@ -42,7 +42,7 @@ export default class Linter {
       try {
         issues.push(...r.rule.run(context));
       } catch (error) {
-        console.error(error);
+        console.error(context.fileName, error);
       }
 
       if (issues.length > 0) {

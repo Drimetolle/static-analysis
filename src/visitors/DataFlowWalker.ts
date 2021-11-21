@@ -91,8 +91,6 @@ export default class DataFlowWalker
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      const firstRay = new LinearBlock(0, ctx);
-
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
         const functionDef = (i as DeclarationContext).functionDefinition();
@@ -199,7 +197,7 @@ export default class DataFlowWalker
   }
 
   private ifElseStatementVisitor(
-    ctx: ConditionContext | null,
+    ctx: ConditionContext | undefined,
     toNode: ScopeNode
   ) {
     if (!ctx) {
@@ -426,11 +424,7 @@ export default class DataFlowWalker
 
       for (const s of selectionSequence) {
         const childNode = this.createNode(node);
-        const newBlock = new IfBlock(
-          depth,
-          s.condition?.text,
-          s.condition as ParserRuleContext
-        );
+        const newBlock = new IfBlock(depth, s.condition, conditionStatement);
         newBlock.createEdge(outBlock);
         block.createEdge(newBlock);
 

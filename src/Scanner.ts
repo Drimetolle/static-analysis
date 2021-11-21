@@ -8,6 +8,7 @@ import Formatter, { JsonIssueScheme } from "./cli-engine/Formatter";
 import dotenv from "dotenv";
 import { writeFile } from "fs";
 import * as console from "console";
+import cliProgress from "cli-progress";
 
 interface JsonReport {
   totalIssue: number;
@@ -18,6 +19,10 @@ interface JsonReport {
 }
 
 dotenv.config({ path: ".env.local" });
+const singleBar = new cliProgress.SingleBar(
+  {},
+  cliProgress.Presets.shades_classic
+);
 InitContainer();
 
 const controller = container.resolve(Controller);
@@ -31,14 +36,19 @@ container.resolve(IssuesQueue).subscribe((i) => {
   issues.push(message);
 });
 
-let totalFiles = 0;
+let competedFiles = 0;
+const totalFiles = fileManager.cLikeFileCount();
+console.log("Analyzing files");
+singleBar.start(totalFiles, competedFiles);
 
 for (const { text, path } of fileManager.readCLikeFile()) {
   promises.push({
     path,
     promise: controller.runWithContent({ content: text, fileName: path }),
   });
-  totalFiles++;
+  competedFiles++;
+
+  singleBar.update(competedFiles);
 }
 
 let counterCompletedPromises = 0;
@@ -48,7 +58,8 @@ for (const { path, promise } of promises) {
     .then((_) => {
       counterCompletedPromises++;
 
-      if (counterCompletedPromises == totalFiles) {
+      if (counterCompletedPromises == competedFiles) {
+        singleBar.stop();
         const result: JsonReport = {
           totalIssue: issues.length,
           totalErrors: issues.filter((issue) => issue.level == "error").length,

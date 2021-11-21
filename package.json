@@ -32,6 +32,7 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.9.2",
     "@types/jest": "26.0.22",
     "@types/node": "12.12.0",
     "@types/ramda": "0.27.39",
@@ -39,6 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "antlr4ts-cli": "^0.5.0-alpha.4",
+    "cli-progress": "^3.9.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",

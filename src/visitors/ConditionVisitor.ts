@@ -12,7 +12,7 @@ import { isEmpty } from "ramda";
 
 export interface ConditionAndStatementContext {
   statementSequence: Array<StatementContext>;
-  condition: ConditionContext | null;
+  condition?: ConditionContext;
 }
 
 export interface ExpressionAndStatementContext {
@@ -59,7 +59,6 @@ export default class ConditionVisitor {
       });
 
       result.push({
-        condition: null,
         statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
           statements[1]
         ),
@@ -88,7 +87,6 @@ export default class ConditionVisitor {
         const elseBlock = ConditionVisitor.getElseStatement(elseStatement);
 
         result.push({
-          condition: null,
           statementSequence: this.blockVisitor.getBlockOfStatementsFromStatement(
             elseBlock
           ),

@@ -95,7 +95,7 @@ export default class CheckUserInput extends Rule {
           .map((variable) => {
             return {
               variable,
-              isCheck: block.ast.text.indexOf(variable),
+              isCheck: block.condition?.text.indexOf(variable) ?? false,
             };
           })
           .filter((variable) => !variable.isCheck);
