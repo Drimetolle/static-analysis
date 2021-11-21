@@ -34,6 +34,7 @@ export default abstract class BasicBlock {
 
   public toJSON(): unknown {
     return {
+      text: this.ast.text,
       name: this.name,
       depth: this.scopeDepth,
       blocks: this.blocks,
