@@ -1,7 +1,7 @@
 {
   "name": "static-analysis",
   "description": "Static analysis tool for c/c++",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "repository": "https://github.com/Drimetolle/static-analysis",
   "publisher": "FireStarter",
@@ -23,6 +23,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "vscode:publish": "vsce publish",
     "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./",
