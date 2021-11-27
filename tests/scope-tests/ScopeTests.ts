@@ -3,7 +3,7 @@ import DataFlowWalker from "../../src/visitors/DataFlowWalker";
 import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
 import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
 import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";

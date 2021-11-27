@@ -1,7 +1,7 @@
 ﻿import "reflect-metadata";
 import StringInCStyle from "../../src/rules/variables/StringInCStyle";
 import LinterContext from "../../src/linter/LinterContext";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import StartBlock from "../../src/source-analysis/control-flow/blocks/StartBlock";
 import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";
@@ -17,7 +17,7 @@ import {
   parameterWrapper,
   TestCase,
   whileWrapper,
-} from "../../utils-for-testing/CodeWrappers";
+} from "../utils/CodeWrappers";
 
 describe("Check declaration string in C like style", () => {
   const createContext = async (code: string) => {

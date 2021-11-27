@@ -1,6 +1,6 @@
 ﻿import "reflect-metadata";
 import LinterContext from "../../src/linter/LinterContext";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
 import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";

@@ -1,6 +1,6 @@
 ﻿import "reflect-metadata";
 import VariableNames from "../../src/rules/linter/VariableNames";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";
 import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
@@ -16,7 +16,7 @@ import {
   parameterWrapper,
   TestCase,
   whileWrapper,
-} from "../../utils-for-testing/CodeWrappers";
+} from "../utils/CodeWrappers";
 import { isEmpty } from "ramda";
 
 describe("Check variable names", () => {

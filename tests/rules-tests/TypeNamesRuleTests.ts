@@ -1,5 +1,5 @@
 ﻿import TypeNames from "../../src/rules/linter/TypeNames";
-import { createContextWithAst } from "../../utils-for-testing/LinterContextCreators";
+import { createContextWithAst } from "../utils/LinterContextCreators";
 
 type TestCase = Array<[string, unknown]>;
 

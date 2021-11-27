@@ -1,5 +1,5 @@
 ﻿import UnnamedFunctionParameters from "../../src/rules/functions/UnnamedFunctionParameters";
-import { createContextWithAst } from "../../utils-for-testing/LinterContextCreators";
+import { createContextWithAst } from "../utils/LinterContextCreators";
 
 describe("Check unnamed function parameters", () => {
   const functionWrapper = (code: string) => `main(${code}) {}`;

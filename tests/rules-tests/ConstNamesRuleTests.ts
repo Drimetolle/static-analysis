@@ -1,5 +1,5 @@
 ﻿import "reflect-metadata";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import DataFlowWalker from "../../src/visitors/DataFlowWalker";
 import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
@@ -15,7 +15,7 @@ import {
   globalWrapper,
   TestCase,
   whileWrapper,
-} from "../../utils-for-testing/CodeWrappers";
+} from "../utils/CodeWrappers";
 import ConstNames from "../../src/rules/linter/ConstNames";
 
 describe("Check const variable names", () => {
