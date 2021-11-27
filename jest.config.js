@@ -8,5 +8,6 @@ module.exports = {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
   testPathIgnorePatterns: ["tests/utils/"],
+  collectCoverageFrom: ["src/**/*.{js,jsx,ts}"],
   coveragePathIgnorePatterns: ["src/grammar/"],
 };
