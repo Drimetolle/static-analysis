@@ -17,7 +17,13 @@ import { difference, intersection, isEmpty, not } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ExpressionVisitor from "../../visitors/ExpressionVisitor";
 
-interface VarsAndScope {
+enum VariableState {
+  Checked,
+  UnChecked,
+  NotUsed,
+}
+
+interface VariableFilledFromUser {
   variables: Array<string>;
   scope: ScopeNode;
   ast: ParserRuleContext;
@@ -60,7 +66,7 @@ class FunctionCallListener implements CPP14ParserListener {
 export default class CheckUserInput extends Rule {
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
-    const vars = new Array<VarsAndScope>();
+    const vars = new Array<VariableFilledFromUser>();
 
     for (const block of CheckUserInput.visitLinearBlocks(context.cfg)) {
       if (block.ast.text.indexOf("scanf") >= 0) {
@@ -104,8 +110,8 @@ export default class CheckUserInput extends Rule {
 
   private static checkVariableUseInStatement(
     ast: ParserRuleContext,
-    vars: Array<VarsAndScope>
-  ): Array<{ vars: VarsAndScope; identifiers: Array<string> }> {
+    vars: Array<VariableFilledFromUser>
+  ): Array<{ vars: VariableFilledFromUser; identifiers: Array<string> }> {
     const result = new Array<any>();
     const visitor = new ExpressionVisitor();
 
