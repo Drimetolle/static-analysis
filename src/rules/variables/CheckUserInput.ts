@@ -7,11 +7,21 @@ import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import {
+  ExpressionStatementContext,
   InitializerListContext,
   UnqualifiedIdContext,
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
-import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
+import { ScopeNode } from "../../source-analysis/data-flow/ScopeTree";
+import { difference, intersection, isEmpty, not } from "ramda";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import ExpressionVisitor from "../../visitors/ExpressionVisitor";
+
+interface VarsAndScope {
+  variables: Array<string>;
+  scope: ScopeNode;
+  ast: ParserRuleContext;
+}
 
 class IdentifierListener implements CPP14ParserListener {
   private readonly wrapper: { variable?: string };
@@ -50,6 +60,7 @@ class FunctionCallListener implements CPP14ParserListener {
 export default class CheckUserInput extends Rule {
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
+    const vars = new Array<VarsAndScope>();
 
     for (const block of CheckUserInput.visitLinearBlocks(context.cfg)) {
       if (block.ast.text.indexOf("scanf") >= 0) {
@@ -57,22 +68,67 @@ export default class CheckUserInput extends Rule {
         const listener = new FunctionCallListener(variables);
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
 
-        const uncheckedVars = CheckUserInput.clearCheckedVariables(
-          CheckUserInput.walkByCfgToCheckUserInput(block, variables)
+        if (block.scope) {
+          vars.push({ variables, scope: block.scope, ast: block.ast });
+        }
+      } else {
+        const usedVariables = CheckUserInput.checkVariableUseInStatement(
+          block.ast,
+          vars
         );
+        usedVariables.map((variable) => variable.vars);
 
-        reports.push(
-          ...uncheckedVars.map(
-            (variable) =>
-              new Report(
-                `Unchecked user input in variable: ${variable}.`,
-                block.ast
-              )
-          )
-        );
+        for (const variable of usedVariables) {
+          const uncheckedVariables = vars[vars.indexOf(variable.vars)];
+          uncheckedVariables.variables = difference(
+            uncheckedVariables.variables,
+            variable.identifiers
+          );
+
+          vars[vars.indexOf(variable.vars)] = uncheckedVariables;
+        }
       }
     }
+
+    for (const variable of vars) {
+      reports.push(
+        ...variable.variables.map(
+          (id) =>
+            new Report(`Unchecked user input in variable: ${id}.`, variable.ast)
+        )
+      );
+    }
+
     return reports;
+  }
+
+  private static checkVariableUseInStatement(
+    ast: ParserRuleContext,
+    vars: Array<VarsAndScope>
+  ): Array<{ vars: VarsAndScope; identifiers: Array<string> }> {
+    const result = new Array<any>();
+    const visitor = new ExpressionVisitor();
+
+    if (isEmpty(vars)) {
+      return [];
+    }
+
+    if (ast instanceof ExpressionStatementContext) {
+      const parameters = visitor.tryGetFunctionCallExpression(ast)?.parameters;
+
+      for (const variable of vars) {
+        const usedVariables = intersection(
+          variable.variables,
+          parameters ?? []
+        );
+
+        if (not(isEmpty(usedVariables))) {
+          result.push({ vars: variable, identifiers: usedVariables });
+        }
+      }
+    }
+
+    return result;
   }
 
   private static clearCheckedVariables(
