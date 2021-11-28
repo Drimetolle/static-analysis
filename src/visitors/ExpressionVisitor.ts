@@ -103,6 +103,40 @@ export default class ExpressionVisitor {
     }
   }
 
+  public tryGetAssignmentExpression(
+    expressionStatement: ExpressionStatementContext
+  ): FunctionCallExpression | undefined {
+    const expression = expressionStatement.expression();
+    if (!expression) {
+      return;
+    }
+
+    if (!this.isSingleExpression(expression)) {
+      return;
+    }
+
+    const postfixExpression = this.walkToPostfixExpression(expression);
+    const expressionList = postfixExpression
+      ?.expressionList()
+      ?.initializerList()
+      .initializerClause();
+
+    if (
+      postfixExpression?.LeftParen() != null &&
+      expressionList != null &&
+      postfixExpression?.RightParen() != null
+    ) {
+      return {
+        sourceExpression: postfixExpression,
+        functionName: postfixExpression.postfixExpression()!.text,
+        parameters: expressionList
+          .map((parameter) => this.walkToIdentifier(parameter))
+          .filter((parameter) => !isNil(parameter))
+          .map((terminalNode) => terminalNode!.text),
+      };
+    }
+  }
+
   public isAssignmentExpression(
     expressionStatement: ExpressionStatementContext
   ): boolean {

@@ -13,20 +13,30 @@ import {
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
 import { ScopeNode } from "../../source-analysis/data-flow/ScopeTree";
-import { difference, intersection, isEmpty, not } from "ramda";
+import { difference, intersection, isEmpty, map, not } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ExpressionVisitor from "../../visitors/ExpressionVisitor";
 
 enum VariableState {
-  Checked,
-  UnChecked,
-  NotUsed,
+  Checked = "Checked",
+  Unchecked = "Unchecked",
+  NotUsed = "NotUsed",
+}
+
+interface Variable {
+  readonly name: string;
+  state: VariableState;
 }
 
 interface VariableFilledFromUser {
-  variables: Array<string>;
+  variables: Array<Variable>;
   scope: ScopeNode;
   ast: ParserRuleContext;
+}
+
+interface UsedVariables {
+  vars: VariableFilledFromUser;
+  identifiers: Array<string>;
 }
 
 class IdentifierListener implements CPP14ParserListener {
@@ -75,44 +85,41 @@ export default class CheckUserInput extends Rule {
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
 
         if (block.scope) {
-          vars.push({ variables, scope: block.scope, ast: block.ast });
+          vars.push({
+            variables: variables.map((variable) => {
+              return { name: variable, state: VariableState.NotUsed };
+            }),
+            scope: block.scope,
+            ast: block.ast,
+          });
         }
       } else {
-        const usedVariables = CheckUserInput.checkVariableUseInStatement(
-          block.ast,
-          vars
-        );
-        usedVariables.map((variable) => variable.vars);
-
-        for (const variable of usedVariables) {
-          const uncheckedVariables = vars[vars.indexOf(variable.vars)];
-          uncheckedVariables.variables = difference(
-            uncheckedVariables.variables,
-            variable.identifiers
-          );
-
-          vars[vars.indexOf(variable.vars)] = uncheckedVariables;
-        }
+        CheckUserInput.setUncheckedIfVariableUseInStatement(block.ast, vars);
       }
     }
 
     for (const variable of vars) {
       reports.push(
-        ...variable.variables.map(
-          (id) =>
-            new Report(`Unchecked user input in variable: ${id}.`, variable.ast)
-        )
+        ...variable.variables
+          .filter((v) => v.state == VariableState.Unchecked)
+          .map(
+            (id) =>
+              new Report(
+                `Unchecked user input in variable: ${id.name}.`,
+                variable.ast
+              )
+          )
       );
     }
 
     return reports;
   }
 
-  private static checkVariableUseInStatement(
+  private static setUncheckedIfVariableUseInStatement(
     ast: ParserRuleContext,
     vars: Array<VariableFilledFromUser>
-  ): Array<{ vars: VariableFilledFromUser; identifiers: Array<string> }> {
-    const result = new Array<any>();
+  ): Array<Variable> {
+    const result = new Array<Variable>();
     const visitor = new ExpressionVisitor();
 
     if (isEmpty(vars)) {
@@ -120,16 +127,18 @@ export default class CheckUserInput extends Rule {
     }
 
     if (ast instanceof ExpressionStatementContext) {
-      const parameters = visitor.tryGetFunctionCallExpression(ast)?.parameters;
+      const parameters =
+        visitor.tryGetFunctionCallExpression(ast)?.parameters ??
+        visitor.tryGetAssignmentExpression(ast)?.parameters ??
+        [];
 
-      for (const variable of vars) {
-        const usedVariables = intersection(
-          variable.variables,
-          parameters ?? []
-        );
-
-        if (not(isEmpty(usedVariables))) {
-          result.push({ vars: variable, identifiers: usedVariables });
+      for (const variableWrapper of vars) {
+        for (const variable of variableWrapper.variables) {
+          if (parameters?.indexOf(variable.name) >= 0) {
+            variable.state = VariableState.Checked;
+            variableWrapper.ast = ast;
+            result.push(variable);
+          }
         }
       }
     }
