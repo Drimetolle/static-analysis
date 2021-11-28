@@ -7,13 +7,14 @@ import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import {
+  ConditionContext,
   ExpressionStatementContext,
   InitializerListContext,
   UnqualifiedIdContext,
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
 import { ScopeNode } from "../../source-analysis/data-flow/ScopeTree";
-import { difference, intersection, isEmpty, map, not } from "ramda";
+import { isEmpty } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ExpressionVisitor from "../../visitors/ExpressionVisitor";
 
@@ -23,9 +24,31 @@ enum VariableState {
   NotUsed = "NotUsed",
 }
 
-interface Variable {
+class Variable {
   readonly name: string;
-  state: VariableState;
+  private _state: VariableState;
+
+  get state(): VariableState {
+    return this._state;
+  }
+
+  set state(value: VariableState) {
+    switch (this._state) {
+      case VariableState.Checked:
+        break;
+      case VariableState.Unchecked:
+        this._state = value;
+        break;
+      case VariableState.NotUsed:
+        this._state = value;
+        break;
+    }
+  }
+
+  constructor(name: string) {
+    this.name = name;
+    this._state = VariableState.NotUsed;
+  }
 }
 
 interface VariableFilledFromUser {
@@ -86,12 +109,23 @@ export default class CheckUserInput extends Rule {
 
         if (block.scope) {
           vars.push({
-            variables: variables.map((variable) => {
-              return { name: variable, state: VariableState.NotUsed };
-            }),
+            variables: variables.map((variable) => new Variable(variable)),
             scope: block.scope,
             ast: block.ast,
           });
+        }
+      } else if (block instanceof IfBlock) {
+        const visitor = new ExpressionVisitor();
+        const checkedVariables = visitor.getAllUsedVariablesInExpression(
+          (block.condition as ConditionContext)?.expression()
+        );
+
+        for (const variableWrapper of vars) {
+          for (const variable of variableWrapper.variables) {
+            if (checkedVariables.indexOf(variable.name) >= 0) {
+              variable.state = VariableState.Checked;
+            }
+          }
         }
       } else {
         CheckUserInput.setUncheckedIfVariableUseInStatement(block.ast, vars);
@@ -128,9 +162,9 @@ export default class CheckUserInput extends Rule {
 
     if (ast instanceof ExpressionStatementContext) {
       const parameters =
-        visitor.tryGetFunctionCallExpression(ast)?.parameters ??
-        visitor.tryGetAssignmentExpression(ast)?.parameters ??
-        [];
+        visitor.tryGetFunctionCallExpression(ast)?.parameters ?? [];
+
+      const assigmentExpressions = visitor.tryGetAssignmentExpression(ast);
 
       for (const variableWrapper of vars) {
         for (const variable of variableWrapper.variables) {
@@ -139,44 +173,19 @@ export default class CheckUserInput extends Rule {
             variableWrapper.ast = ast;
             result.push(variable);
           }
+
+          for (const assigment of assigmentExpressions) {
+            if (assigment.assigmentVariable == variable.name) {
+              variable.state = VariableState.Checked;
+            } else if (
+              assigment.usedVariablesInExpression.indexOf(variable.name) >= 0
+            ) {
+              variable.state = VariableState.Unchecked;
+              variableWrapper.ast = assigment.sourceExpression;
+            }
+          }
         }
       }
-    }
-
-    return result;
-  }
-
-  private static clearCheckedVariables(
-    variables: Map<string, boolean>
-  ): Array<string> {
-    return new Array(...variables.entries())
-      .filter((variable) => !variable[1])
-      .map((variable) => variable[0]);
-  }
-
-  private static walkByCfgToCheckUserInput(
-    cfg: BasicBlock,
-    variables: Array<string>,
-    result: Map<string, boolean> = new Map<string, boolean>(
-      variables.map((variable) => [variable, false])
-    )
-  ): any {
-    for (const block of cfg.blocks) {
-      if (block instanceof IfBlock) {
-        const checkedVars = variables
-          .map((variable) => {
-            return {
-              variable,
-              isCheck: block.condition?.text.indexOf(variable) ?? false,
-            };
-          })
-          .filter((variable) => !variable.isCheck);
-
-        for (const { variable } of checkedVars) {
-          result.set(variable, true);
-        }
-      }
-      CheckUserInput.walkByCfgToCheckUserInput(block, variables);
     }
 
     return result;
@@ -190,6 +199,10 @@ export default class CheckUserInput extends Rule {
       if (block instanceof LinearBlock) {
         result.push(block);
       }
+      if (block instanceof IfBlock) {
+        result.push(block);
+      }
+
       CheckUserInput.visitLinearBlocks(block, result);
     }
 

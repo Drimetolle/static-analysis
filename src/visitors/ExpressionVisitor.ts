@@ -25,11 +25,18 @@ import {
 import { isNil } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { constructor } from "tsyringe/dist/typings/types";
 
 export interface FunctionCallExpression {
   readonly sourceExpression: PostfixExpressionContext;
   readonly functionName: string;
   readonly parameters: Array<string>;
+}
+
+export interface AssigmentExpression {
+  readonly sourceExpression: AssignmentExpressionContext;
+  readonly assigmentVariable: string;
+  readonly usedVariablesInExpression: Array<string>;
 }
 
 @scoped(Lifecycle.ContainerScoped)
@@ -105,36 +112,45 @@ export default class ExpressionVisitor {
 
   public tryGetAssignmentExpression(
     expressionStatement: ExpressionStatementContext
-  ): FunctionCallExpression | undefined {
+  ): Array<AssigmentExpression> {
+    const result = new Array<AssigmentExpression>();
     const expression = expressionStatement.expression();
     if (!expression) {
-      return;
+      return result;
     }
 
-    if (!this.isSingleExpression(expression)) {
-      return;
+    const assigmentExpression = expression.assignmentExpression() ?? [];
+
+    for (const assigment of assigmentExpression) {
+      if (assigment.assignmentOperator()) {
+        const usedIds = this.walkToIdentifier(assigment.initializerClause()!)
+          ?.text;
+        result.push({
+          assigmentVariable: this.walkToIdentifier(assigment)!.text,
+          sourceExpression: assigment,
+          usedVariablesInExpression: usedIds != null ? [usedIds] : [],
+        });
+      }
     }
 
-    const postfixExpression = this.walkToPostfixExpression(expression);
-    const expressionList = postfixExpression
-      ?.expressionList()
-      ?.initializerList()
-      .initializerClause();
+    return result;
+  }
 
-    if (
-      postfixExpression?.LeftParen() != null &&
-      expressionList != null &&
-      postfixExpression?.RightParen() != null
-    ) {
-      return {
-        sourceExpression: postfixExpression,
-        functionName: postfixExpression.postfixExpression()!.text,
-        parameters: expressionList
-          .map((parameter) => this.walkToIdentifier(parameter))
-          .filter((parameter) => !isNil(parameter))
-          .map((terminalNode) => terminalNode!.text),
-      };
+  public getAllUsedVariablesInExpression(
+    expression?: ExpressionContext
+  ): Array<string> {
+    const result = new Array<string>();
+    if (!expression) {
+      return result;
     }
+    // Todo walk to search all id
+    const onlyFirstId = this.walkToIdentifier(expression);
+
+    if (onlyFirstId) {
+      result.push(onlyFirstId.text);
+    }
+
+    return result;
   }
 
   public isAssignmentExpression(
