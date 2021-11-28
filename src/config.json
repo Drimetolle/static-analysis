@@ -11,5 +11,6 @@
   "UseConstInsteadMacro": 3,
   "UnnamedFunctionParameters": 1,
   "ReturnForNotVoidFunction": 1,
-  "CheckUserInput": 2
+  "CheckUserInput": 2,
+  "ToNestedCode": 1
 }

@@ -13,6 +13,7 @@ import UseConstInsteadMacro from "./variables/UseConstInsteadMacro";
 import UnnamedFunctionParameters from "./functions/UnnamedFunctionParameters";
 import ReturnForNotVoidFunction from "./functions/ReturnForNotVoidFunction";
 import CheckUserInput from "./variables/CheckUserInput";
+import ToNestedCode from "./linter/ToNestedCode";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -36,6 +37,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 13, rule: UnnamedFunctionParameters },
   { id: 14, rule: ReturnForNotVoidFunction },
   { id: 15, rule: CheckUserInput },
+  { id: 15, rule: ToNestedCode },
 ];
 
 export default AllRules;
