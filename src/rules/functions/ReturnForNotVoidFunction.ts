@@ -30,7 +30,7 @@ export default class ReturnForNotVoidFunction extends Rule {
         result.push(
           new Report(
             `Function: ${functionBlock.functionDeclaration} doesn't have any return statement or have empty return statement.`,
-            functionBlock.ast
+            functionBlock.functionDeclarationNodes
           )
         );
       }

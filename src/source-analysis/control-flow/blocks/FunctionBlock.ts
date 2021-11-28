@@ -5,7 +5,9 @@ import { getOriginalTextFromAst } from "../../../utils/Utils";
 import { TypeSpecifier } from "../../data-objects/LanguageKeyWords";
 
 export default class FunctionBlock extends BasicBlock {
-  get functionDeclaration(): any {
+  private readonly _type?: TypeSpecifier;
+
+  get functionDeclaration(): string {
     const functionDeclaration = this.ast as FunctionDefinitionContext;
     const declarationSpecifiers = functionDeclaration.declSpecifierSeq();
     const functionDeclarator = functionDeclaration.declarator();
@@ -16,10 +18,20 @@ export default class FunctionBlock extends BasicBlock {
       getOriginalTextFromAst(functionDeclarator)
     );
   }
+
+  get functionDeclarationNodes(): Array<ParserRuleContext> {
+    const functionDeclaration = this.ast as FunctionDefinitionContext;
+    const declarationSpecifiers = functionDeclaration.declSpecifierSeq();
+    const functionDeclarator = functionDeclaration.declarator();
+
+    return [declarationSpecifiers, functionDeclarator].filter(
+      (node) => node != undefined
+    ) as Array<ParserRuleContext>;
+  }
+
   get type(): TypeSpecifier | undefined {
     return this._type;
   }
-  private readonly _type?: TypeSpecifier;
 
   constructor(
     scopeDepth: number,

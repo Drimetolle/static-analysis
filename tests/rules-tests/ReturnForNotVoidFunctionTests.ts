@@ -32,8 +32,8 @@ describe("Tests for rule ReturnForNotVoidFunction", () => {
 
   test.each([
     [`int main() { return 1; }`, undefined],
-    [`int main() { return; }`, "intmain(){return;}"],
-    [`int main() {}`, "intmain(){}"],
+    [`int main() { return; }`, "int main()"],
+    [`int main() {}`, "int main()"],
     [`SomeType main() { return var; }`, undefined],
     [`void main() {}`, undefined],
     [`void main() { return; }`, undefined],
@@ -42,6 +42,11 @@ describe("Tests for rule ReturnForNotVoidFunction", () => {
   ])("Check return statement in non void function", async (code, expected) => {
     const result = rule.run(await createContext(code));
 
-    expect(result.pop()?.node.text).toBe(expected);
+    expect(
+      result
+        .pop()
+        ?.nodes.map((node) => node.text)
+        .join(" ")
+    ).toBe(expected);
   });
 });
