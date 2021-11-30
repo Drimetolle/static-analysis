@@ -12,5 +12,6 @@
   "UnnamedFunctionParameters": 1,
   "ReturnForNotVoidFunction": 1,
   "CheckUserInput": 2,
-  "ToNestedCode": 1
+  "ToNestedCode": 1,
+  "CognitiveComplexity": 2
 }
