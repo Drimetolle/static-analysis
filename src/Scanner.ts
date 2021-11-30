@@ -62,10 +62,11 @@ for (const { path, promise } of promises) {
         singleBar.stop();
         const result: JsonReport = {
           totalIssue: issues.length,
-          totalErrors: issues.filter((issue) => issue.level == "error").length,
-          totalWarnings: issues.filter((issue) => issue.level == "warning")
+          totalErrors: issues.filter((issue) => issue.level == "Error").length,
+          totalWarnings: issues.filter((issue) => issue.level == "Warning")
             .length,
-          totalStyle: issues.filter((issue) => issue.level == "typo").length,
+          totalStyle: issues.filter((issue) => issue.level == "Information")
+            .length,
           issues,
         };
         writeFile(
