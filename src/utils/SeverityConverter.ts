@@ -4,13 +4,13 @@ import { DiagnosticSeverity } from "vscode";
 export default class SeverityConverter {
   static convert(severity: Severity): DiagnosticSeverity {
     switch (severity) {
-      case Severity.Skip:
+      case Severity.Off:
         return DiagnosticSeverity.Hint;
       case Severity.Warning:
         return DiagnosticSeverity.Warning;
       case Severity.Error:
         return DiagnosticSeverity.Error;
-      case Severity.Typo:
+      case Severity.Information:
         return DiagnosticSeverity.Information;
     }
   }
