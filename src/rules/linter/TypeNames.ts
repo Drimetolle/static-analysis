@@ -72,4 +72,8 @@ export default class TypeNames extends Rule {
 
     return reports;
   }
+
+  isValidScheme(config: any): boolean {
+    return true;
+  }
 }

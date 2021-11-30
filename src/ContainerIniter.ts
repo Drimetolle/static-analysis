@@ -6,8 +6,11 @@ import FileManager from "./file-system/FileManager";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import config from "./config.json";
 import { intersection } from "ramda";
+import ConfigurationProvider from "./utils/configuration/ConfigurationProvider";
 
 export default function InitContainer() {
+  const provider = container.resolve(ConfigurationProvider);
+
   const neededRulesNames = intersection(
     AllRules.map((rule) => rule.rule.name),
     Object.keys(config)
@@ -17,9 +20,7 @@ export default function InitContainer() {
   );
 
   container.register<Linter>(Linter, {
-    useValue: new Linter(neededRules, {
-      rules: config,
-    }),
+    useValue: new Linter(provider.parse(config, neededRules)),
   });
   container.register<FileManager>(FileManager, {
     useValue: new FileManager(),

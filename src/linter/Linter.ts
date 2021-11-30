@@ -4,16 +4,16 @@ import LinterContext from "./LinterContext";
 import IssuesQueue from "./issue/IssuesQueue";
 import CodeIssue from "./issue/CodeIssue";
 import PositionInFile from "../source-analysis/data-objects/PositionInFile";
-import LinterConfig from "./LinterConfig";
-import RuleResolverHelper from "../utils/RuleResolverHelper";
 import { Interval } from "antlr4ts/misc";
-import { AnalyzerRule } from "../rules";
 import * as console from "console";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { RuleConfig } from "./LinterConfig";
+import { head } from "ramda";
 
-interface AnalyzerRuleInternal {
+export interface AnalyzerRuleInternal {
   id: string | number;
   rule: Rule;
+  config: RuleConfig;
 }
 
 @singleton()
@@ -21,18 +21,10 @@ interface AnalyzerRuleInternal {
 export default class Linter {
   readonly rules: Array<AnalyzerRuleInternal>;
   private readonly issueService: IssuesQueue;
-  private readonly ruleResolver: RuleResolverHelper;
 
-  constructor(
-    rules: Array<AnalyzerRule>,
-    config: LinterConfig,
-    issueService?: IssuesQueue
-  ) {
-    this.rules = rules.map((analyzerRule) => {
-      return { id: analyzerRule.id, rule: new analyzerRule.rule() };
-    });
+  constructor(rules: Array<AnalyzerRuleInternal>, issueService?: IssuesQueue) {
+    this.rules = rules;
     this.issueService = issueService!;
-    this.ruleResolver = new RuleResolverHelper(config);
   }
 
   start(context: LinterContext): void {
@@ -55,7 +47,7 @@ export default class Linter {
               (issue.node.start?.charPositionInLine ?? 0) + 1
             ),
             context.fileName,
-            this.ruleResolver.getRuleSeverity(r.rule.constructor.name),
+            head(r.config),
             Linter.mergeNodeToText(issue.nodes)
           )
         );

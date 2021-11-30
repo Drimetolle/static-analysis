@@ -1,7 +1,9 @@
 import { Severity } from "./issue/Severity";
 
-type Rule = { [id in string]: Severity };
+export type RuleConfig = [Severity, any?];
+
+export type RuleSchema = { [id in string]: RuleConfig };
 
 export default interface LinterConfig {
-  readonly rules: Rule;
+  readonly rules: RuleSchema;
 }

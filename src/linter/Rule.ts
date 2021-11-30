@@ -3,4 +3,8 @@ import Report from "./issue/Report";
 
 export default abstract class Rule {
   abstract run(context: LinterContext): Array<Report>;
+
+  isValidScheme(config: any): boolean {
+    return true;
+  }
 }

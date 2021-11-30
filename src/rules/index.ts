@@ -37,7 +37,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 13, rule: UnnamedFunctionParameters },
   { id: 14, rule: ReturnForNotVoidFunction },
   { id: 15, rule: CheckUserInput },
-  { id: 15, rule: ToNestedCode },
+  { id: 16, rule: ToNestedCode },
 ];
 
 export default AllRules;
