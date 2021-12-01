@@ -15,20 +15,22 @@ export enum CodeStyles {
   UpperPascalCase,
 }
 
+export type CodeStylesStrings = keyof typeof CodeStyles;
+
 export default class CodeStyleStrategy {
   public static getCodeStyleChecker(
-    style: CodeStyles
+    style: CodeStylesStrings
   ): (id: string) => boolean {
     switch (style) {
-      case CodeStyles.CamelCase:
+      case "CamelCase":
         return CodeStyleStrategy.isCamelCase;
-      case CodeStyles.UpperSnakeCase:
+      case "UpperSnakeCase":
         return CodeStyleStrategy.isUpperSnakeCase;
-      case CodeStyles.PascalCase:
+      case "PascalCase":
         return CodeStyleStrategy.isPascalCase;
-      case CodeStyles.SnakeCase:
-      case CodeStyles.UpperCamelCase:
-      case CodeStyles.UpperPascalCase:
+      case "UpperCamelCase":
+      case "SnakeCase":
+      case "UpperPascalCase":
         throw new Error(`Not implemented code style: ${style}`);
     }
   }

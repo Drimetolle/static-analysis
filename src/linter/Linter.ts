@@ -28,11 +28,12 @@ export default class Linter {
   }
 
   start(context: LinterContext): void {
-    this.rules.forEach((r) => {
+    this.rules.forEach((ruleContext) => {
       const issues = [];
 
       try {
-        issues.push(...r.rule.run(context));
+        context.config = ruleContext.config[1];
+        issues.push(...ruleContext.rule.run(context));
       } catch (error) {
         console.error(context.fileName, error);
       }
@@ -40,14 +41,14 @@ export default class Linter {
       for (const issue of issues) {
         this.issueService.add(
           new CodeIssue(
-            r.id.toString(),
+            ruleContext.id.toString(),
             issue.description,
             new PositionInFile(
               issue.node.start?.line ?? 0,
               (issue.node.start?.charPositionInLine ?? 0) + 1
             ),
             context.fileName,
-            head(r.config),
+            head(ruleContext.config),
             Linter.mergeNodeToText(issue.nodes)
           )
         );

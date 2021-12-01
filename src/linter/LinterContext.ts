@@ -9,6 +9,15 @@ export default class LinterContext {
   readonly scope: ScopeTree;
   readonly cfg: StartBlock;
   readonly methods: DeclaredMethods;
+  private _config?: any;
+
+  getConfig<TConfig>(): TConfig {
+    return this._config;
+  }
+
+  set config(value: any) {
+    this._config ??= value;
+  }
 
   constructor(
     fileName: string,
