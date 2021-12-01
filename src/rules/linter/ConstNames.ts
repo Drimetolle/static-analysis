@@ -9,6 +9,8 @@ import {
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import { head } from "ramda";
 import { DeclarationSpecifier } from "../../source-analysis/data-objects/DeclarationSpecifier";
+import CodeStyleStrategy, { stylePropertyInSchema } from "./CodeStyleStrategy";
+import DefaultCodeStyleConfig from "./DefaultCodeStyleConfig";
 
 class ConstVariableListener implements CPP14ParserListener {
   private readonly variables;
@@ -61,23 +63,31 @@ class ConstVariableListener implements CPP14ParserListener {
   }
  */
 export default class ConstNames extends Rule {
-  private static isUpperSnakeCase(str: string): boolean {
-    return /^[A-Z]+(?:_[A-Z]+)*$/.test(str);
+  constructor() {
+    super();
+    this.Schema = {
+      type: "object",
+      properties: {
+        ...stylePropertyInSchema,
+      },
+    };
   }
 
   run(context: LinterContext): Array<Report> {
+    const config = context.getConfig<DefaultCodeStyleConfig>();
+    const checker = CodeStyleStrategy.getCodeStyleChecker(config.style);
     const reports = new Array<Report>();
 
     for (const { data } of context.scope.toArray()) {
       for (const variable of data.declaredVariables.variables) {
         if (
-          !ConstNames.isUpperSnakeCase(variable.variableName) &&
+          !checker(variable.variableName) &&
           variable.specifiers.has(DeclarationSpecifier.Const) &&
           !variable.isParameter
         ) {
           reports.push(
             new Report(
-              `Const '${variable.variableName}' is not in upper shake case.`,
+              `Const '${variable.variableName}' is not in ${config.style}.`,
               variable.declaration
             )
           );

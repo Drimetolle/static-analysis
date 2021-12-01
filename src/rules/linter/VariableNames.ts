@@ -1,7 +1,8 @@
 import Rule from "../../linter/Rule";
 import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
-import { stylePropertyInSchema } from "./CodeStyleStrategy";
+import CodeStyleStrategy, { stylePropertyInSchema } from "./CodeStyleStrategy";
+import DefaultCodeStyleConfig from "./DefaultCodeStyleConfig";
 
 /**
  * @example
@@ -32,12 +33,10 @@ export default class VariableNames extends Rule {
     };
   }
 
-  isCamelCase(str: string) {
-    return /^[a-z]+([A-Z][a-z]*)*$/.test(str);
-  }
-
   run(context: LinterContext): Array<Report> {
+    const config = context.getConfig<DefaultCodeStyleConfig>();
     const reports = new Array<Report>();
+    const checker = CodeStyleStrategy.getCodeStyleChecker(config.style);
 
     const allLocalVariables = context.scope.getRoot.children.flatMap(
       (children) => context.scope.toArray(children)
@@ -45,10 +44,10 @@ export default class VariableNames extends Rule {
 
     for (const node of allLocalVariables) {
       for (const variable of node.data.declaredVariables.variables) {
-        if (!this.isCamelCase(variable.variableName)) {
+        if (!checker(variable.variableName)) {
           reports.push(
             new Report(
-              `Identifier '${variable.variableName}' is not in camel case.`,
+              `Identifier '${variable.variableName}' is not in ${config.style}.`,
               variable.declaration
             )
           );

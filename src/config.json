@@ -3,13 +3,17 @@
   "VariableNames": ["Information", {
     "style": "CamelCase"
   }],
-  "TypeNames": "Information",
+  "TypeNames": ["Information", {
+    "style": "PascalCase"
+  }],
   "CheckPrivateFieldName": "Warning",
   "InfinityLoopTruePredicate": "Warning",
   "ShortGlobalVariable": "Warning",
   "UnsafeFunctions": "Error",
   "StringInCStyle": "Warning",
-  "ConstNames": "Information",
+  "ConstNames": ["Information", {
+    "style": "UpperSnakeCase"
+  }],
   "UseConstInsteadMacro": "Warning",
   "UnnamedFunctionParameters": "Warning",
   "ReturnForNotVoidFunction": "Warning",
