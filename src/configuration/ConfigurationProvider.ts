@@ -1,9 +1,11 @@
 ﻿import { autoInjectable, injectable, Lifecycle, scoped } from "tsyringe";
-import { RuleSchema } from "../../linter/LinterConfig";
-import { isSeverityString, Severity } from "../../linter/issue/Severity";
+import { RuleConfig, RuleSchema } from "../linter/LinterConfig";
+import { isSeverityString, Severity } from "../linter/issue/Severity";
 import { head } from "ramda";
-import { AnalyzerRule } from "../../rules";
-import { AnalyzerRuleInternal } from "../../linter/Linter";
+import { AnalyzerRule } from "../rules";
+import { AnalyzerRuleInternal } from "../linter/Linter";
+import Ajv from "ajv";
+import { Json } from "../linter/Rule";
 
 @injectable()
 @scoped(Lifecycle.ContainerScoped)
@@ -34,8 +36,19 @@ export default class ConfigurationProvider {
       const rule = new analyzerRule.rule();
       const ruleName = rule.constructor.name;
 
-      if (!rule.isValidScheme(configsByRuleName[ruleName])) {
-        throw new Error(`Invalid rule scheme for rule: ${ruleName}.`);
+      const validation = ConfigurationProvider.isValidScheme(
+        rule.Schema,
+        configsByRuleName[ruleName]
+      );
+
+      if (!validation.valid) {
+        throw new Error(
+          `Invalid rule scheme for rule: ${ruleName}. Errors:\n ${JSON.stringify(
+            validation.errors,
+            null,
+            2
+          )}`
+        );
       }
 
       return {
@@ -44,5 +57,14 @@ export default class ConfigurationProvider {
         config: configsByRuleName[ruleName],
       };
     });
+  }
+
+  private static isValidScheme(schema: Json, [_, config]: RuleConfig) {
+    const ajv = new Ajv();
+
+    const validate = ajv.compile(schema);
+    const valid = validate(config);
+
+    return { valid, errors: validate.errors };
   }
 }

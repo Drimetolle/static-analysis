@@ -1,6 +1,8 @@
 ﻿{
   "CheckScope": "Warning",
-  "VariableNames": "Information",
+  "VariableNames": ["Information", {
+    "style": "camelCase"
+  }],
   "TypeNames": "Information",
   "CheckPrivateFieldName": "Warning",
   "InfinityLoopTruePredicate": "Warning",

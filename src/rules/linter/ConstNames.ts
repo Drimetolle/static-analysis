@@ -87,29 +87,3 @@ export default class ConstNames extends Rule {
     return reports;
   }
 }
-
-// export default class ConstNames extends Rule {
-//   private static isUpperSnakeCase(str: string): boolean {
-//     return /^[A-Z]+(?:_[A-Z]+)*$/.test(str);
-//   }
-//
-//   run(context: LinterContext): Array<Report> {
-//     const reports = new Array<Report>();
-//
-//     const names = new Array<ParserRuleContext>();
-//     const printer = new ConstVariableListener(names);
-//     ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, context.ast);
-//     for (const className of names) {
-//       if (!ConstNames.isUpperSnakeCase(className.text)) {
-//         reports.push(
-//           new Report(
-//             `Const '${className.text}' is not in upper shake case.`,
-//             className
-//           )
-//         );
-//       }
-//     }
-//
-//     return reports;
-//   }
-// }

@@ -6,7 +6,7 @@ import FileManager from "./file-system/FileManager";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
 import config from "./config.json";
 import { intersection } from "ramda";
-import ConfigurationProvider from "./utils/configuration/ConfigurationProvider";
+import ConfigurationProvider from "./configuration/ConfigurationProvider";
 
 export default function InitContainer() {
   const provider = container.resolve(ConfigurationProvider);

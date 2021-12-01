@@ -1,6 +1,7 @@
 import Rule from "../../linter/Rule";
 import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
+import { stylePropertyInSchema } from "./CodeNameStyles";
 
 /**
  * @example
@@ -21,6 +22,16 @@ import Report from "../../linter/issue/Report";
   }
  */
 export default class VariableNames extends Rule {
+  constructor() {
+    super();
+    this.Schema = {
+      type: "object",
+      properties: {
+        ...stylePropertyInSchema,
+      },
+    };
+  }
+
   isCamelCase(str: string) {
     return /^[a-z]+([A-Z][a-z]*)*$/.test(str);
   }
