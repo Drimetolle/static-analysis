@@ -2,10 +2,10 @@ import { subscribeToDocumentChanges } from "./extension/diagnostics";
 import { ExtensionContext, languages } from "vscode";
 
 export function activate(context: ExtensionContext) {
-  const emojiDiagnostics = languages.createDiagnosticCollection(
+  const diagnosticCollection = languages.createDiagnosticCollection(
     "static-analysis"
   );
-  context.subscriptions.push(emojiDiagnostics);
+  context.subscriptions.push(diagnosticCollection);
 
-  subscribeToDocumentChanges(context, emojiDiagnostics);
+  subscribeToDocumentChanges(context, diagnosticCollection);
 }

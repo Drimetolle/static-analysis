@@ -29,10 +29,10 @@ const configPathFromWorkspace = path.join(
 
 if (existsSync(configPathFromSettings)) {
   const conf = readFileSync(configPathFromSettings, "utf8");
-  InitContainer(config);
+  InitContainer(JSON.parse(conf.trim()));
 } else if (existsSync(configPathFromWorkspace)) {
   const conf = readFileSync(configPathFromWorkspace, "utf8");
-  InitContainer(config);
+  InitContainer(JSON.parse(conf.trim()));
 } else {
   InitContainer(config);
 }
