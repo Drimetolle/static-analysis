@@ -32,8 +32,15 @@ export default class Linter {
       const issues = [];
 
       try {
-        context.config = ruleContext.config[1];
-        issues.push(...ruleContext.rule.run(context));
+        const contextCopy: LinterContext = new LinterContext(
+          context.fileName,
+          context.ast,
+          context.scope,
+          context.cfg,
+          context.methods
+        );
+        contextCopy.config = ruleContext.config[1];
+        issues.push(...ruleContext.rule.run(contextCopy));
       } catch (error) {
         console.error(context.fileName, error);
       }

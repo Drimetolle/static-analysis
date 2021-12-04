@@ -9,7 +9,23 @@
   "CheckPrivateFieldName": "Warning",
   "InfinityLoopTruePredicate": "Warning",
   "ShortGlobalVariable": "Warning",
-  "UnsafeFunctions": "Error",
+  "UnsafeFunctions": ["Error", {
+    "strcpy": ["strlcpy", "strcpy_s"],
+    "strncpy": ["strlcpy", "strcpy_s"],
+    "strcat": ["strlcat", "strcat_s", "strtok"],
+    "sprintf": ["snprintf"],
+    "vsprintf": ["vsnprintf"],
+    "gets": ["fgets", "gets_s"],
+    "makepath": ["_makepath_s"],
+    "_splitpath": ["_splitpath_s"],
+    "scanf": ["sscanf_s"],
+    "sscanf": ["sscanf_s"],
+    "snscanf": ["_snscanf_s"],
+    "strlen": ["strnlen_s"],
+    "atof": ["strtod"],
+    "atoi": ["strtol"],
+    "atol": ["strtol"]
+  }],
   "StringInCStyle": "Warning",
   "ConstNames": ["Information", {
     "style": "UpperSnakeCase"
