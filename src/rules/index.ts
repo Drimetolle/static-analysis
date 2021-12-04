@@ -14,6 +14,7 @@ import UnnamedFunctionParameters from "./functions/UnnamedFunctionParameters";
 import ReturnForNotVoidFunction from "./functions/ReturnForNotVoidFunction";
 import CheckUserInput from "./variables/CheckUserInput";
 import ToNestedCode from "./linter/ToNestedCode";
+import PrintUnexpectedFormat from "./functions/PrintUnexpectedFormat";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -38,6 +39,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 14, rule: ReturnForNotVoidFunction },
   { id: 15, rule: CheckUserInput },
   { id: 16, rule: ToNestedCode },
+  { id: 17, rule: PrintUnexpectedFormat },
 ];
 
 export default AllRules;

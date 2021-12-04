@@ -19,5 +19,6 @@
   "ReturnForNotVoidFunction": "Warning",
   "CheckUserInput": "Error",
   "ToNestedCode": "Warning",
-  "CognitiveComplexity": "Error"
+  "CognitiveComplexity": "Error",
+  "PrintUnexpectedFormat": "Error"
 }
