@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { writeFile } from "fs";
 import * as console from "console";
 import cliProgress from "cli-progress";
+import config from "./config.json";
 
 interface JsonReport {
   totalIssue: number;
@@ -23,7 +24,7 @@ const singleBar = new cliProgress.SingleBar(
   {},
   cliProgress.Presets.shades_classic
 );
-InitContainer();
+InitContainer(config);
 
 const controller = container.resolve(Controller);
 const fileManager = new FileManager(process.env.SCAN_PATH as string);
