@@ -12,14 +12,35 @@ import {
   workspace,
 } from "vscode";
 import InitContainer from "../ContainerIniter";
+import config from "../config.json";
+import { head } from "ramda";
+import { existsSync, readFileSync } from "fs";
+import * as path from "path";
 
-InitContainer();
+const analyzerConfig = workspace.getConfiguration("static-analysis");
+const configPathFromSettings = path.join(
+  analyzerConfig.get("path-to-config") ?? "",
+  "config.json"
+);
+const configPathFromWorkspace = path.join(
+  head(workspace.workspaceFolders ?? [])?.uri.fsPath ?? "",
+  "config.json"
+);
+
+if (existsSync(configPathFromSettings)) {
+  const conf = readFileSync(configPathFromSettings, "utf8");
+  InitContainer(config);
+} else if (existsSync(configPathFromWorkspace)) {
+  const conf = readFileSync(configPathFromWorkspace, "utf8");
+  InitContainer(config);
+} else {
+  InitContainer(config);
+}
 
 export async function refreshDiagnostics(
   document: TextDocument,
   emojiDiagnostics: DiagnosticCollection
 ): Promise<void> {
-  console.log("event");
   const firstLine = document.lineAt(0);
   const lastLine = document.lineAt(document.lineCount - 1);
 

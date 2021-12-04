@@ -4,6 +4,7 @@ import Controller from "./Controller";
 import IssuesQueue from "./linter/issue/IssuesQueue";
 import Formatter from "./cli-engine/Formatter";
 import InitContainer from "./ContainerIniter";
+import config from "./config.json";
 
 /*
  * x = 1;
@@ -57,7 +58,7 @@ import InitContainer from "./ContainerIniter";
 // console.log(calculator.calculate().map((v) => v.interval));
 
 // container registration
-InitContainer();
+InitContainer(config);
 
 container
   .resolve(IssuesQueue)

@@ -1,5 +1,6 @@
 {
   "name": "static-analysis",
+  "displayName": "Static analyzer for C/C++",
   "description": "Static analysis tool for c/c++",
   "version": "0.0.2",
   "private": true,
@@ -16,6 +17,18 @@
     "Other"
   ],
   "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Analyzer config",
+      "properties": {
+        "static-analysis.path-to-config": {
+          "type": "string",
+          "description": "Path to rules configuration. Used config from rute directory or default config if empty.",
+          "scope": "application"
+        }
+      }
+    }
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "vscode:publish": "vsce publish",

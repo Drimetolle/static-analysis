@@ -4,11 +4,11 @@ import Linter from "./linter/Linter";
 import AllRules from "./rules";
 import FileManager from "./file-system/FileManager";
 import WalkersHelper from "./linter/walkers/WalkersHelper";
-import config from "./config.json";
 import { intersection } from "ramda";
 import ConfigurationProvider from "./configuration/ConfigurationProvider";
+import { Json } from "./linter/Rule";
 
-export default function InitContainer() {
+export default function InitContainer(config: Json) {
   const provider = container.resolve(ConfigurationProvider);
 
   const neededRulesNames = intersection(
