@@ -19,7 +19,7 @@ import {
 } from "../utils/CodeWrappers";
 import { isEmpty } from "ramda";
 
-describe("Check variable names", () => {
+describe("Check variable names in camelCase", () => {
   const createContext = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
     const { scope } = await new DataFlowWalker(
@@ -29,13 +29,19 @@ describe("Check variable names", () => {
       new ANTLRExpressionConverter()
     ).start(ast);
 
-    return new LinterContext(
+    const linterContext = new LinterContext(
       "main.cpp",
       ast,
       scope,
       new StartBlock(0, undefined as any),
       new DeclaredMethods([])
     );
+
+    linterContext.config = {
+      style: "CamelCase",
+    };
+
+    return linterContext;
   };
 
   const rawCases: TestCase = [

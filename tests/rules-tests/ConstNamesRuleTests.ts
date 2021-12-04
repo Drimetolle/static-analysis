@@ -28,13 +28,19 @@ describe("Check const variable names", () => {
       new ANTLRExpressionConverter()
     ).start(ast);
 
-    return new LinterContext(
+    const linterContext = new LinterContext(
       "main.cpp",
       ast,
       scope,
       new StartBlock(0, undefined as any),
       new DeclaredMethods([])
     );
+
+    linterContext.config = {
+      style: "UpperSnakeCase",
+    };
+
+    return linterContext;
   };
 
   const rawCases: TestCase = [

@@ -1,9 +1,29 @@
 ﻿import TypeNames from "../../src/rules/linter/TypeNames";
-import { createContextWithAst } from "../utils/LinterContextCreators";
+import LinterContext from "../../src/linter/LinterContext";
+import ASTGenerator from "../utils/ASTGenerator";
+import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
+import StartBlock from "../../src/source-analysis/control-flow/blocks/StartBlock";
+import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";
 
 type TestCase = Array<[string, unknown]>;
 
 describe("Check type names", () => {
+  function createContextWithAst(code: string) {
+    const linterContext = new LinterContext(
+      "",
+      ASTGenerator.fromString(code),
+      new ScopeTree(),
+      new StartBlock(0, undefined as any),
+      new DeclaredMethods([])
+    );
+
+    linterContext.config = {
+      style: "PascalCase",
+    };
+
+    return linterContext;
+  }
+
   const concatClass = (cases: TestCase): TestCase =>
     cases.map(([code, expected]) => [`class ${code}`, expected]);
   const concatStruct = (cases: TestCase): TestCase =>
