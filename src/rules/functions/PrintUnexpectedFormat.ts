@@ -3,7 +3,6 @@ import Report from "../../linter/issue/Report";
 import LinterContext from "../../linter/LinterContext";
 import BasicBlock from "../../source-analysis/control-flow/blocks/BasicBlock";
 import LinearBlock from "../../source-analysis/control-flow/blocks/LinearBlock";
-import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
 import { ParseTreeWalker } from "antlr4ts/tree";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
@@ -74,10 +73,7 @@ export default class PrintUnexpectedFormat extends Rule {
 
     // TODO search variable in all context
     for (let i = 0; i < args.length; i++) {
-      console.log(args[i]);
-      const variable = blockContext.scope?.data.declaredVariables.getVariable(
-        args[i]
-      );
+      const variable = blockContext.scope?.getVariable(args[i]);
 
       if (!variable) {
         continue;
@@ -136,9 +132,6 @@ export default class PrintUnexpectedFormat extends Rule {
   ): Array<BasicBlock> {
     for (const block of cfg.blocks) {
       if (block instanceof LinearBlock) {
-        result.push(block);
-      }
-      if (block instanceof IfBlock) {
         result.push(block);
       }
 
