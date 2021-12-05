@@ -9,6 +9,7 @@ import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
 import { InitializerListContext } from "../../grammar/CPP14Parser";
 import { head, tail } from "ramda";
 import { TypeSpecifier } from "../../source-analysis/data-objects/LanguageKeyWords";
+import { DeclaratorSpecifier } from "../../source-analysis/data-objects/DeclaratorSpecifier";
 
 class FunctionCallListener implements CPP14ParserListener {
   private readonly variables: Array<string>;
@@ -115,6 +116,17 @@ export default class PrintUnexpectedFormat extends Rule {
           }
           break;
         case "%s":
+          if (
+            !(
+              variable.type == TypeSpecifier.CHAR &&
+              variable.declarators.has(DeclaratorSpecifier.Pointer)
+            )
+          ) {
+            yield new Report(
+              `String is expected rather than a "${variable.type}"`,
+              blockContext.ast
+            );
+          }
           break;
       }
     }
