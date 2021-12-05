@@ -71,7 +71,6 @@ export default class PrintUnexpectedFormat extends Rule {
       );
     }
 
-    // TODO search variable in all context
     for (let i = 0; i < args.length; i++) {
       const variable = blockContext.scope?.getVariable(args[i]);
 
@@ -81,6 +80,12 @@ export default class PrintUnexpectedFormat extends Rule {
 
       switch (formatKeys[i]) {
         case "%c":
+          if (!PrintUnexpectedFormat.isChar(variable.type)) {
+            yield new Report(
+              `Char is expected rather than a "${variable.type}"`,
+              blockContext.ast
+            );
+          }
           break;
         case "%d":
           if (!PrintUnexpectedFormat.isSignedInteger(variable.type)) {
@@ -92,11 +97,22 @@ export default class PrintUnexpectedFormat extends Rule {
           break;
         case "%e":
         case "%E":
-          break;
-        case "%f":
-          break;
         case "%g":
         case "%G":
+          if (!PrintUnexpectedFormat.isDouble(variable.type)) {
+            yield new Report(
+              `Double is expected rather than a "${variable.type}"`,
+              blockContext.ast
+            );
+          }
+          break;
+        case "%f":
+          if (variable.type != TypeSpecifier.FLOAT) {
+            yield new Report(
+              `Double is expected rather than a "${variable.type}"`,
+              blockContext.ast
+            );
+          }
           break;
         case "%s":
           break;
@@ -115,6 +131,22 @@ export default class PrintUnexpectedFormat extends Rule {
       type == TypeSpecifier.SHORT ||
       type == TypeSpecifier.UNSIGNED_SHORT
     );
+  }
+
+  private static isChar(type: TypeSpecifier | undefined) {
+    if (!type) {
+      return true;
+    }
+
+    return type == TypeSpecifier.CHAR || type == TypeSpecifier.UNSIGNED_CHAR;
+  }
+
+  private static isDouble(type: TypeSpecifier | undefined) {
+    if (!type) {
+      return true;
+    }
+
+    return type == TypeSpecifier.DOUBLE || type == TypeSpecifier.FLOAT;
   }
 
   private static getFormats(formatString: string | undefined): Array<string> {
