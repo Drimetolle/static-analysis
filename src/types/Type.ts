@@ -1,6 +1,17 @@
 ﻿import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 
+export enum Stereotype {
+  Value,
+  Struct,
+  Class,
+  Enum,
+}
+
 export default class Type {
+  constructor(name: string, stereotype: Stereotype);
+  constructor(name: string, stereotype: Stereotype, members: Array<Type>);
+  constructor(name: string, stereotype: Stereotype, members?: Array<Type>) {}
+
   public get fullName() {
     return "";
   }
@@ -18,6 +29,10 @@ export default class Type {
   }
 
   public get IsStruct() {
+    return false;
+  }
+
+  public get IsEnum() {
     return false;
   }
 
