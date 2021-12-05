@@ -19,7 +19,7 @@ import MethodSignature, {
 import {
   parseFunctionReturnType,
   parseSimpleType,
-} from "../utils/TypeInference";
+} from "../types/TypeInference";
 import FileManager from "../file-system/FileManager";
 import Lexer from "../parsers/Lexer";
 import Parser from "../parsers/Parser";

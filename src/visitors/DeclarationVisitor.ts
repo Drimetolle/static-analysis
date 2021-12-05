@@ -13,7 +13,7 @@ import {
   StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
 import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
-import { parseSimpleType } from "../utils/TypeInference";
+import { parseSimpleType } from "../types/TypeInference";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
