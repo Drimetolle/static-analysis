@@ -6,6 +6,7 @@ import {
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
   InitDeclaratorContext,
+  MemberdeclarationContext,
   NoPointerDeclaratorContext,
   ParameterDeclarationContext,
   PointerDeclaratorContext,
@@ -17,10 +18,11 @@ import { parseSimpleType } from "../types/TypeInference";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
+import { MemberDeclaration } from "../types/Type";
 
 @scoped(Lifecycle.ContainerScoped)
 export default class DeclarationVisitor {
-  createDeclaration(
+  public createDeclaration(
     declarator: DeclaratorContext,
     init?: AssignmentExpressionContext,
     decSeq?: DeclSpecifierSeqContext,
@@ -50,15 +52,9 @@ export default class DeclarationVisitor {
       .addDeclarator(...declarators);
   }
 
-  private static getInitDeclarator(
-    declarator: DeclaratorContext
-  ): DeclaratorContext | InitDeclaratorContext {
-    const init = declarator.parent;
-
-    return (init as InitDeclaratorContext) ?? declarator;
-  }
-
-  simpleDeclaration(ctx: SimpleDeclarationContext): Array<VariableDeclaration> {
+  public simpleDeclaration(
+    ctx: SimpleDeclarationContext
+  ): Array<VariableDeclaration> {
     const nodeVars =
       ctx
         .initDeclaratorList()
@@ -110,6 +106,48 @@ export default class DeclarationVisitor {
     }
 
     return [];
+  }
+
+  public memberDeclaration(
+    memberDeclaration: MemberdeclarationContext
+  ): Array<MemberDeclaration> {
+    const isSimpleDeclaration = memberDeclaration.memberDeclaratorList();
+
+    if (!isSimpleDeclaration) {
+      const declarationSpecifiersSequence = memberDeclaration.declSpecifierSeq();
+      const declarationSpecifiers =
+        declarationSpecifiersSequence?.declSpecifier() ?? [];
+      const variableName = declarationSpecifiers.pop()!;
+
+      const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+        memberDeclaration.declSpecifierSeq()!
+      );
+
+      const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
+        variableName
+      );
+
+      const type = parseSimpleType(declarationSpecifiersSequence);
+
+      return [
+        {
+          identifier: variable.text,
+          simpleType: type,
+          memberDeclaration,
+          declarationSpecifiers: specifiers,
+        },
+      ];
+    }
+
+    return [];
+  }
+
+  private static getInitDeclarator(
+    declarator: DeclaratorContext
+  ): DeclaratorContext | InitDeclaratorContext {
+    const init = declarator.parent;
+
+    return (init as InitDeclaratorContext) ?? declarator;
   }
 
   private static createSimpleDeclaration(

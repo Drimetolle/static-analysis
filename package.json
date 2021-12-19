@@ -2,7 +2,7 @@
   "name": "static-analysis",
   "displayName": "Static analyzer for C/C++",
   "description": "Static analysis tool for c/c++",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "repository": "https://github.com/Drimetolle/static-analysis",
   "publisher": "FireStarter",

@@ -1,9 +1,13 @@
 ﻿import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
-import { SimpleDeclarationContext } from "../grammar/CPP14Parser";
+import {
+  MemberdeclarationContext,
+  SimpleDeclarationContext,
+} from "../grammar/CPP14Parser";
 import { clone } from "ramda";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
 import { parseSimpleType } from "./TypeInference";
+import DeclarationVisitor from "../visitors/DeclarationVisitor";
 
 export enum Stereotype {
   Value,
@@ -22,13 +26,69 @@ interface InternalSpecifiers {
   readonly declaratorSpecifier: Set<DeclaratorSpecifier>;
 }
 
+export interface MemberDeclaration {
+  readonly identifier: string;
+  readonly simpleType?: TypeSpecifier;
+  readonly memberDeclaration: MemberdeclarationContext;
+  readonly declarationSpecifiers: Array<DeclarationSpecifier>;
+}
+
 export default class TypeBuilder {
+  private readonly declarationVisitor: DeclarationVisitor;
+
+  constructor(declarationVisitor: DeclarationVisitor) {
+    this.declarationVisitor = declarationVisitor;
+  }
+
+  public createType(declaration: SimpleDeclarationContext): Type {
+    return this.createStructType(declaration);
+  }
+
   public createClassType(declaration: SimpleDeclarationContext): Type {
     return new InternalType(Stereotype.Class, null as any, []);
   }
 
   public createStructType(declaration: SimpleDeclarationContext): Type {
-    return new InternalType(Stereotype.Struct, null as any, []);
+    const struct = declaration
+      .declSpecifierSeq()
+      ?.declSpecifier(0)
+      .typeSpecifier()
+      ?.classSpecifier();
+
+    if (!struct) {
+      throw new Error(`Can't create struct type for ${declaration.text}`);
+    }
+
+    const members = new Array<InternalType>();
+
+    for (const member of struct.memberSpecification()?.memberdeclaration() ??
+      []) {
+      const declaration = member.declSpecifierSeq();
+
+      if (!declaration) {
+        continue;
+      }
+
+      // TODO now support only simple declaration
+      const test = this.declarationVisitor.memberDeclaration(member).pop()!;
+
+      if (test) {
+        members.push(
+          new InternalType(Stereotype.Value, {
+            declarationSpecifier: test.declarationSpecifiers,
+            declaratorSpecifier: [],
+          }).setFullName(test.identifier, [])
+        );
+      }
+    }
+    return new InternalType(
+      Stereotype.Struct,
+      {
+        declarationSpecifier: new Array<DeclarationSpecifier>(),
+        declaratorSpecifier: new Array<DeclaratorSpecifier>(),
+      },
+      members
+    );
   }
 
   public createEnumType(declaration: SimpleDeclarationContext): Type {
@@ -74,6 +134,7 @@ class InternalType implements Type {
   private readonly stereotype: Stereotype;
   private readonly members: Array<InternalType>;
   private readonly specifiers: InternalSpecifiers;
+  private identifier: any;
 
   constructor(stereotype: Stereotype, specifiers: Specifiers);
   constructor(
@@ -111,7 +172,7 @@ class InternalType implements Type {
   }
 
   public get fullName() {
-    return "";
+    return this.identifier.toString();
   }
 
   public get IsPrimitive() {
@@ -147,6 +208,7 @@ class InternalType implements Type {
   }
 
   public setFullName(typeId: string, nameSpaces: Array<string>) {
+    this.identifier = typeId;
     return this;
   }
 }

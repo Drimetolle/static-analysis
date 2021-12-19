@@ -51,6 +51,7 @@ import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
 import { parseSimpleType } from "../types/TypeInference";
+import TypeBuilder from "../types/Type";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -83,6 +84,10 @@ export default class DataFlowWalker
     this.cfg = new StartBlock(0, tree);
     const sequence = tree.declarationseq();
     if (sequence) {
+      const a = new TypeBuilder(this.declarationVisitor).createType(
+        sequence.declaration(0).blockDeclaration()?.simpleDeclaration()!
+      );
+      console.log(a);
       this.visitDeclarationseq(sequence);
     }
 
