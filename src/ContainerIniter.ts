@@ -7,6 +7,9 @@ import WalkersHelper from "./linter/walkers/WalkersHelper";
 import { intersection } from "ramda";
 import ConfigurationProvider from "./configuration/ConfigurationProvider";
 import { Json } from "./linter/Rule";
+import TypesSourceImplementation, {
+  TypesSource,
+} from "./types/TypesSourceImplementation";
 
 export default function InitContainer(config: Json) {
   const provider = container.resolve(ConfigurationProvider);
@@ -27,5 +30,8 @@ export default function InitContainer(config: Json) {
   });
   container.register<WalkersHelper>(WalkersHelper, {
     useValue: new WalkersHelper(),
+  });
+  container.register<TypesSource>("TypesSource", {
+    useClass: TypesSourceImplementation,
   });
 }

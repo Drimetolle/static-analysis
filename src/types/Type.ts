@@ -9,6 +9,7 @@ import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorS
 import { parseSimpleType } from "./TypeInference";
 import DeclarationVisitor from "../visitors/DeclarationVisitor";
 import { Lifecycle, scoped } from "tsyringe";
+import TypeMember, { TypeMemberImplementation } from "./TypeMember";
 
 export enum Stereotype {
   Value = "value",
@@ -62,7 +63,14 @@ export default class TypeBuilder {
   }
 
   public createClassType(declaration: SimpleDeclarationContext): Type {
-    return new InternalType(Stereotype.Class, null as any, []);
+    return new InternalType(
+      Stereotype.Class,
+      {
+        declarationSpecifier: [],
+        declaratorSpecifier: [],
+      },
+      []
+    );
   }
 
   public createStructType(declaration: SimpleDeclarationContext): Type {
@@ -72,11 +80,17 @@ export default class TypeBuilder {
       .typeSpecifier()
       ?.classSpecifier();
 
-    if (!struct) {
+    const structName = struct
+      ?.classHead()
+      ?.classHeadName()
+      ?.className()
+      ?.Identifier()?.text;
+
+    if (!struct || !structName) {
       throw new Error(`Can't create struct type for ${declaration.text}`);
     }
 
-    const members = new Array<InternalType>();
+    const members = new Array<TypeMember>();
 
     for (const member of struct.memberSpecification()?.memberdeclaration() ??
       []) {
@@ -87,14 +101,22 @@ export default class TypeBuilder {
       }
 
       // TODO now support only simple declaration
-      const test = this.declarationVisitor.memberDeclaration(member).pop()!;
+      const memberInfo = this.declarationVisitor
+        .memberDeclaration(member)
+        .pop()!;
 
-      if (test) {
+      if (memberInfo) {
+        const type = new InternalType(Stereotype.Value, {
+          declarationSpecifier: memberInfo.declarationSpecifiers,
+          declaratorSpecifier: [],
+        });
+
         members.push(
-          new InternalType(Stereotype.Value, {
-            declarationSpecifier: test.declarationSpecifiers,
-            declaratorSpecifier: [],
-          }).setFullName(test.identifier, [])
+          new TypeMemberImplementation(
+            memberInfo.identifier,
+            type,
+            memberInfo.memberDeclaration
+          )
         );
       }
     }
@@ -105,11 +127,18 @@ export default class TypeBuilder {
         declaratorSpecifier: new Array<DeclaratorSpecifier>(),
       },
       members
-    );
+    ).setFullName(structName, []);
   }
 
   public createEnumType(declaration: SimpleDeclarationContext): Type {
-    return new InternalType(Stereotype.Enum, null as any, []);
+    return new InternalType(
+      Stereotype.Enum,
+      {
+        declarationSpecifier: [],
+        declaratorSpecifier: [],
+      },
+      []
+    );
   }
 
   public createValueType(declaration: SimpleDeclarationContext): Type {
@@ -119,17 +148,28 @@ export default class TypeBuilder {
       throw new Error(`Can't create type for ${declaration.text}`);
     }
 
-    return new InternalType(Stereotype.Value, null as any, []).setFullName(
-      simpleType,
+    return new InternalType(
+      Stereotype.Value,
+      {
+        declarationSpecifier: [],
+        declaratorSpecifier: [],
+      },
       []
-    );
+    ).setFullName(simpleType, []);
   }
 
   public createArrayType(
     declaration: SimpleDeclarationContext,
     length?: number
   ): Type {
-    return new InternalType(Stereotype.Value, null as any, []);
+    return new InternalType(
+      Stereotype.Value,
+      {
+        declarationSpecifier: [],
+        declaratorSpecifier: [],
+      },
+      []
+    );
   }
 }
 
@@ -143,26 +183,26 @@ export interface Type {
 
   getPrimitiveType(): TypeSpecifier;
 
-  getNestedTypes(): Array<Type>;
+  getNestedMembers(): Array<TypeMember>;
 }
 
 class InternalType implements Type {
+  private identifier?: string;
   private primitiveType?: TypeSpecifier;
   private readonly stereotype: Stereotype;
-  private readonly members: Array<InternalType>;
+  private readonly members: Array<TypeMember>;
   private readonly specifiers: InternalSpecifiers;
-  private identifier: any;
 
   constructor(stereotype: Stereotype, specifiers: Specifiers);
   constructor(
     stereotype: Stereotype,
     specifiers: Specifiers,
-    members: Array<InternalType>
+    members: Array<TypeMember>
   );
   constructor(
     stereotype: Stereotype,
     specifiers: Specifiers,
-    members?: Array<InternalType>
+    members?: Array<TypeMember>
   ) {
     this.stereotype = stereotype;
     this.members = members ?? [];
@@ -189,7 +229,7 @@ class InternalType implements Type {
   }
 
   public get fullName() {
-    return this.identifier.toString();
+    return this.identifier?.toString() ?? "";
   }
 
   public get IsPrimitive() {
@@ -216,7 +256,7 @@ class InternalType implements Type {
     return TypeSpecifier.INT;
   }
 
-  public getNestedTypes(): Array<Type> {
+  public getNestedMembers(): Array<TypeMember> {
     return clone(this.members);
   }
 

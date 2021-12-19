@@ -41,7 +41,7 @@ import StartBlock from "../source-analysis/control-flow/blocks/StartBlock";
 import ConditionVisitor, {
   ExpressionAndStatementContext,
 } from "./ConditionVisitor";
-import { isEmpty } from "ramda";
+import { head, isEmpty } from "ramda";
 import DeclarationVisitor from "./DeclarationVisitor";
 import CaseBlock from "../source-analysis/control-flow/blocks/switch/CaseBlock";
 import DefaultCaseBlock from "../source-analysis/control-flow/blocks/switch/DefaultCaseBlock";
@@ -52,6 +52,7 @@ import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock"
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
 import { parseSimpleType } from "../types/TypeInference";
 import TypeBuilder from "../types/Type";
+import { TypesSource } from "../types/TypesSourceImplementation";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -67,13 +68,15 @@ export default class DataFlowWalker
   private readonly declarationVisitor: DeclarationVisitor;
   private readonly expressionConverter: ANTLRExpressionConverter;
   private readonly typeBuilder: TypeBuilder;
+  private readonly typesSource: TypesSource;
 
   constructor(
     fileName: string,
     conditionVisitor: ConditionVisitor,
     declarationVisitor: DeclarationVisitor,
     expressionConverter: ANTLRExpressionConverter,
-    typeBuilder: TypeBuilder
+    typeBuilder: TypeBuilder,
+    typesSource: TypesSource
   ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
@@ -81,6 +84,7 @@ export default class DataFlowWalker
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
     this.typeBuilder = typeBuilder;
+    this.typesSource = typesSource;
   }
 
   visit(tree: TranslationUnitContext): ScopeAndCFG {
@@ -261,6 +265,17 @@ export default class DataFlowWalker
   private blockStatement(block: BlockDeclarationContext) {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
+      if (
+        head(simpleDeclaration.declSpecifierSeq()?.declSpecifier() ?? [])
+          ?.typeSpecifier()
+          ?.classSpecifier()
+          ?.classHead()
+      ) {
+        const a = this.typeBuilder.createType(simpleDeclaration);
+
+        return;
+      }
+
       const variableDeclarations = this.visitSimpleDeclaration(
         simpleDeclaration
       );

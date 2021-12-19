@@ -1,9 +1,10 @@
-import { Lifecycle, scoped } from "tsyringe";
+import { inject, Lifecycle, scoped } from "tsyringe";
 import DataFlowWalker from "./DataFlowWalker";
 import ConditionVisitor from "./ConditionVisitor";
 import DeclarationVisitor from "./DeclarationVisitor";
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
 import TypeBuilder from "../types/Type";
+import { TypesSource } from "../types/TypesSourceImplementation";
 
 @scoped(Lifecycle.ContainerScoped)
 export default class DataFlowVisitorFactory {
@@ -16,12 +17,14 @@ export default class DataFlowVisitorFactory {
     conditionVisitor: ConditionVisitor,
     declarationVisitor: DeclarationVisitor,
     expressionConverter: ANTLRExpressionConverter,
-    typeBuilder: TypeBuilder
+    typeBuilder: TypeBuilder,
+    @inject("TypesSource") private readonly typesSource: TypesSource
   ) {
     this.conditionVisitor = conditionVisitor;
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
     this.typeBuilder = typeBuilder;
+    this.typesSource = typesSource;
   }
 
   createVisitorsForFiles(files: Array<string>): Array<DataFlowWalker> {
@@ -34,7 +37,8 @@ export default class DataFlowVisitorFactory {
           this.conditionVisitor,
           this.declarationVisitor,
           this.expressionConverter,
-          this.typeBuilder
+          this.typeBuilder,
+          this.typesSource
         )
       );
     }
