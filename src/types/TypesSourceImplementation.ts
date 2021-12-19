@@ -13,10 +13,15 @@ export default class TypesSourceImplementation implements TypesSource {
   }
 
   public tryRegisterType(type: Type): boolean {
+    if (!this.typesTable.has(type.fullName)) {
+      this.typesTable.set(type.fullName, type);
+
+      return true;
+    }
     return false;
   }
 
   public resolveType(typeName: string): Type | undefined {
-    return;
+    return this.typesTable.get(typeName);
   }
 }

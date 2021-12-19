@@ -271,7 +271,9 @@ export default class DataFlowWalker
           ?.classSpecifier()
           ?.classHead()
       ) {
-        const a = this.typeBuilder.createType(simpleDeclaration);
+        const type = this.typeBuilder.createType(simpleDeclaration);
+
+        this.typesSource.tryRegisterType(type);
 
         return;
       }
