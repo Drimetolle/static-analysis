@@ -3,17 +3,17 @@ import {
   MemberdeclarationContext,
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
-import { clone } from "ramda";
+import { clone, head } from "ramda";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
 import { parseSimpleType } from "./TypeInference";
 import DeclarationVisitor from "../visitors/DeclarationVisitor";
 
 export enum Stereotype {
-  Value,
-  Struct,
-  Class,
-  Enum,
+  Value = "value",
+  Struct = "struct",
+  Class = "class",
+  Enum = "enum",
 }
 
 export interface Specifiers {
@@ -41,7 +41,22 @@ export default class TypeBuilder {
   }
 
   public createType(declaration: SimpleDeclarationContext): Type {
-    return this.createStructType(declaration);
+    const classKey = head(declaration.declSpecifierSeq()?.declSpecifier() ?? [])
+      ?.typeSpecifier()
+      ?.classSpecifier()
+      ?.classHead()
+      ?.classKey()?.text;
+
+    switch (classKey) {
+      case Stereotype.Struct:
+        return this.createStructType(declaration);
+      case Stereotype.Class:
+        return this.createClassType(declaration);
+      case Stereotype.Enum:
+        return this.createEnumType(declaration);
+      default:
+        throw new Error(`Can't create struct type for ${declaration.text}`);
+    }
   }
 
   public createClassType(declaration: SimpleDeclarationContext): Type {

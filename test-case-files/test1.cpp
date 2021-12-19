@@ -6,3 +6,5 @@ struct Struct {
   const char * secondName;
   const char secondName2;
 };
+
+class cl {};
