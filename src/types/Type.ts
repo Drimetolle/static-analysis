@@ -8,6 +8,7 @@ import { DeclarationSpecifier } from "../source-analysis/data-objects/Declaratio
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
 import { parseSimpleType } from "./TypeInference";
 import DeclarationVisitor from "../visitors/DeclarationVisitor";
+import { Lifecycle, scoped } from "tsyringe";
 
 export enum Stereotype {
   Value = "value",
@@ -33,6 +34,7 @@ export interface MemberDeclaration {
   readonly declarationSpecifiers: Array<DeclarationSpecifier>;
 }
 
+@scoped(Lifecycle.ContainerScoped)
 export default class TypeBuilder {
   private readonly declarationVisitor: DeclarationVisitor;
 

@@ -66,28 +66,27 @@ export default class DataFlowWalker
   private readonly conditionVisitor: ConditionVisitor;
   private readonly declarationVisitor: DeclarationVisitor;
   private readonly expressionConverter: ANTLRExpressionConverter;
+  private readonly typeBuilder: TypeBuilder;
 
   constructor(
     fileName: string,
     conditionVisitor: ConditionVisitor,
     declarationVisitor: DeclarationVisitor,
-    expressionConverter: ANTLRExpressionConverter
+    expressionConverter: ANTLRExpressionConverter,
+    typeBuilder: TypeBuilder
   ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
     this.conditionVisitor = conditionVisitor;
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
+    this.typeBuilder = typeBuilder;
   }
 
   visit(tree: TranslationUnitContext): ScopeAndCFG {
     this.cfg = new StartBlock(0, tree);
     const sequence = tree.declarationseq();
     if (sequence) {
-      const a = new TypeBuilder(this.declarationVisitor).createType(
-        sequence.declaration(0).blockDeclaration()?.simpleDeclaration()!
-      );
-      console.log(a);
       this.visitDeclarationseq(sequence);
     }
 
@@ -262,9 +261,11 @@ export default class DataFlowWalker
   private blockStatement(block: BlockDeclarationContext) {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
-      const tmp = this.visitSimpleDeclaration(simpleDeclaration);
+      const variableDeclarations = this.visitSimpleDeclaration(
+        simpleDeclaration
+      );
 
-      for (const declaration of tmp) {
+      for (const declaration of variableDeclarations) {
         DataFlowWalker.setScope(this.scopeTree?.getRoot, declaration);
       }
     }
