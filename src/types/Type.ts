@@ -175,11 +175,11 @@ export default class TypeBuilder {
 
 export interface Type {
   fullName: string;
-  IsPrimitive: boolean;
-  IsEnumerable: boolean;
-  IsClass: boolean;
-  IsStruct: boolean;
-  IsEnum: boolean;
+  isPrimitive: boolean;
+  isEnumerable: boolean;
+  isClass: boolean;
+  isStruct: boolean;
+  isEnum: boolean;
 
   getPrimitiveType(): TypeSpecifier;
 
@@ -232,23 +232,23 @@ class InternalType implements Type {
     return this.identifier?.toString() ?? "";
   }
 
-  public get IsPrimitive() {
+  public get isPrimitive() {
     return this.stereotype == Stereotype.Value;
   }
 
-  public get IsEnumerable() {
+  public get isEnumerable() {
     return this.specifiers.declaratorSpecifier.has(DeclaratorSpecifier.Pointer);
   }
 
-  public get IsClass() {
+  public get isClass() {
     return this.stereotype == Stereotype.Class;
   }
 
-  public get IsStruct() {
+  public get isStruct() {
     return this.stereotype == Stereotype.Struct;
   }
 
-  public get IsEnum() {
+  public get isEnum() {
     return this.stereotype == Stereotype.Enum;
   }
 
