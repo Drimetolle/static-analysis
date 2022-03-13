@@ -23,13 +23,19 @@ import switchStatementExpected from "./test-cases/switchStatment.json";
 import switchWithoutDefaultCaseStatementExpected from "./test-cases/switchStatmentWithoutDefaultCase.json";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 import FunctionBlock from "../../src/source-analysis/control-flow/blocks/FunctionBlock";
+import TypeBuilder from "../../src/types/Type";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
 
 async function createTestCase(code: string, expected: object) {
+  const declarationVisitor = new DeclarationVisitor()
+
   const { cfg } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
-    new DeclarationVisitor(),
-    new ANTLRExpressionConverter()
+    declarationVisitor,
+    new ANTLRExpressionConverter(),
+    new TypeBuilder(declarationVisitor),
+    new TypesSourceImplementation()
   ).start(ASTGenerator.fromString(code));
 
   const validator = new CFGValidator(new OutBlock(0, null as any));

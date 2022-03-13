@@ -17,15 +17,21 @@ import {
   whileWrapper,
 } from "../utils/CodeWrappers";
 import ConstNames from "../../src/rules/linter/ConstNames";
+import TypeBuilder from "../../src/types/Type";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
 
 describe("Check const variable names", () => {
   const createContext = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
+    const declarationVisitor = new DeclarationVisitor()
+
     const { scope } = await new DataFlowWalker(
       "",
       new ConditionVisitor(new BlockVisitor()),
-      new DeclarationVisitor(),
-      new ANTLRExpressionConverter()
+      declarationVisitor,
+      new ANTLRExpressionConverter(),
+      new TypeBuilder(declarationVisitor),
+      new TypesSourceImplementation()
     ).start(ast);
 
     const linterContext = new LinterContext(

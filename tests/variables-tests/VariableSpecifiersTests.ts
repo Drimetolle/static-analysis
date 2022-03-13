@@ -15,15 +15,21 @@ import {
   whileWrapper,
 } from "../utils/CodeWrappers";
 import { DeclarationSpecifier } from "../../src/source-analysis/data-objects/DeclarationSpecifier";
+import TypeBuilder from "../../src/types/Type";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
 
 describe("Check const variable names", () => {
   const createScope = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
+    const declarationVisitor = new DeclarationVisitor()
+
     const { scope } = await new DataFlowWalker(
       "",
       new ConditionVisitor(new BlockVisitor()),
-      new DeclarationVisitor(),
-      new ANTLRExpressionConverter()
+      declarationVisitor,
+      new ANTLRExpressionConverter(),
+      new TypeBuilder(declarationVisitor),
+      new TypesSourceImplementation()
     ).start(ast);
 
     return scope;

@@ -9,15 +9,21 @@ import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 import ReturnForNotVoidFunction from "../../src/rules/functions/ReturnForNotVoidFunction";
+import TypeBuilder from "../../src/types/Type";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
 
 describe("Tests for rule ReturnForNotVoidFunction", () => {
   const createContext = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
+    const declarationVisitor = new DeclarationVisitor()
+
     const { cfg } = await new DataFlowWalker(
       "",
       new ConditionVisitor(new BlockVisitor()),
-      new DeclarationVisitor(),
-      new ANTLRExpressionConverter()
+      declarationVisitor,
+      new ANTLRExpressionConverter(),
+      new TypeBuilder(declarationVisitor),
+      new TypesSourceImplementation()
     ).start(ast);
 
     return new LinterContext(
