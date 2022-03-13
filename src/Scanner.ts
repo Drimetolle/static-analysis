@@ -35,6 +35,7 @@ const promises = Array<{ path: string; promise: Promise<void> }>();
 container.resolve(IssuesQueue).subscribe((i) => {
   const message = Formatter.formatMessageToJson(i);
   issues.push(message);
+  console.log(Formatter.formatMessage(i));
 });
 
 let competedFiles = 0;

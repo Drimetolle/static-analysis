@@ -1,8 +1,28 @@
-struct Struct {
-  int age;
-  long ss;
-  float weight;
-  char name[25];
-  const char * secondName;
-  const char secondName2;
-};
+// struct Struct {
+//   int age;
+//   long ss;
+//   float weight;
+//   char name[25];
+//   const char * secondName;
+//   const char secondName2;
+// };
+//
+// auto b = 1;
+//
+// int main(int) {
+//   char* a = "12";
+//
+//   while(1) {
+//
+//   }
+// }
+
+void Foo() {
+}
+
+void Foo2(int *ptr)
+{
+  while (ptr == NULL)
+    return
+  Foo();
+}

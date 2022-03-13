@@ -36,5 +36,6 @@
   "CheckUserInput": "Error",
   "ToNestedCode": "Warning",
   "CognitiveComplexity": "Error",
-  "PrintUnexpectedFormat": "Error"
+  "PrintUnexpectedFormat": "Error",
+  "MissingSemicolonAfterReturn": "Warning"
 }

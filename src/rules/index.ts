@@ -15,6 +15,7 @@ import ReturnForNotVoidFunction from "./functions/ReturnForNotVoidFunction";
 import CheckUserInput from "./variables/CheckUserInput";
 import ToNestedCode from "./linter/ToNestedCode";
 import PrintUnexpectedFormat from "./functions/PrintUnexpectedFormat";
+import MissingSemicolonAfterReturn from "./owasp/MissingSemicolonAfterReturn";
 
 export interface AnalyzerRule {
   id: string | number;
@@ -40,6 +41,7 @@ const AllRules: Array<AnalyzerRule> = [
   { id: 15, rule: CheckUserInput },
   { id: 16, rule: ToNestedCode },
   { id: 17, rule: PrintUnexpectedFormat },
+  { id: 18, rule: MissingSemicolonAfterReturn },
 ];
 
 export default AllRules;
