@@ -32,6 +32,6 @@ void main() {
     int a = 1;
   } catch (MyExcept &)
   {
-    afd();
+//     afd();
   }
 }
