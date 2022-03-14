@@ -9,6 +9,7 @@ import {
 } from "../grammar/CPP14Parser";
 import BlockVisitor from "./BlockVisitor";
 import { isEmpty } from "ramda";
+import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 
 export interface ConditionAndStatementContext {
   statementSequence: Array<StatementContext>;
@@ -21,6 +22,7 @@ export interface ExpressionAndStatementContext {
     | undefined
     | ConstantExpressionContext
     | Array<ConstantExpressionContext>;
+  label?: ParserRuleContext;
 }
 
 export interface CaseStatement {
@@ -178,6 +180,7 @@ export default class ConditionVisitor {
           result.push({
             statementSequence: caseBlock.block,
             expression: caseBlock.cases,
+            label: switchStatement,
           });
         }
       } else {
@@ -185,6 +188,7 @@ export default class ConditionVisitor {
         result.push({
           expression: undefined,
           statementSequence: seq,
+          label: switchStatement,
         });
       }
     }

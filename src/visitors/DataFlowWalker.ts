@@ -542,13 +542,15 @@ export default class DataFlowWalker
     let newBlock: BasicBlock;
 
     if (statement.expression == null) {
-      newBlock = new DefaultCaseBlock(depth, null as any);
+      newBlock = new DefaultCaseBlock(
+        depth,
+        statement.label as ParserRuleContext
+      );
     } else if (Array.isArray(statement.expression)) {
       newBlock = new CaseBlock(
         depth,
         statement.expression.map((s) => s.text),
-        // TODO
-        null as any
+        statement.label as ParserRuleContext
       );
     } else {
       newBlock = new CaseBlock(

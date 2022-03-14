@@ -38,5 +38,6 @@
   "CognitiveComplexity": "Error",
   "PrintUnexpectedFormat": "Error",
   "MissingSemicolonAfterReturn": "Warning",
-  "AnEmptyExceptionHandler": "Warning"
+  "AnEmptyExceptionHandler": "Warning",
+  "EverySwitchWithDefaultStatement": "Warning"
 }

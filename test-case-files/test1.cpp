@@ -27,11 +27,29 @@
 //   Foo();
 // }
 
-void main() {
-  try {
-    int a = 1;
-  } catch (MyExcept &)
-  {
+// void main() {
+//   try {
+//     int a = 1;
+//   } catch (MyExcept &)
+//   {
 //     afd();
+//   }
+// }
+
+void main() {
+  switch(1) {
+    case 1:
+      break;
+    case 2:
+      break;
+    default:
+    {
+      some();
+      break;
+    }
+//     Not work ;(
+//     default:
+//       some();
+//       break;
   }
 }
