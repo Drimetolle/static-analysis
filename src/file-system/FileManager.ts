@@ -82,4 +82,12 @@ export default class FileManager {
       yield new SourceFile(file, fileContent);
     }
   }
+
+  public cLikeFileCount() {
+    const cLikeFiles = this.files
+      .filter((file) => [".cpp", ".c"].indexOf(path.extname(file)) >= 0)
+      .filter((file) => lstatSync(file).isFile());
+
+    return cLikeFiles.length;
+  }
 }

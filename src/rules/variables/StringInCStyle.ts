@@ -3,6 +3,7 @@ import Report from "../../linter/issue/Report";
 import LinterContext from "../../linter/LinterContext";
 import { TypeSpecifier } from "../../source-analysis/data-objects/LanguageKeyWords";
 import { isCppFile } from "../../utils/Utils";
+import { DeclaratorSpecifier } from "../../source-analysis/data-objects/DeclaratorSpecifier";
 
 /**
  * This function does something see example below:
@@ -26,8 +27,10 @@ export default class StringInCStyle extends Rule {
       .toArray()
       .flatMap((_) => _.data.declaredVariables.variables)
       .filter((variable) => {
-        // TODO check pointer
-        return variable.type == TypeSpecifier.CHAR;
+        return (
+          variable.type == TypeSpecifier.CHAR &&
+          variable.declarators.has(DeclaratorSpecifier.Pointer)
+        );
       });
 
     return a.map(

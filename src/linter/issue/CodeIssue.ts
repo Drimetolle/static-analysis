@@ -1,5 +1,5 @@
 import PositionInFile from "../../source-analysis/data-objects/PositionInFile";
-import { mapSeverity, Severity } from "./Severity";
+import { Severity } from "./Severity";
 
 export default class CodeIssue {
   readonly errorCode: string;
@@ -41,8 +41,8 @@ export default class CodeIssue {
   }
 
   toString(): string {
-    return `${this.fileName}:${this.link.line}:${
-      this.link.start
-    } - ${mapSeverity(this.severity)} ${this.errorCode}: ${this.description}`;
+    return `${this.fileName}:${this.link.line}:${this.link.start} - ${
+      Severity[this.severity]
+    } ${this.errorCode}: ${this.description}`;
   }
 }

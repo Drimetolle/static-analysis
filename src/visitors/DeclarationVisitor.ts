@@ -1,9 +1,12 @@
 import { Lifecycle, scoped } from "tsyringe";
 import {
   AssignmentExpressionContext,
+  CvQualifierContext,
   DeclaratorContext,
   DeclSpecifierContext,
   DeclSpecifierSeqContext,
+  InitDeclaratorContext,
+  MemberdeclarationContext,
   NoPointerDeclaratorContext,
   ParameterDeclarationContext,
   PointerDeclaratorContext,
@@ -11,53 +14,47 @@ import {
   StorageClassSpecifierContext,
 } from "../grammar/CPP14Parser";
 import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
-import { parseType } from "../utils/TypeInference";
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { parseSimpleType } from "../types/TypeInference";
 import { DeclarationSpecifier } from "../source-analysis/data-objects/DeclarationSpecifier";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
+import { MemberDeclaration } from "../types/Type";
 
 @scoped(Lifecycle.ContainerScoped)
 export default class DeclarationVisitor {
-  createDeclaration(
-    dec: DeclaratorContext,
+  public createDeclaration(
+    declarator: DeclaratorContext,
     init?: AssignmentExpressionContext,
-    decSeq?: DeclSpecifierSeqContext
+    decSeq?: DeclSpecifierSeqContext,
+    simpleDeclaration?: SimpleDeclarationContext
   ): VariableDeclaration {
     const variable = this.getVariableNameFromDeclarator(
-      dec.pointerDeclarator()!
+      declarator.pointerDeclarator()!
     ).text;
     const specifiers = [];
-
+    const declarators = DeclarationVisitor.extractAllDeclaratorsFromDeclaration(
+      declarator
+    );
     if (decSeq) {
       specifiers.push(
         ...DeclarationVisitor.extractAllSpecifiersFromDeclaration(decSeq)
       );
     }
 
-    const type = parseType(decSeq);
-    return new VariableDeclaration(variable, decSeq!, init)
+    const type = parseSimpleType(decSeq);
+    return new VariableDeclaration(
+      variable,
+      simpleDeclaration ?? DeclarationVisitor.getInitDeclarator(declarator),
+      init
+    )
       .addSpecifier(...specifiers)
-      .trySetSimpleType(type);
+      .trySetSimpleType(type)
+      .addDeclarator(...declarators);
   }
 
-  private static createSimpleDeclaration(
-    simpleDeclaration: SimpleDeclarationContext,
-    decSeq: DeclSpecifierSeqContext
-  ): VariableDeclaration {
-    const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
-      decSeq.declSpecifier().pop()!
-    ).text;
-    const type = parseType(decSeq);
-
-    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
-      decSeq
-    );
-    return new VariableDeclaration(variable, simpleDeclaration)
-      .addSpecifier(...specifiers)
-      .trySetSimpleType(type);
-  }
-
-  simpleDeclaration(ctx: SimpleDeclarationContext): Array<VariableDeclaration> {
+  public simpleDeclaration(
+    ctx: SimpleDeclarationContext
+  ): Array<VariableDeclaration> {
     const nodeVars =
       ctx
         .initDeclaratorList()
@@ -65,8 +62,22 @@ export default class DeclarationVisitor {
         .map((v) => v) ?? [];
     const simpleDeclaration = ctx.declSpecifierSeq();
 
-    if (nodeVars.length > 0) {
-      return nodeVars.map((node, i) => {
+    if (nodeVars.length == 1) {
+      const node = nodeVars.pop()!;
+      return [
+        this.createDeclaration(
+          node.declarator(),
+          node
+            .initializer()
+            ?.braceOrEqualInitializer()
+            ?.initializerClause()
+            ?.assignmentExpression(),
+          ctx.declSpecifierSeq(),
+          ctx
+        ),
+      ];
+    } else if (nodeVars.length > 0) {
+      return nodeVars.map((node) => {
         return this.createDeclaration(
           node.declarator(),
           node
@@ -82,18 +93,100 @@ export default class DeclarationVisitor {
       if (1 >= simpleDeclaration.childCount) {
         return [];
       }
-      return new Array<VariableDeclaration>(
-        DeclarationVisitor.createSimpleDeclaration(ctx, simpleDeclaration)
+
+      const result = new Array<VariableDeclaration>();
+      const declaration = DeclarationVisitor.createSimpleDeclaration(
+        ctx,
+        simpleDeclaration
       );
+      if (declaration) {
+        result.push(declaration);
+      }
+      return result;
     }
 
     return [];
   }
 
+  public memberDeclaration(
+    memberDeclaration: MemberdeclarationContext
+  ): Array<MemberDeclaration> {
+    const isSimpleDeclaration = memberDeclaration.memberDeclaratorList();
+
+    if (!isSimpleDeclaration) {
+      const declarationSpecifiersSequence = memberDeclaration.declSpecifierSeq();
+      const declarationSpecifiers =
+        declarationSpecifiersSequence?.declSpecifier() ?? [];
+      const variableName = declarationSpecifiers.pop()!;
+
+      const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+        memberDeclaration.declSpecifierSeq()!
+      );
+
+      const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
+        variableName
+      );
+
+      const type = parseSimpleType(declarationSpecifiersSequence);
+
+      return [
+        {
+          identifier: variable.text,
+          simpleType: type,
+          memberDeclaration,
+          declarationSpecifiers: specifiers,
+        },
+      ];
+    }
+
+    return [];
+  }
+
+  private static getInitDeclarator(
+    declarator: DeclaratorContext
+  ): DeclaratorContext | InitDeclaratorContext {
+    const init = declarator.parent;
+
+    return (init as InitDeclaratorContext) ?? declarator;
+  }
+
+  private static createSimpleDeclaration(
+    simpleDeclaration: SimpleDeclarationContext,
+    decSeq: DeclSpecifierSeqContext
+  ): VariableDeclaration | null {
+    const declarationSpecifier = decSeq.declSpecifier().pop()!;
+
+    /* For this declarations:
+    typedef struct point{
+      double x, y;
+    };
+    */
+    // TODO now ignore
+    if (
+      declarationSpecifier?.typeSpecifier()?.classSpecifier()?.classHead().text
+    ) {
+      return null;
+    }
+
+    const variable = DeclarationVisitor.getVariableNameFromDeclarationSpecifier(
+      declarationSpecifier
+    ).text;
+
+    const type = parseSimpleType(decSeq);
+
+    const specifiers = DeclarationVisitor.extractAllSpecifiersFromDeclaration(
+      decSeq
+    );
+
+    return new VariableDeclaration(variable, simpleDeclaration)
+      .addSpecifier(...specifiers)
+      .trySetSimpleType(type);
+  }
+
   visitParameterDeclaration(
     ctx: ParameterDeclarationContext
   ): VariableDeclaration | null {
-    const type = parseType(ctx.declSpecifierSeq());
+    const type = parseSimpleType(ctx.declSpecifierSeq());
 
     const declaration = this.createParameterDeclaration(ctx);
 
@@ -114,12 +207,20 @@ export default class DeclarationVisitor {
     );
 
     if (declarator) {
-      return this.createDeclarator(ctx, declarator).addSpecifier(...specifiers);
+      const declarators = DeclarationVisitor.extractAllDeclaratorsFromDeclaration(
+        declarator
+      );
+      return this.createDeclarator(ctx, declarator)
+        .addSpecifier(...specifiers)
+        .addDeclarator(...declarators)
+        .changeToParameter();
     }
 
     const simpleDeclaration = declarationSpecifiers.declSpecifier().pop();
 
-    return new VariableDeclaration(simpleDeclaration!.text, ctx);
+    return new VariableDeclaration(simpleDeclaration!.text, ctx)
+      .addSpecifier(...specifiers)
+      .changeToParameter();
   }
 
   private createDeclarator(
@@ -177,16 +278,36 @@ export default class DeclarationVisitor {
         const declarationSpecifier = DeclarationVisitor.convertClassSpecifier(
           classSpecifier
         );
+
         result.push(declarationSpecifier);
         continue;
       }
 
       if (typeSpecifier) {
-        // TODO implement typeSpecifier
+        const cvQualifier = typeSpecifier.cvQualifier();
+
+        if (cvQualifier) {
+          result.push(DeclarationVisitor.convertCvQualifier(cvQualifier));
+        }
       }
     }
 
     return result;
+  }
+
+  private static *extractAllDeclaratorsFromDeclaration(ctx: DeclaratorContext) {
+    const declarators = ctx.pointerDeclarator()?.pointerOperator() ?? [];
+
+    for (const declarator of declarators) {
+      const star = declarator.Star();
+      const ref = declarator.And();
+
+      if (star) {
+        yield DeclaratorSpecifier.Pointer;
+      } else if (ref) {
+        yield DeclaratorSpecifier.Ref;
+      }
+    }
   }
 
   private static convertClassSpecifier(
@@ -200,6 +321,18 @@ export default class DeclarationVisitor {
       return DeclarationSpecifier.Extern;
     } else if (ctx.Thread_local()) {
       return DeclarationSpecifier.ThreadLocal;
+    }
+
+    throw new Error(`Unexpected specifier: ${ctx.text}`);
+  }
+
+  private static convertCvQualifier(
+    ctx: CvQualifierContext
+  ): DeclarationSpecifier {
+    if (ctx.Const()) {
+      return DeclarationSpecifier.Const;
+    } else if (ctx.Volatile()) {
+      return DeclarationSpecifier.Volatile;
     }
 
     throw new Error(`Unexpected specifier: ${ctx.text}`);

@@ -41,7 +41,7 @@ import StartBlock from "../source-analysis/control-flow/blocks/StartBlock";
 import ConditionVisitor, {
   ExpressionAndStatementContext,
 } from "./ConditionVisitor";
-import { isEmpty } from "ramda";
+import { head, isEmpty } from "ramda";
 import DeclarationVisitor from "./DeclarationVisitor";
 import CaseBlock from "../source-analysis/control-flow/blocks/switch/CaseBlock";
 import DefaultCaseBlock from "../source-analysis/control-flow/blocks/switch/DefaultCaseBlock";
@@ -50,6 +50,11 @@ import ReturnBlock from "../source-analysis/control-flow/blocks/ReturnBlock";
 import BreakBlock from "../source-analysis/control-flow/blocks/BreakBlock";
 import ContinueBlock from "../source-analysis/control-flow/blocks/ContinueBlock";
 import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpressionConverter";
+import { parseSimpleType } from "../types/TypeInference";
+import TypeBuilder from "../types/Type";
+import { TypesSource } from "../types/TypesSourceImplementation";
+import TryBlock from "../source-analysis/control-flow/blocks/exception/TryBlock";
+import CatchBlock from "../source-analysis/control-flow/blocks/exception/CatchBlock";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -64,18 +69,24 @@ export default class DataFlowWalker
   private readonly conditionVisitor: ConditionVisitor;
   private readonly declarationVisitor: DeclarationVisitor;
   private readonly expressionConverter: ANTLRExpressionConverter;
+  private readonly typeBuilder: TypeBuilder;
+  private readonly typesSource: TypesSource;
 
   constructor(
     fileName: string,
     conditionVisitor: ConditionVisitor,
     declarationVisitor: DeclarationVisitor,
-    expressionConverter: ANTLRExpressionConverter
+    expressionConverter: ANTLRExpressionConverter,
+    typeBuilder: TypeBuilder,
+    typesSource: TypesSource
   ) {
     this.scopeTree = new ScopeTree();
     this.name = fileName;
     this.conditionVisitor = conditionVisitor;
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
+    this.typeBuilder = typeBuilder;
+    this.typesSource = typesSource;
   }
 
   visit(tree: TranslationUnitContext): ScopeAndCFG {
@@ -85,14 +96,11 @@ export default class DataFlowWalker
       this.visitDeclarationseq(sequence);
     }
 
-    // console.log(JsonFormatter.ScopeToJson(this.scopeTree));
     return { scope: this.scopeTree, cfg: this.cfg };
   }
 
   visitDeclarationseq(ctx: DeclarationseqContext): any {
     if (ctx.children) {
-      const firstRay = new LinearBlock(0, ctx);
-
       for (const i of ctx.children) {
         const block = (i as DeclarationContext).blockDeclaration();
         const functionDef = (i as DeclarationContext).functionDefinition();
@@ -100,13 +108,16 @@ export default class DataFlowWalker
         if (block) {
           this.blockStatement(block);
         } else if (functionDef) {
-          const block = new FunctionBlock(0, functionDef);
+          const block = new FunctionBlock(
+            0,
+            functionDef,
+            parseSimpleType(functionDef.declSpecifierSeq())
+          );
+
           this.cfg.createEdge(block);
           this.topLevelFunctionStatement(functionDef, block);
         }
       }
-
-      this.cfg.createEdge(firstRay);
     }
   }
 
@@ -196,7 +207,7 @@ export default class DataFlowWalker
   }
 
   private ifElseStatementVisitor(
-    ctx: ConditionContext | null,
+    ctx: ConditionContext | undefined,
     toNode: ScopeNode
   ) {
     if (!ctx) {
@@ -256,9 +267,24 @@ export default class DataFlowWalker
   private blockStatement(block: BlockDeclarationContext) {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
-      const tmp = this.visitSimpleDeclaration(simpleDeclaration);
+      if (
+        head(simpleDeclaration.declSpecifierSeq()?.declSpecifier() ?? [])
+          ?.typeSpecifier()
+          ?.classSpecifier()
+          ?.classHead()
+      ) {
+        const type = this.typeBuilder.createType(simpleDeclaration);
 
-      for (const declaration of tmp) {
+        this.typesSource.tryRegisterType(type);
+
+        return;
+      }
+
+      const variableDeclarations = this.visitSimpleDeclaration(
+        simpleDeclaration
+      );
+
+      for (const declaration of variableDeclarations) {
         DataFlowWalker.setScope(this.scopeTree?.getRoot, declaration);
       }
     }
@@ -325,13 +351,14 @@ export default class DataFlowWalker
 
       if (declaration) {
         const newBlock = new LinearBlock(depth, declaration);
+        newBlock.trySetScope(node);
         block.createEdge(newBlock);
         block = newBlock;
-        newBlock.scope = node;
 
         this.declarationStatement(declaration, node);
       } else if (expressionStatement) {
         const newBlock = new LinearBlock(depth, expressionStatement);
+        newBlock.trySetScope(node);
         block.createEdge(newBlock);
         block = newBlock;
 
@@ -360,9 +387,9 @@ export default class DataFlowWalker
           depth
         );
       } else if (tryBlock) {
-        // const newBlock = new TryBlock(depth, "Try");
-        // block.createEdge(newBlock);
-        // block = newBlock;
+        const newBlock = new TryBlock(depth, tryBlock);
+        block.createEdge(newBlock);
+        block = newBlock;
         block = this.compoundStatementVisitor(
           tryBlock.compoundStatement(),
           node,
@@ -371,21 +398,22 @@ export default class DataFlowWalker
         );
 
         // TODO Need catch
-        // for (const handler of tryBlock.handlerSeq().handler()) {
-        //   const newBlock = new CatchBlock(
-        //     depth,
-        //     handler.exceptionDeclaration().text
-        //   );
-        //   block.createEdge(newBlock);
-        //   block = newBlock;
-        //
-        //   this.compoundStatementVisitor(
-        //     handler.compoundStatement(),
-        //     node,
-        //     block,
-        //     depth
-        //   );
-        // }
+        for (const handler of tryBlock.handlerSeq().handler()) {
+          const newBlock = new CatchBlock(
+            depth,
+            handler.exceptionDeclaration().text,
+            handler
+          );
+          block.createEdge(newBlock);
+          block = newBlock;
+
+          this.compoundStatementVisitor(
+            handler.compoundStatement(),
+            node,
+            block,
+            depth
+          );
+        }
       }
     });
 
@@ -423,11 +451,7 @@ export default class DataFlowWalker
 
       for (const s of selectionSequence) {
         const childNode = this.createNode(node);
-        const newBlock = new IfBlock(
-          depth,
-          s.condition?.text,
-          s.condition as ParserRuleContext
-        );
+        const newBlock = new IfBlock(depth, s.condition, conditionStatement);
         newBlock.createEdge(outBlock);
         block.createEdge(newBlock);
 
@@ -518,13 +542,15 @@ export default class DataFlowWalker
     let newBlock: BasicBlock;
 
     if (statement.expression == null) {
-      newBlock = new DefaultCaseBlock(depth, null as any);
+      newBlock = new DefaultCaseBlock(
+        depth,
+        statement.label as ParserRuleContext
+      );
     } else if (Array.isArray(statement.expression)) {
       newBlock = new CaseBlock(
         depth,
         statement.expression.map((s) => s.text),
-        // TODO
-        null as any
+        statement.label as ParserRuleContext
       );
     } else {
       newBlock = new CaseBlock(

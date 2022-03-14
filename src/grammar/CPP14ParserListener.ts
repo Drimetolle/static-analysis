@@ -1,4 +1,4 @@
-// Generated from lib/CPP14Parser.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from CPP14Parser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { InputMismatchException } from 'antlr4ts/InputMismatchException';

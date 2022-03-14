@@ -1,45 +1,8 @@
 import Rule from "../../linter/Rule";
 import LinterContext from "../../linter/LinterContext";
 import Report from "../../linter/issue/Report";
-import { head } from "ramda";
-import { CPP14ParserListener } from "../../grammar/CPP14ParserListener";
-import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
-import {
-  BlockDeclarationContext,
-  DeclSpecifierContext,
-} from "../../grammar/CPP14Parser";
-import { ParseTreeWalker } from "antlr4ts/tree";
-import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
-
-class VariableNamesListener implements CPP14ParserListener {
-  private readonly variables;
-
-  constructor(variables: Array<ParserRuleContext>) {
-    this.variables = variables;
-  }
-
-  enterBlockDeclaration(ctx: BlockDeclarationContext) {
-    const declarators =
-      ctx.simpleDeclaration()?.initDeclaratorList()?.initDeclarator() ?? [];
-
-    const simpleDeclaratorSpecifier =
-      ctx.simpleDeclaration()?.declSpecifierSeq()?.declSpecifier() ?? [];
-    const declarator = simpleDeclaratorSpecifier.pop();
-    if (declarator && declarators.length == 0) {
-      if (VariableNamesListener.isConst(simpleDeclaratorSpecifier)) {
-        this.variables.push(declarator);
-      }
-    }
-
-    if (VariableNamesListener.isConst(simpleDeclaratorSpecifier)) {
-      this.variables.push(...declarators);
-    }
-  }
-
-  private static isConst(specifiers: Array<DeclSpecifierContext>) {
-    return head(specifiers)?.text == "const";
-  }
-}
+import CodeStyleStrategy, { stylePropertyInSchema } from "./CodeStyleStrategy";
+import DefaultCodeStyleConfig from "./DefaultCodeStyleConfig";
 
 /**
  * @example
@@ -60,26 +23,31 @@ class VariableNamesListener implements CPP14ParserListener {
   }
  */
 export default class VariableNames extends Rule {
-  isCamelCase(str: string) {
-    return /^[a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+  constructor() {
+    super();
+    this.Schema = {
+      type: "object",
+      properties: {
+        ...stylePropertyInSchema,
+      },
+    };
   }
 
   run(context: LinterContext): Array<Report> {
+    const config = context.getConfig<DefaultCodeStyleConfig>();
     const reports = new Array<Report>();
+    const checker = CodeStyleStrategy.getCodeStyleChecker(config.style);
 
-    const names = new Array<ParserRuleContext>();
-    const listener = new VariableNamesListener(names);
-    ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, context.ast);
+    const allLocalVariables = context.scope.getRoot.children.flatMap(
+      (children) => context.scope.toArray(children)
+    );
 
-    for (const node of context.scope.toArray()) {
+    for (const node of allLocalVariables) {
       for (const variable of node.data.declaredVariables.variables) {
-        if (
-          !this.isCamelCase(variable.variableName) &&
-          /^[a-zA-Z_]+[0-9]*$/.test(variable.variableName)
-        ) {
+        if (!checker(variable.variableName)) {
           reports.push(
             new Report(
-              `Identifier '${variable.variableName}' is not in camel case.`,
+              `Identifier '${variable.variableName}' is not in ${config.style}.`,
               variable.declaration
             )
           );

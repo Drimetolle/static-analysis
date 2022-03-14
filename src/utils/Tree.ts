@@ -1,3 +1,6 @@
+import VariableDeclaration from "../source-analysis/data-objects/VariableDeclaration";
+import { ScopeNode } from "../source-analysis/data-flow/ScopeTree";
+
 export class Node<T> {
   data: T;
   parent: Node<T> | null;
@@ -13,6 +16,35 @@ export class Node<T> {
 
   toString(): string {
     return `${this.data}`;
+  }
+
+  private traverseToRoot(
+    startNode: Node<T>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback: (...args: Array<any>) => void
+  ): void {
+    let currentNode = startNode;
+
+    callback(currentNode);
+
+    while (currentNode.parent) {
+      currentNode = currentNode.parent;
+      callback(currentNode);
+    }
+  }
+
+  getVariable(variableName: string): VariableDeclaration | null {
+    let result = null;
+
+    this.traverseToRoot(this, (node: ScopeNode) => {
+      const tmp = node.data.declaredVariables.getVariable(variableName);
+
+      if (tmp) {
+        result = tmp;
+      }
+    });
+
+    return result;
   }
 }
 
@@ -62,13 +94,16 @@ export class Tree<T> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  traverseDF(callback: (...args: Array<any>) => void): void {
+  traverseDF(
+    callback: (...args: Array<any>) => void,
+    node: Node<T> = this.root
+  ): void {
     (function recurse(currentNode: Node<T>) {
       for (let i = 0, length = currentNode.children.length; i < length; i++) {
         recurse(currentNode.children[i]);
       }
       callback(currentNode);
-    })(this.root);
+    })(node);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

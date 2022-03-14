@@ -30,10 +30,10 @@ export default class IntervalsGenerator {
 
     this.visitedNodes.add(block);
     const constantVar = Number(
-      block.scope?.data.declaredVariables.getVariable("x")?.expression.text
+      block.scope?.data?.declaredVariables.getVariable("x")?.expression?.text
     );
     console.log(
-      block.scope?.data.declaredVariables.getVariable("x")?.expression.text
+      block.scope?.data?.declaredVariables.getVariable("x")?.expression?.text
     );
     if (Number.isInteger(constantVar)) {
       const variable = new VariableInterval(

@@ -1,5 +1,5 @@
 ﻿import LinterContext from "../../src/linter/LinterContext";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
 import StartBlock from "../../src/source-analysis/control-flow/blocks/StartBlock";
 import DeclaredMethods from "../../src/source-analysis/methods/DeclaredMethods";

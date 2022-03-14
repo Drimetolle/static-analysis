@@ -1,21 +1,14 @@
 export enum Severity {
-  Skip,
+  Off,
+  Information,
   Warning,
   Error,
-  Typo,
 }
 
-export type messageLevel = "error" | "warning" | "typo" | "";
+export type SeverityLevelStrings = keyof typeof Severity;
 
-export function mapSeverity(s: Severity): messageLevel {
-  switch (s) {
-    case Severity.Warning:
-      return "warning";
-    case Severity.Error:
-      return "error";
-    case Severity.Typo:
-      return "typo";
-    default:
-      return "";
-  }
+const severities = ["Off", "Information", "Warning", "Error"];
+
+export function isSeverityString(text: string): text is SeverityLevelStrings {
+  return severities.indexOf(text) >= 0;
 }

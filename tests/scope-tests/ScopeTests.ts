@@ -3,20 +3,26 @@ import DataFlowWalker from "../../src/visitors/DataFlowWalker";
 import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import ScopeTree from "../../src/source-analysis/data-flow/ScopeTree";
 import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
 import CodeBlock from "../../src/source-analysis/data-objects/CodeBlock";
 import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/DeclaredVariablesInScope";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 import VariableDeclaration from "../../src/source-analysis/data-objects/VariableDeclaration";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
+import TypeBuilder from "../../src/types/Type";
 
 export async function createTestCase(code: string, expected: ScopeTree) {
+  const declarationVisitor = new DeclarationVisitor()
+
   const { scope } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
-    new DeclarationVisitor(),
-    new ANTLRExpressionConverter()
+    declarationVisitor,
+    new ANTLRExpressionConverter(),
+    new TypeBuilder(declarationVisitor),
+    new TypesSourceImplementation()
   ).start(ASTGenerator.fromString(code));
 
   expect(JsonFormatter.ScopeToJson(scope)).toBe(

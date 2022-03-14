@@ -8,6 +8,8 @@ import {
   ClassHeadNameContext,
 } from "../../grammar/CPP14Parser";
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
+import DefaultCodeStyleConfig from "./DefaultCodeStyleConfig";
+import CodeStyleStrategy, { stylePropertyInSchema } from "./CodeStyleStrategy";
 
 class TypeListener implements CPP14ParserListener {
   private readonly names;
@@ -28,14 +30,14 @@ class TypeListener implements CPP14ParserListener {
  * @example
  class Vector;
  class Matrix {
-  
+
   };
  class Vector {
-  
+
   };
 
  struct MyStruct {
-  
+
   };
 
  namespace ns {
@@ -49,21 +51,29 @@ class TypeListener implements CPP14ParserListener {
   };
  */
 export default class TypeNames extends Rule {
-  private static isPascalCase(str: string): boolean {
-    return /^[A-Z0-9][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/.test(str);
+  constructor() {
+    super();
+    this.Schema = {
+      type: "object",
+      properties: {
+        ...stylePropertyInSchema,
+      },
+    };
   }
 
   run(context: LinterContext): Array<Report> {
+    const config = context.getConfig<DefaultCodeStyleConfig>();
+    const checker = CodeStyleStrategy.getCodeStyleChecker(config.style);
     const reports = new Array<Report>();
 
     const names = new Array<ClassHeadNameContext>();
     const printer = new TypeListener(names);
     ParseTreeWalker.DEFAULT.walk(printer as ParseTreeListener, context.ast);
     for (const className of names) {
-      if (!TypeNames.isPascalCase(className.text)) {
+      if (!checker(className.text)) {
         reports.push(
           new Report(
-            `Class name '${className.text}' is not in pascal case.`,
+            `Class name '${className.text}' is not in ${config.style}.`,
             className
           )
         );

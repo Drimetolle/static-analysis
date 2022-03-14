@@ -1,19 +1,55 @@
+// struct Struct {
+//   int age;
+//   long ss;
+//   float weight;
+//   char name[25];
+//   const char * secondName;
+//   const char secondName2;
+// };
+//
+// auto b = 1;
+//
+// int main(int) {
+//   char* a = "12";
+//
+//   while(1) {
+//
+//   }
+// }
+
+// void Foo() {
+// }
+//
+// void Foo2(int *ptr)
+// {
+//   while (ptr == NULL)
+//     return
+//   Foo();
+// }
+
+// void main() {
+//   try {
+//     int a = 1;
+//   } catch (MyExcept &)
+//   {
+//     afd();
+//   }
+// }
+
 void main() {
-    auto a1;
-    auto *a2;
-    auto a3[];
-    auto a4[123];
-    auto &a5;
-    const auto &a6;
-    const auto *a7;
-    const auto **a8;
-    
-    auto a9, a10;
-    auto *a11, *a12;
-    auto a13[], a14[];
-    auto a15[123], a16[123];
-    auto &a17, &a18;
-    const auto &a19, &a20;
-    const auto *a21, *a22;
-    const auto **a23, **a24;
+  switch(1) {
+    case 1:
+      break;
+    case 2:
+      break;
+    default:
+    {
+      some();
+      break;
+    }
+//     Not work ;(
+//     default:
+//       some();
+//       break;
+  }
 }

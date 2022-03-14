@@ -1,7 +1,8 @@
 {
   "name": "static-analysis",
+  "displayName": "Static analyzer for C/C++",
   "description": "Static analysis tool for c/c++",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "repository": "https://github.com/Drimetolle/static-analysis",
   "publisher": "FireStarter",
@@ -16,22 +17,32 @@
     "Other"
   ],
   "main": "./out/extension.js",
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/tests/utils/"
-    ]
+  "contributes": {
+    "configuration": {
+      "title": "Analyzer config",
+      "properties": {
+        "static-analysis.path-to-config": {
+          "type": "string",
+          "description": "Path to rules configuration. Used config from rute directory or default config if empty.",
+          "scope": "application"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "vscode:publish": "vsce publish",
     "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./",
     "antlr4ts": "cd src/grammar && antlr4ts CPP14Lexer.g4 CPP14Parser.g4",
     "cli-mode": "tsnd --respawn src/CLI.ts",
     "scan": "tsnd src/Scanner.ts",
-    "test": "jest"
+    "test": "jest",
+    "test-coverage": "jest --collectCoverage"
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.9.2",
     "@types/jest": "26.0.22",
     "@types/node": "12.12.0",
     "@types/ramda": "0.27.39",
@@ -39,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "antlr4ts-cli": "^0.5.0-alpha.4",
+    "cli-progress": "^3.9.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
@@ -49,6 +61,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "ajv": "^8.8.2",
     "antlr4ts": "0.5.0-alpha.4",
     "chalk": "2.4.2",
     "dotenv": "10.0.0",

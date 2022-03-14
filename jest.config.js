@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-undef
 module.exports = {
   roots: ["<rootDir>"],
   testMatch: [
@@ -8,4 +7,7 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
+  testPathIgnorePatterns: ["tests/utils/"],
+  collectCoverageFrom: ["src/**/*.{js,jsx,ts}"],
+  coveragePathIgnorePatterns: ["src/grammar/"],
 };

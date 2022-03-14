@@ -1,11 +1,11 @@
 import chalk from "chalk";
 import CodeIssue from "../linter/issue/CodeIssue";
-import { mapSeverity, messageLevel, Severity } from "../linter/issue/Severity";
+import { Severity, SeverityLevelStrings } from "../linter/issue/Severity";
 
 export interface JsonIssueScheme {
   fileName: string;
   code: string;
-  level: messageLevel;
+  level: SeverityLevelStrings;
   link: string;
   description: string;
 }
@@ -26,7 +26,7 @@ export default class Formatter {
       issue.link.start
     } - ${this.coloredSeverity(
       issue.severity,
-      mapSeverity(issue.severity)
+      Severity[issue.severity]
     )} ${chalk.gray(issue.errorCode.toString())}: ${
       issue.description.endsWith(".")
         ? issue.description
@@ -38,7 +38,7 @@ export default class Formatter {
     return {
       fileName: issue.fileName,
       code: issue.errorCode,
-      level: mapSeverity(issue.severity),
+      level: Severity[issue.severity] as SeverityLevelStrings,
       link: `${issue.link.line}:${issue.link.start}`,
       description: issue.description.endsWith(".")
         ? issue.description
@@ -52,9 +52,9 @@ export default class Formatter {
         return chalk.yellow(message);
       case Severity.Error:
         return chalk.red(message);
-      case Severity.Typo:
+      case Severity.Information:
         return chalk.green(message);
-      case Severity.Skip:
+      case Severity.Off:
         return chalk.green(message);
     }
   }

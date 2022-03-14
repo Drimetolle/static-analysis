@@ -13,10 +13,16 @@ export default class ScopeTree extends Tree<CodeBlock> {
     super(new CodeBlock());
   }
 
-  toArray(): Array<ScopeNode> {
+  toArray(): Array<ScopeNode>;
+  toArray(fromNode: ScopeNode): Array<ScopeNode>;
+  toArray(fromNode?: ScopeNode): Array<ScopeNode> {
     const result = new Array<ScopeNode>();
 
-    this.traverseDF((node: ScopeNode) => result.push(node));
+    if (fromNode) {
+      this.traverseDF((node: ScopeNode) => result.push(node), fromNode);
+    } else {
+      this.traverseDF((node: ScopeNode) => result.push(node));
+    }
 
     return result;
   }

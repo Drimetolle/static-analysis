@@ -5,6 +5,7 @@ node_modules
 package-lock.json
 .idea
 .env.local
+coverage
 
 #ANTLR files
 .interp

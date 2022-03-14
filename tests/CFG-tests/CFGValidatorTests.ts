@@ -14,7 +14,7 @@ import ConditionVisitor from "../../src/visitors/ConditionVisitor";
 import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
 import JsonFormatter from "../../src/utils/json-formatters/JsonFormatter";
-import ASTGenerator from "../../utils-for-testing/ASTGenerator";
+import ASTGenerator from "../utils/ASTGenerator";
 import simpleReturn from "./test-cases/return/simpleReturn.json";
 import ifReturn from "./test-cases/return/ifReturn.json";
 import loopReturn from "./test-cases/return/loopReturn.json";
@@ -22,21 +22,28 @@ import switchReturn from "./test-cases/return/switchReturn.json";
 import switchStatementExpected from "./test-cases/switchStatment.json";
 import switchWithoutDefaultCaseStatementExpected from "./test-cases/switchStatmentWithoutDefaultCase.json";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
+import FunctionBlock from "../../src/source-analysis/control-flow/blocks/FunctionBlock";
+import TypeBuilder from "../../src/types/Type";
+import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
 
 async function createTestCase(code: string, expected: object) {
+  const declarationVisitor = new DeclarationVisitor()
+
   const { cfg } = await new DataFlowWalker(
     "",
     new ConditionVisitor(new BlockVisitor()),
-    new DeclarationVisitor(),
-    new ANTLRExpressionConverter()
+    declarationVisitor,
+    new ANTLRExpressionConverter(),
+    new TypeBuilder(declarationVisitor),
+    new TypesSourceImplementation()
   ).start(ASTGenerator.fromString(code));
 
   const validator = new CFGValidator(new OutBlock(0, null as any));
   const block = cfg.blocks[0];
 
-  expect(JsonFormatter.CFGToJson(validator.validateFunction(block))).toBe(
-    JSON.stringify(expected, null, 2)
-  );
+  expect(
+    JsonFormatter.CFGToJson(validator.validateFunction(block as FunctionBlock))
+  ).toBe(JSON.stringify(expected, null, 2));
 }
 
 describe("cfg generator tests for if statement", () => {

@@ -1,12 +1,6 @@
 import { TypeSpecifier } from "../data-objects/LanguageKeyWords";
 import { clone } from "ramda";
 
-export enum PassArguments {
-  byValue,
-  byPointer,
-  byReference,
-}
-
 export default class MethodSignature {
   readonly name: string;
   private readonly _args?: Array<MethodArgument>;
