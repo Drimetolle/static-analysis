@@ -53,6 +53,8 @@ import ANTLRExpressionConverter from "../source-analysis/expression/ANTLRExpress
 import { parseSimpleType } from "../types/TypeInference";
 import TypeBuilder from "../types/Type";
 import { TypesSource } from "../types/TypesSourceImplementation";
+import TryBlock from "../source-analysis/control-flow/blocks/exception/TryBlock";
+import CatchBlock from "../source-analysis/control-flow/blocks/exception/CatchBlock";
 
 interface ScopeAndCFG {
   scope: ScopeTree;
@@ -385,9 +387,9 @@ export default class DataFlowWalker
           depth
         );
       } else if (tryBlock) {
-        // const newBlock = new TryBlock(depth, "Try");
-        // block.createEdge(newBlock);
-        // block = newBlock;
+        const newBlock = new TryBlock(depth, tryBlock);
+        block.createEdge(newBlock);
+        block = newBlock;
         block = this.compoundStatementVisitor(
           tryBlock.compoundStatement(),
           node,
@@ -396,21 +398,22 @@ export default class DataFlowWalker
         );
 
         // TODO Need catch
-        // for (const handler of tryBlock.handlerSeq().handler()) {
-        //   const newBlock = new CatchBlock(
-        //     depth,
-        //     handler.exceptionDeclaration().text
-        //   );
-        //   block.createEdge(newBlock);
-        //   block = newBlock;
-        //
-        //   this.compoundStatementVisitor(
-        //     handler.compoundStatement(),
-        //     node,
-        //     block,
-        //     depth
-        //   );
-        // }
+        for (const handler of tryBlock.handlerSeq().handler()) {
+          const newBlock = new CatchBlock(
+            depth,
+            handler.exceptionDeclaration().text,
+            handler
+          );
+          block.createEdge(newBlock);
+          block = newBlock;
+
+          this.compoundStatementVisitor(
+            handler.compoundStatement(),
+            node,
+            block,
+            depth
+          );
+        }
       }
     });
 

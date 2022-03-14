@@ -17,12 +17,21 @@
 //   }
 // }
 
-void Foo() {
-}
+// void Foo() {
+// }
+//
+// void Foo2(int *ptr)
+// {
+//   while (ptr == NULL)
+//     return
+//   Foo();
+// }
 
-void Foo2(int *ptr)
-{
-  while (ptr == NULL)
-    return
-  Foo();
+void main() {
+  try {
+    int a = 1;
+  } catch (MyExcept &)
+  {
+    afd();
+  }
 }
