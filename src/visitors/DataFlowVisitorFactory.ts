@@ -24,7 +24,6 @@ export default class DataFlowVisitorFactory {
     this.declarationVisitor = declarationVisitor;
     this.expressionConverter = expressionConverter;
     this.typeBuilder = typeBuilder;
-    this.typesSource = typesSource;
   }
 
   createVisitorsForFiles(files: Array<string>): Array<DataFlowWalker> {

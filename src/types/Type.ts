@@ -1,5 +1,6 @@
 ﻿import { TypeSpecifier } from "../source-analysis/data-objects/LanguageKeyWords";
 import {
+  DeclSpecifierSeqContext,
   MemberdeclarationContext,
   SimpleDeclarationContext,
 } from "../grammar/CPP14Parser";
@@ -170,6 +171,26 @@ export default class TypeBuilder {
       },
       []
     );
+  }
+}
+
+@scoped(Lifecycle.ContainerScoped)
+export class ValueTypeBuilder {
+  public createValueType(declaration: DeclSpecifierSeqContext): Type {
+    const simpleType = parseSimpleType(declaration);
+
+    if (!simpleType) {
+      throw new Error(`Can't create type for ${declaration.text}`);
+    }
+
+    return new InternalType(
+      Stereotype.Value,
+      {
+        declarationSpecifier: [],
+        declaratorSpecifier: [],
+      },
+      []
+    ).setFullName(simpleType, []);
   }
 }
 

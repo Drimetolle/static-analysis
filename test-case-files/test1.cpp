@@ -1,14 +1,15 @@
-// struct Struct {
-//   int age;
-//   long ss;
-//   float weight;
-//   char name[25];
-//   const char * secondName;
-//   const char secondName2;
-// };
-//
-// auto b = 1;
-//
+struct Struct1 {
+  int age;
+  long ss;
+  float weight;
+  char name[25];
+  const char * secondName;
+  const char secondName2;
+};
+
+int intVar = 1;
+Struct1 Struct1Var = 1;
+
 // int main(int) {
 //   char* a = "12";
 //

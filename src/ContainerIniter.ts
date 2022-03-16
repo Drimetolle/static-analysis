@@ -1,5 +1,5 @@
 ﻿import "reflect-metadata";
-import { container } from "tsyringe";
+import { container, Lifecycle } from "tsyringe";
 import Linter from "./linter/Linter";
 import AllRules from "./rules";
 import FileManager from "./file-system/FileManager";
@@ -10,6 +10,7 @@ import { Json } from "./linter/Rule";
 import TypesSourceImplementation, {
   TypesSource,
 } from "./types/TypesSourceImplementation";
+import TypeResolver, { TypeResolverImplementation } from "./types/TypeResolver";
 
 export default function InitContainer(config: Json) {
   const provider = container.resolve(ConfigurationProvider);
@@ -31,7 +32,14 @@ export default function InitContainer(config: Json) {
   container.register<WalkersHelper>(WalkersHelper, {
     useValue: new WalkersHelper(),
   });
-  container.register<TypesSource>("TypesSource", {
-    useClass: TypesSourceImplementation,
+  container.register<TypesSource>(
+    "TypesSource",
+    {
+      useClass: TypesSourceImplementation,
+    },
+    { lifecycle: Lifecycle.ContainerScoped }
+  );
+  container.register<TypeResolver>("TypeResolver", {
+    useClass: TypeResolverImplementation,
   });
 }

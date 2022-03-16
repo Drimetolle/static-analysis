@@ -1,4 +1,4 @@
-import { Lifecycle, scoped } from "tsyringe";
+import { inject, Lifecycle, scoped } from "tsyringe";
 import {
   AssignmentExpressionContext,
   CvQualifierContext,
@@ -19,9 +19,12 @@ import { DeclarationSpecifier } from "../source-analysis/data-objects/Declaratio
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import { DeclaratorSpecifier } from "../source-analysis/data-objects/DeclaratorSpecifier";
 import { MemberDeclaration } from "../types/Type";
+import TypeResolver from "../types/TypeResolver";
 
 @scoped(Lifecycle.ContainerScoped)
 export default class DeclarationVisitor {
+  constructor(@inject("TypeResolver") private typeResolver: TypeResolver) {}
+
   public createDeclaration(
     declarator: DeclaratorContext,
     init?: AssignmentExpressionContext,
@@ -41,14 +44,16 @@ export default class DeclarationVisitor {
       );
     }
 
-    const type = parseSimpleType(decSeq);
+    const type = this.typeResolver.getType(decSeq!);
+    const simpleType = parseSimpleType(decSeq);
     return new VariableDeclaration(
       variable,
       simpleDeclaration ?? DeclarationVisitor.getInitDeclarator(declarator),
       init
     )
       .addSpecifier(...specifiers)
-      .trySetSimpleType(type)
+      .trySetCompositeType(type)
+      .trySetSimpleType(simpleType)
       .addDeclarator(...declarators);
   }
 

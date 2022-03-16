@@ -9,6 +9,7 @@ import {
 import { DeclarationSpecifier } from "./DeclarationSpecifier";
 import { clone } from "ramda";
 import { DeclaratorSpecifier } from "./DeclaratorSpecifier";
+import { Type } from "../../types/Type";
 
 export default class VariableDeclaration {
   readonly variableName: string;
@@ -19,6 +20,7 @@ export default class VariableDeclaration {
     | InitDeclaratorContext;
   readonly expression?: AssignmentExpressionContext;
   type?: TypeSpecifier;
+  compositeType?: Type;
   private readonly _specifiers: Array<DeclarationSpecifier>;
   private readonly _declarators: Array<DeclaratorSpecifier>;
   private _isParameter: boolean;
@@ -57,6 +59,12 @@ export default class VariableDeclaration {
     return this;
   }
 
+  public trySetCompositeType(type?: Type) {
+    this.compositeType = type;
+
+    return this;
+  }
+
   public setSimpleType(type: TypeSpecifier) {
     this.type = type;
     return this;
@@ -87,6 +95,7 @@ export default class VariableDeclaration {
   private toJSON(): unknown {
     return {
       name: this.variableName,
+      type: this.compositeType?.fullName,
     };
   }
 }
