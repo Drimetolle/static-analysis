@@ -8,6 +8,7 @@ import ReturnBlock from "../../source-analysis/control-flow/blocks/ReturnBlock";
 import { Interval } from "antlr4ts/misc";
 import LoopBlock from "../../source-analysis/control-flow/blocks/LoopBlock";
 
+// https://pvs-studio.com/ru/docs/warnings/v5001/
 export default class MissingSemicolonAfterReturn extends Rule {
   run(context: LinterContext): Array<Report> {
     const result = new Array<Report>();

@@ -4,6 +4,7 @@ import LinterContext from "../../linter/LinterContext";
 import BasicBlock from "../../source-analysis/control-flow/blocks/BasicBlock";
 import CatchBlock from "../../source-analysis/control-flow/blocks/exception/CatchBlock";
 
+// https://pvs-studio.com/ru/docs/warnings/v5002/
 export default class AnEmptyExceptionHandler extends Rule {
   run(context: LinterContext): Array<Report> {
     const result = new Array<Report>();

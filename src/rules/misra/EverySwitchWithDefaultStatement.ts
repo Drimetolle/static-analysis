@@ -7,8 +7,8 @@ import DefaultCaseBlock from "../../source-analysis/control-flow/blocks/switch/D
 import OutBlock from "../../source-analysis/control-flow/blocks/OutBlock";
 import BreakBlock from "../../source-analysis/control-flow/blocks/BreakBlock";
 
-//https://pvs-studio.com/ru/docs/warnings/v2519/
-//https://pvs-studio.com/ru/docs/warnings/v2518/
+// https://pvs-studio.com/ru/docs/warnings/v2519/
+// https://pvs-studio.com/ru/docs/warnings/v2518/
 export default class EverySwitchWithDefaultStatement extends Rule {
   run(context: LinterContext): Array<Report> {
     const result = new Array<Report>();
