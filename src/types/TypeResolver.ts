@@ -5,7 +5,7 @@ import { parseSimpleType } from "./TypeInference";
 import { Type, ValueTypeBuilder } from "./Type";
 
 export default interface TypeResolver {
-  getType(declaration: DeclSpecifierSeqContext): Type;
+  getType(declaration: DeclSpecifierSeqContext): Type | undefined;
 }
 
 @injectable()
@@ -15,7 +15,7 @@ export class TypeResolverImplementation implements TypeResolver {
     private valueTypeBuilder: ValueTypeBuilder
   ) {}
 
-  getType(declaration: DeclSpecifierSeqContext): Type {
+  getType(declaration: DeclSpecifierSeqContext): Type | undefined {
     const simpleType = parseSimpleType(declaration);
 
     if (simpleType) {
@@ -25,7 +25,8 @@ export class TypeResolverImplementation implements TypeResolver {
     const type = this.typesSource.resolveType(declaration.text);
 
     if (!type) {
-      throw new Error(`Unknown type <${declaration.text}>`);
+      console.log(`Unknown type <${declaration.text}>`)
+      // throw new Error(`Unknown type <${declaration.text}>`);
     }
 
     return type;
