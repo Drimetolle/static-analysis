@@ -45,7 +45,18 @@ export default class TypeBuilder {
   }
 
   public createType(declaration: SimpleDeclarationContext): Type {
-    const classKey = head(declaration.declSpecifierSeq()?.declSpecifier() ?? [])
+    let classKeyIndex = 0;
+
+    const declarationSpecifiers =
+      declaration.declSpecifierSeq()?.declSpecifier() ?? [];
+
+    const typeDeclaration = head(declarationSpecifiers);
+
+    if (typeDeclaration?.Typedef()) {
+      classKeyIndex = 1;
+    }
+
+    const classKey = declarationSpecifiers[classKeyIndex]
       ?.typeSpecifier()
       ?.classSpecifier()
       ?.classHead()
@@ -53,7 +64,7 @@ export default class TypeBuilder {
 
     switch (classKey) {
       case Stereotype.Struct:
-        return this.createStructType(declaration);
+        return this.createStructType(declaration, classKeyIndex);
       case Stereotype.Class:
         return this.createClassType(declaration);
       case Stereotype.Enum:
@@ -74,10 +85,13 @@ export default class TypeBuilder {
     );
   }
 
-  public createStructType(declaration: SimpleDeclarationContext): Type {
+  public createStructType(
+    declaration: SimpleDeclarationContext,
+    typeBodyIndex: number
+  ): Type {
     const struct = declaration
       .declSpecifierSeq()
-      ?.declSpecifier(0)
+      ?.declSpecifier(typeBodyIndex)
       .typeSpecifier()
       ?.classSpecifier();
 
@@ -121,7 +135,8 @@ export default class TypeBuilder {
         );
       }
     }
-    return new InternalType(
+
+    const resultType = new InternalType(
       Stereotype.Struct,
       {
         declarationSpecifier: new Array<DeclarationSpecifier>(),
@@ -129,6 +144,14 @@ export default class TypeBuilder {
       },
       members
     ).setFullName(structName, []);
+
+    // is typedef type
+    if (typeBodyIndex == 1) {
+      const alias = declaration.declSpecifierSeq()?.declSpecifier(2).text;
+      resultType.tryAddAlias(alias);
+    }
+
+    return resultType;
   }
 
   public createEnumType(declaration: SimpleDeclarationContext): Type {
@@ -196,6 +219,7 @@ export class ValueTypeBuilder {
 
 export interface Type {
   fullName: string;
+  readonly aliases: Array<string>;
   isPrimitive: boolean;
   isEnumerable: boolean;
   isClass: boolean;
@@ -203,7 +227,6 @@ export interface Type {
   isEnum: boolean;
 
   getPrimitiveType(): TypeSpecifier;
-
   getNestedMembers(): Array<TypeMember>;
 }
 
@@ -213,6 +236,7 @@ class InternalType implements Type {
   private readonly stereotype: Stereotype;
   private readonly members: Array<TypeMember>;
   private readonly specifiers: InternalSpecifiers;
+  private readonly _aliases: Array<string>;
 
   constructor(stereotype: Stereotype, specifiers: Specifiers);
   constructor(
@@ -227,6 +251,7 @@ class InternalType implements Type {
   ) {
     this.stereotype = stereotype;
     this.members = members ?? [];
+    this._aliases = [];
 
     this.specifiers = {
       declarationSpecifier: new Set<DeclarationSpecifier>(
@@ -288,5 +313,15 @@ class InternalType implements Type {
   public setFullName(typeId: string, nameSpaces: Array<string>) {
     this.identifier = typeId;
     return this;
+  }
+
+  public tryAddAlias(alias?: string) {
+    if (alias) {
+      this._aliases.push(alias);
+    }
+  }
+
+  public get aliases() {
+    return clone(this._aliases);
   }
 }

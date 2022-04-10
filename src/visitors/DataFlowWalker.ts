@@ -267,14 +267,17 @@ export default class DataFlowWalker
   private blockStatement(block: BlockDeclarationContext) {
     const simpleDeclaration = block.simpleDeclaration();
     if (simpleDeclaration) {
-      if (
-        head(simpleDeclaration.declSpecifierSeq()?.declSpecifier() ?? [])
-          ?.typeSpecifier()
-          ?.classSpecifier()
-          ?.classHead()
-      ) {
+      const typeDeclaration = head(
+        simpleDeclaration.declSpecifierSeq()?.declSpecifier() ?? []
+      );
+      if (typeDeclaration?.typeSpecifier()?.classSpecifier()?.classHead()) {
         const type = this.typeBuilder.createType(simpleDeclaration);
 
+        this.typesSource.tryRegisterType(type);
+
+        return;
+      } else if (typeDeclaration?.Typedef()) {
+        const type = this.typeBuilder.createType(simpleDeclaration);
         this.typesSource.tryRegisterType(type);
 
         return;

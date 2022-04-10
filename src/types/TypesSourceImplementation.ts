@@ -22,6 +22,21 @@ export default class TypesSourceImplementation implements TypesSource {
   }
 
   public resolveType(typeName: string): Type | undefined {
-    return this.typesTable.get(typeName);
+    const type = this.typesTable.get(typeName);
+
+    if (type) {
+      return type;
+    }
+
+    const aliases = Array.from(this.typesTable, ([key, { aliases }]) => ({
+      key,
+      aliases,
+    }));
+
+    for (const alias of aliases) {
+      if (alias.aliases.indexOf(typeName) >= 0) {
+        return this.typesTable.get(alias.key);
+      }
+    }
   }
 }
