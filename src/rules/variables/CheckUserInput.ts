@@ -121,7 +121,7 @@ export default class CheckUserInput extends Rule {
         const variables = new Array<string>();
         const listener = new FunctionCallListener(variables);
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
-;
+
         if (block.scope) {
           vars.push({
             variables: variables.map((variable) => new Variable(variable)),
