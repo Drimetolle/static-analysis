@@ -25,7 +25,7 @@ export class TypeResolverImplementation implements TypeResolver {
     const type = this.typesSource.resolveType(declaration.text);
 
     if (!type) {
-      console.log(`Unknown type <${declaration.text}>`)
+      console.log(`Unknown type <${declaration.text}>`);
       // throw new Error(`Unknown type <${declaration.text}>`);
     }
 
