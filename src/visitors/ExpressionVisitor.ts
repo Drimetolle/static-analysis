@@ -73,6 +73,7 @@ export default class ExpressionVisitor {
       PrimaryExpressionContext,
       IdExpressionContext,
       UnqualifiedIdContext,
+      PostfixExpressionContext,
     ]);
   }
 
@@ -209,6 +210,14 @@ export default class ExpressionVisitor {
     if (expression instanceof UnqualifiedIdContext) {
       result = expression.Identifier();
       return result;
+    } else if (expression instanceof PostfixExpressionContext) {
+      const identifier = expression
+        .idExpression()
+        ?.unqualifiedId()
+        ?.Identifier();
+      if (identifier) {
+        return identifier;
+      }
     }
 
     return result;

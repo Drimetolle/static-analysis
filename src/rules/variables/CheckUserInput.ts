@@ -47,7 +47,7 @@ class Variable {
 
   constructor(name: string) {
     this.name = name;
-    this._state = VariableState.NotUsed;
+    this._state = VariableState.Unchecked;
   }
 }
 
@@ -96,6 +96,21 @@ class FunctionCallListener implements CPP14ParserListener {
   }
 }
 
+/*
+void main() {
+  Struct1 buf = 1;
+  scanf("%d", buf->age);
+
+//   if  (buf->age) {}
+}
+
+void main() {
+  Struct1 buf = 1;
+  scanf("%d", buf->age);
+
+  if  (buf->age) {}
+}
+* */
 export default class CheckUserInput extends Rule {
   run(context: LinterContext): Array<Report> {
     const reports = new Array<Report>();
@@ -106,7 +121,7 @@ export default class CheckUserInput extends Rule {
         const variables = new Array<string>();
         const listener = new FunctionCallListener(variables);
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
-
+;
         if (block.scope) {
           vars.push({
             variables: variables.map((variable) => new Variable(variable)),
