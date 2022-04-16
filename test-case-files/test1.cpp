@@ -72,10 +72,13 @@ struct Struct1 {
 // }
 //
 void main() {
-  Struct1 buf = 1;
-  scanf("%d", buf->age);
+    Struct1 a;
+    Struct1 b;
+    scanf("", a->age);
 
-  if  (buf->age) {}
+if  (a) {}
+
+    b = a;
 }
 
 typedef struct Info {

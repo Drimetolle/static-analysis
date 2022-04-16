@@ -13,13 +13,10 @@ import {
   UnqualifiedIdContext,
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
-import ScopeTree, {
-  ScopeNode,
-} from "../../source-analysis/data-flow/ScopeTree";
+import { ScopeNode } from "../../source-analysis/data-flow/ScopeTree";
 import { isEmpty } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ExpressionVisitor from "../../visitors/ExpressionVisitor";
-import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 
 enum VariableState {
   Checked = "Checked",
@@ -58,11 +55,6 @@ interface VariableFilledFromUser {
   variables: Array<Variable>;
   scope: ScopeNode;
   ast: ParserRuleContext;
-}
-
-interface UsedVariables {
-  vars: VariableFilledFromUser;
-  identifiers: Array<string>;
 }
 
 class IdentifierListener implements CPP14ParserListener {
@@ -140,21 +132,6 @@ export default class CheckUserInput extends Rule {
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
 
         if (block.scope) {
-          // console.log(JsonFormatter.ScopeToJson(block.scope as any));
-          // console.log(JsonFormatter.ScopeToJson(block.scope.children[0] as any));
-
-          for (const v of variables) {
-            const virableMetaInforamtion = block.scope.getVariable(v);
-
-            for (const {
-              identifier,
-            } of virableMetaInforamtion?.compositeType?.getNestedMembers() ??
-              []) {
-              // console.log(identifier);
-            }
-          }
-          // console.log(variables);
-
           vars.push({
             variables: variables.map((variable) => new Variable(variable)),
             scope: block.scope,
@@ -162,22 +139,6 @@ export default class CheckUserInput extends Rule {
           });
         }
       }
-      // else if (block instanceof IfBlock) {
-      //   const visitor = new ExpressionVisitor();
-      //   const checkedVariables = visitor.getAllUsedVariablesInExpression(
-      //     (block.condition as ConditionContext)?.expression()
-      //   );
-
-      //   for (const variableWrapper of vars) {
-      //     for (const variable of variableWrapper.variables) {
-      //       if (checkedVariables.indexOf(variable.name) >= 0) {
-      //         variable.state = VariableState.Checked;
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   CheckUserInput.setUncheckedIfVariableUseInStatement(block.ast, vars);
-      // }
     }
 
     for (const block of linearBlocks) {
