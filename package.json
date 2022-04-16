@@ -36,7 +36,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./",
     "antlr4ts": "cd src/grammar && antlr4ts CPP14Lexer.g4 CPP14Parser.g4",
-    "cli-mode": "tsnd --respawn src/CLI.ts",
+    "cli-mode": "tsnd --watch test-case-files --respawn src/CLI.ts",
     "scan": "tsnd src/Scanner.ts",
     "test": "jest",
     "test-coverage": "jest --collectCoverage"
