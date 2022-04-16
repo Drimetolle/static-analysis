@@ -13,10 +13,13 @@ import {
   UnqualifiedIdContext,
 } from "../../grammar/CPP14Parser";
 import IfBlock from "../../source-analysis/control-flow/blocks/IfBlock";
-import { ScopeNode } from "../../source-analysis/data-flow/ScopeTree";
+import ScopeTree, {
+  ScopeNode,
+} from "../../source-analysis/data-flow/ScopeTree";
 import { isEmpty } from "ramda";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
 import ExpressionVisitor from "../../visitors/ExpressionVisitor";
+import JsonFormatter from "../../utils/json-formatters/JsonFormatter";
 
 enum VariableState {
   Checked = "Checked",
@@ -47,7 +50,7 @@ class Variable {
 
   constructor(name: string) {
     this.name = name;
-    this._state = VariableState.Unchecked;
+    this._state = VariableState.NotUsed;
   }
 }
 
@@ -63,13 +66,14 @@ interface UsedVariables {
 }
 
 class IdentifierListener implements CPP14ParserListener {
-  private readonly wrapper: { variable?: string };
-  constructor(variables: { variable?: string }) {
+  private readonly wrapper: Array<{ variable?: string }>;
+
+  constructor(variables: Array<{ variable?: string }>) {
     this.wrapper = variables;
   }
 
   enterUnqualifiedId(ctx: UnqualifiedIdContext) {
-    this.wrapper.variable = ctx.Identifier()?.text;
+    this.wrapper.push({ variable: ctx.Identifier()?.text });
   }
 }
 
@@ -85,23 +89,34 @@ class FunctionCallListener implements CPP14ParserListener {
     callArguments = callArguments.slice(1, callArguments.length);
 
     for (const argument of callArguments) {
-      const wrapper = {} as { variable?: string };
+      const wrapper = new Array<{ variable?: string }>();
       const listener = new IdentifierListener(wrapper);
       ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, argument);
 
-      if (wrapper.variable) {
-        this.variables.push(wrapper.variable);
+      for (const variable of wrapper) {
+        if (variable.variable) {
+          this.variables.push(variable.variable);
+        }
       }
     }
   }
 }
 
 /*
+struct Struct1 {
+  int age;
+  long ss;
+  float weight;
+  char name[25];
+  const char * secondName;
+  const char secondName2;
+};
+
 void main() {
   Struct1 buf = 1;
   scanf("%d", buf->age);
 
-//   if  (buf->age) {}
+  if  (buf->age) {}
 }
 
 void main() {
@@ -116,20 +131,57 @@ export default class CheckUserInput extends Rule {
     const reports = new Array<Report>();
     const vars = new Array<VariableFilledFromUser>();
 
-    for (const block of CheckUserInput.visitLinearBlocks(context.cfg)) {
+    const linearBlocks = CheckUserInput.visitLinearBlocks(context.cfg);
+
+    for (const block of linearBlocks) {
       if (block.ast.text.indexOf("scanf") >= 0) {
         const variables = new Array<string>();
         const listener = new FunctionCallListener(variables);
         ParseTreeWalker.DEFAULT.walk(listener as ParseTreeListener, block.ast);
 
         if (block.scope) {
+          // console.log(JsonFormatter.ScopeToJson(block.scope as any));
+          // console.log(JsonFormatter.ScopeToJson(block.scope.children[0] as any));
+
+          for (const v of variables) {
+            const virableMetaInforamtion = block.scope.getVariable(v);
+
+            for (const {
+              identifier,
+            } of virableMetaInforamtion?.compositeType?.getNestedMembers() ??
+              []) {
+              // console.log(identifier);
+            }
+          }
+          // console.log(variables);
+
           vars.push({
             variables: variables.map((variable) => new Variable(variable)),
             scope: block.scope,
             ast: block.ast,
           });
         }
-      } else if (block instanceof IfBlock) {
+      }
+      // else if (block instanceof IfBlock) {
+      //   const visitor = new ExpressionVisitor();
+      //   const checkedVariables = visitor.getAllUsedVariablesInExpression(
+      //     (block.condition as ConditionContext)?.expression()
+      //   );
+
+      //   for (const variableWrapper of vars) {
+      //     for (const variable of variableWrapper.variables) {
+      //       if (checkedVariables.indexOf(variable.name) >= 0) {
+      //         variable.state = VariableState.Checked;
+      //       }
+      //     }
+      //   }
+      // } else {
+      //   CheckUserInput.setUncheckedIfVariableUseInStatement(block.ast, vars);
+      // }
+    }
+
+    for (const block of linearBlocks) {
+      if (block instanceof IfBlock) {
         const visitor = new ExpressionVisitor();
         const checkedVariables = visitor.getAllUsedVariablesInExpression(
           (block.condition as ConditionContext)?.expression()
@@ -183,7 +235,10 @@ export default class CheckUserInput extends Rule {
 
       for (const variableWrapper of vars) {
         for (const variable of variableWrapper.variables) {
-          if (parameters?.indexOf(variable.name) >= 0) {
+          if (
+            parameters?.indexOf(variable.name) >= 0 &&
+            ast.text.indexOf("scanf") < 0
+          ) {
             variable.state = VariableState.Checked;
             variableWrapper.ast = ast;
             result.push(variable);

@@ -55,15 +55,15 @@
 //   }
 // }
 
-// struct Struct1 {
-//   int age;
-//   long ss;
-//   float weight;
-//   char name[25];
-//   const char * secondName;
-//   const char secondName2;
-// };
-//
+struct Struct1 {
+  int age;
+  long ss;
+  float weight;
+  char name[25];
+  const char * secondName;
+  const char secondName2;
+};
+
 // void main() {
 //   Struct1 buf = 1;
 //   scanf("%d", buf->age);
@@ -71,12 +71,12 @@
 // //   if  (buf->age) {}
 // }
 //
-// void main() {
-//   Struct1 buf = 1;
-//   scanf("%d", buf->age);
-//
-//   if  (buf->age) {}
-// }
+void main() {
+  Struct1 buf = 1;
+  scanf("%d", buf->age);
+
+  if  (buf->age) {}
+}
 
 typedef struct Info {
   char name[21];
