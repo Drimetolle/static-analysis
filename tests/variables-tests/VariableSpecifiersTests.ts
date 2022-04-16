@@ -15,13 +15,14 @@ import {
   whileWrapper,
 } from "../utils/CodeWrappers";
 import { DeclarationSpecifier } from "../../src/source-analysis/data-objects/DeclarationSpecifier";
-import TypeBuilder from "../../src/types/Type";
+import TypeBuilder, {ValueTypeBuilder} from "../../src/types/Type";
 import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
+import {TypeResolverImplementation} from "../../src/types/TypeResolver";
 
 describe("Check const variable names", () => {
   const createScope = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
-    const declarationVisitor = new DeclarationVisitor()
+    const declarationVisitor = new DeclarationVisitor(new TypeResolverImplementation(new TypesSourceImplementation(), new ValueTypeBuilder()))
 
     const { scope } = await new DataFlowWalker(
       "",

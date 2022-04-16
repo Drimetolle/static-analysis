@@ -9,13 +9,14 @@ import BlockVisitor from "../../src/visitors/BlockVisitor";
 import DeclarationVisitor from "../../src/visitors/DeclarationVisitor";
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 import ReturnForNotVoidFunction from "../../src/rules/functions/ReturnForNotVoidFunction";
-import TypeBuilder from "../../src/types/Type";
+import TypeBuilder, {ValueTypeBuilder} from "../../src/types/Type";
 import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
+import {TypeResolverImplementation} from "../../src/types/TypeResolver";
 
 describe("Tests for rule ReturnForNotVoidFunction", () => {
   const createContext = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
-    const declarationVisitor = new DeclarationVisitor()
+    const declarationVisitor = new DeclarationVisitor(new TypeResolverImplementation(new TypesSourceImplementation(), new ValueTypeBuilder()))
 
     const { cfg } = await new DataFlowWalker(
       "",

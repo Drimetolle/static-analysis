@@ -18,13 +18,14 @@ import {
   TestCase,
   whileWrapper,
 } from "../utils/CodeWrappers";
-import TypeBuilder from "../../src/types/Type";
+import TypeBuilder, {ValueTypeBuilder} from "../../src/types/Type";
 import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
+import {TypeResolverImplementation} from "../../src/types/TypeResolver";
 
 describe("Check declaration string in C like style", () => {
   const createContext = async (code: string) => {
     const ast = ASTGenerator.fromString(code);
-    const declarationVisitor = new DeclarationVisitor()
+    const declarationVisitor = new DeclarationVisitor(new TypeResolverImplementation(new TypesSourceImplementation(), new ValueTypeBuilder()))
 
     const { scope } = await new DataFlowWalker(
       "",

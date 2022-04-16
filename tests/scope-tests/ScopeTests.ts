@@ -11,10 +11,11 @@ import DeclaredVariablesInScope from "../../src/source-analysis/data-flow/Declar
 import ANTLRExpressionConverter from "../../src/source-analysis/expression/ANTLRExpressionConverter";
 import VariableDeclaration from "../../src/source-analysis/data-objects/VariableDeclaration";
 import TypesSourceImplementation from "../../src/types/TypesSourceImplementation";
-import TypeBuilder from "../../src/types/Type";
+import TypeBuilder, {ValueTypeBuilder} from "../../src/types/Type";
+import {TypeResolverImplementation} from "../../src/types/TypeResolver";
 
 export async function createTestCase(code: string, expected: ScopeTree) {
-  const declarationVisitor = new DeclarationVisitor()
+  const declarationVisitor = new DeclarationVisitor(new TypeResolverImplementation(new TypesSourceImplementation(), new ValueTypeBuilder()))
 
   const { scope } = await new DataFlowWalker(
     "",
