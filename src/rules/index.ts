@@ -27,11 +27,11 @@ export interface AnalyzerRule {
 }
 
 const AllRules: Array<AnalyzerRule> = [
-  { id: 2, rule: CheckScope },
+  // { id: 2, rule: CheckScope },
   { id: 3, rule: VariableNames },
   { id: 4, rule: TypeNames },
   { id: 5, rule: CognitiveComplexity },
-  { id: 6, rule: CheckPrivateFieldName },
+  // { id: 6, rule: CheckPrivateFieldName },
   { id: 7, rule: InfinityLoopTruePredicate },
   { id: 8, rule: ShortGlobalVariable },
   { id: 9, rule: UnsafeFunctions },

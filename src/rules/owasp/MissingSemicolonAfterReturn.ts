@@ -44,7 +44,7 @@ export default class MissingSemicolonAfterReturn extends Rule {
         new Interval(block.ast.start.startIndex, block.ast.stop!.stopIndex)
       ) ?? "";
 
-    const matchArray = rawCode.match(/^return\n(.*?);/) ?? [];
+    const matchArray = rawCode.match(/^return(\r\n|\n|\r|\s*?).*?;/) ?? [];
 
     return matchArray.length > 0;
   }
