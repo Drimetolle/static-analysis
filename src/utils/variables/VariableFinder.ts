@@ -14,15 +14,6 @@ export default class VariableFinder {
     const upper = node.start.startIndex;
     const lower = node.stop?.stopIndex ?? upper;
 
-    // const scope = allNodes.map((node) =>
-    //   node.vars.filter((v) => upper >= v.blockId && lower <= v.blockId)
-    // );
-
-    // console.log(
-    //   upper,
-    //   lower,
-    //   allNodes.map((_) => _.vars.map((v) => v.blockId))
-    // );
     return null as any;
   }
 }

@@ -45,28 +45,12 @@ export default class Controller {
       contentL?.path ?? "",
     ]);
 
-    // const methodsVisitor = new MethodsVisitor(
-    //   contentL?.path ?? "",
-    //   this.config.includePath
-    // );
-
     const walkers = container.resolve(WalkersHelper);
     const { scope, cfg } = await walkers.analyze(visitors[0], tree);
-    // const methods = await walkers.analyze(methodsVisitor, tree);
-    // console.log(scope.isDefined(cfg.blocks[0].blocks[0].blocks[0].scope!, "b"));
-    // console.log(
-    //   JsonFormatter.ScopeToJson(cfg.blocks[0].blocks[0].scope as any)
-    // );
-    // console.log(JsonFormatter.CFGToJson(cfg.blocks[0]));
 
-    // console.log(JsonFormatter.ScopeToJson(scope));
-
-    // methods.getMethodSignature(contentL?.path ?? "", "func");
     context.create(
       new LinterContext(contentL?.path ?? "", tree, scope, cfg, null as any)
     );
-
-    // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
   }
 
   async runWithContent(document: {
@@ -86,27 +70,11 @@ export default class Controller {
       document.fileName,
     ]);
 
-    // const methodsVisitor = new MethodsVisitor(
-    //   contentL?.path ?? "",
-    //   this.config.includePath
-    // );
-
     const walkers = container.resolve(WalkersHelper);
     const { scope, cfg } = await walkers.analyze(visitors[0], tree);
-    // const methods = await walkers.analyze(methodsVisitor, tree);
-    // console.log(scope.isDefined(cfg.blocks[0].blocks[0].blocks[0].scope!, "b"));
-    // console.log(
-    //   JsonFormatter.ScopeToJson(cfg.blocks[0].blocks[0].scope as any)
-    // );
-    // console.log(JsonFormatter.CFGToJson(cfg.blocks[0]));
 
-    // console.log(JsonFormatter.ScopeToJson(scope));
-
-    // methods.getMethodSignature(contentL?.path ?? "", "func");
     context.create(
       new LinterContext(document.fileName, tree, scope, cfg, null as any)
     );
-
-    // linter.start(new LinterContext(contentL?.path ?? "", tree, scope, methods));
   }
 }

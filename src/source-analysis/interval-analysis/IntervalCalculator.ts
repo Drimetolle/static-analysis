@@ -44,24 +44,6 @@ export default class IntervalCalculator {
     return [max(a, c), min(b, d)];
   }
 
-  // public join(
-  //   interval1: [number, number],
-  //   interval2: [number, number]
-  // ): [number, number] {
-  //   return IntervalCalculator.abstractOperator(interval1, interval2, union);
-  // }
-  //
-  // public join2(
-  //   interval1: [number, number],
-  //   interval2: [number, number]
-  // ): [number, number] {
-  //   return IntervalCalculator.abstractOperator2<number>(
-  //     interval1,
-  //     interval2,
-  //     (a: number, b: number) => a + b
-  //   );
-  // }
-
   public widening(
     interval1: [number, number],
     interval2: [number, number],

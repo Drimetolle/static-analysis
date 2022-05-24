@@ -76,21 +76,12 @@ export function subscribeToDocumentChanges(
   context: ExtensionContext,
   staticDiagnostic: DiagnosticCollection
 ): void {
-  // context.subscriptions.push(
-  // 	workspace.onDidOpenTextDocument(document => {
-  // 		refreshDiagnostics(document, staticDiagnostic);
-  // 	})
-  // );
   context.subscriptions.push(
     workspace.onDidSaveTextDocument((document) =>
       refreshDiagnostics(document, staticDiagnostic)
     )
   );
-  // context.subscriptions.push(
-  //   workspace.onDidChangeTextDocument((e) =>
-  //     refreshDiagnostics(e.document, staticDiagnostic)
-  //   )
-  // );
+
   context.subscriptions.push(
     workspace.onDidCloseTextDocument((doc) => staticDiagnostic.delete(doc.uri))
   );

@@ -12,9 +12,6 @@ export default class JsonFormatter {
 
   static CFGToJson(cfg: BasicBlock): string {
     return JSON.stringify(cfg, this.replacerCFG, 2);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // return JSON.stringify(cfg, JsonFormatter.refReplacer(), 2);
   }
 
   private static replacerCFG(key: string, value: unknown) {
@@ -88,28 +85,3 @@ export default class JsonFormatter {
     return o;
   }
 }
-
-// let s = `{
-//     "o1": {
-//         "o2": {
-//             "a1": 1,
-//             "a2": 2,
-//             "a3": [
-//                 1,
-//                 2,
-//                 {
-//                     "b1": 3,
-//                     "b2": "4",
-//                     "b3": "#REF:$.o1.o2"
-//                 }
-//             ]
-//         }
-//     },
-//     "b": "#REF:$.o1.o2.a3[2]",
-//     "a": "#REF:$.o1.o2"
-// }`;
-//
-// console.log('Open Chrome console to see nested fields:');
-// let obj = parseRefJSON(s);
-//
-// console.log(obj);
